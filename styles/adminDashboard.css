@@ -1,0 +1,58 @@
+/* Importing from helper dashboard */
+@import url('/styles/helperDashboard.css');
+
+/* Status Styling */
+.status {
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.status.pending {
+  background-color: #ffcc00;
+  color: #000;
+}
+
+.status.approved {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.status.active {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.status.inactive {
+  background-color: #f44336;
+  color: #fff;
+}
+
+/* User Card Styling */
+.user-card {
+  background: var(--white);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+}
+
+.actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.approve-btn, .reject-btn, .edit-btn, .delete-btn {
+  background-color: var(--cerulean);
+  color: var(--white);
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.approve-btn:hover, .reject-btn:hover, .edit-btn:hover, .delete-btn:hover {
+  background-color: #005f73;
+}
