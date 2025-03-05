@@ -183,54 +183,6 @@ header h1 {
   font-size: 12px;
 }
 
-/* Forms */
-form {
-  background: var(--white);
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: bold;
-  color: var(--cerulean);
-}
-
-input,
-textarea {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-family: 'Sequel Sans', sans-serif;
-  font-size: 14px;
-  transition: border-color 0.3s ease;
-}
-
-input:focus,
-textarea:focus {
-  border-color: var(--cerulean);
-  outline: none;
-}
-
-button {
-  background-color: var(--cerulean);
-  color: var(--white);
-  padding: 12px 25px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #005f73;
-}
-
 /* Request Cards */
 .request-card {
   background: var(--white);
@@ -269,6 +221,54 @@ button:hover {
 }
 
 .request-card button:hover {
+  background-color: #005f73;
+}
+
+/* Forms */
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: var(--cerulean);
+}
+
+form {
+  background: var(--white);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: 'Sequel Sans', sans-serif;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--cerulean);
+  outline: none;
+}
+
+button {
+  background-color: var(--cerulean);
+  color: var(--white);
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
   background-color: #005f73;
 }
 
