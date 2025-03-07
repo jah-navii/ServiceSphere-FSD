@@ -183,6 +183,47 @@ header h1 {
   font-size: 12px;
 }
 
+/* Request Cards */
+.request-card {
+  background: var(--white);
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.request-card:hover {
+  transform: translateY(-5px);
+}
+
+.request-card h3 {
+  font-size: 25px;
+  font-weight: bold;
+  color: var(--cerulean);
+  margin-bottom: 10px;
+}
+
+.request-card p {
+  margin: 5px 0;
+  color: var(--black);
+}
+
+.request-card button {
+  margin-right: 10px;
+  background-color: var(--cerulean);
+  color: var(--white);
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.request-card button:hover {
+  background-color: #005f73;
+}
+
 /* Forms */
 form {
   background: var(--white);
@@ -228,47 +269,6 @@ button {
 }
 
 button:hover {
-  background-color: #005f73;
-}
-
-/* Request Cards */
-.request-card {
-  background: var(--white);
-  padding: 20px;
-  margin-bottom: 15px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-}
-
-.request-card:hover {
-  transform: translateY(-5px);
-}
-
-.request-card h3 {
-  font-size: 25px;
-  font-weight: bold;
-  color: var(--cerulean);
-  margin-bottom: 10px;
-}
-
-.request-card p {
-  margin: 5px 0;
-  color: var(--black);
-}
-
-.request-card button {
-  margin-right: 10px;
-  background-color: var(--cerulean);
-  color: var(--white);
-  border: none;
-  padding: 8px 15px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.request-card button:hover {
   background-color: #005f73;
 }
 
