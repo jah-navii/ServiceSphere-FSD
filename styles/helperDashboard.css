@@ -225,18 +225,18 @@ header h1 {
 }
 
 /* Forms */
-form {
-  background: var(--white);
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
 label {
   display: block;
   margin-bottom: 10px;
   font-weight: bold;
   color: var(--cerulean);
+}
+
+form {
+  background: var(--white);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 input,
