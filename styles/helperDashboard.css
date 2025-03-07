@@ -542,25 +542,6 @@ button:hover {
   background: #005f73;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .dashboard-container {
-    flex-direction: column;
-  }
-  
-  .sidebar {
-    width: 100%;
-    padding: 10px;
-  }
-  
-  .main-content {
-    padding: 10px;
-  }
-  
-  .service-updates {
-    flex-direction: column;
-  }
-}
 /* Service Updates */
 .service-updates {
   display: flex;
@@ -646,4 +627,24 @@ button:hover {
 
 #service-list button:hover {
   background-color: #cc0000;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    padding: 10px;
+  }
+  
+  .main-content {
+    padding: 10px;
+  }
+  
+  .service-updates {
+    flex-direction: column;
+  }
 }
