@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previously Booked Services</title>
+    <link rel="stylesheet" href="/styles/prevbookings.css">
+    <script defer src="/javascript/prevbookings.js"></script>
+</head>
+<body>
+    <div class="container">
+        <a href="/home" class="home-icon" title="Go to Homepage">
+            <span class="home-icon-symbol">&#x1F3E0;</span>
+        </a>
+        <h1>Previously Booked Services</h1>
+
+        <script>
+            // Pass the booking data to the frontend script
+            window.bookingsData = <%- JSON.stringify(bookingsData) %>;
+        </script>
+
+        <div id="services-list">
+            <!-- Services will be populated dynamically -->
+        </div>
+    </div>
+</body>
+</html>
