@@ -1,0 +1,222 @@
+<form id="profile-form" method="POST" action="/helper/profile" enctype="multipart/form-data">
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name" value="<%= userData?.name || '' %>" required>
+
+  <label for="contact">Contact:</label>
+  <input type="text" id="contact" name="mobilenumber" value="<%= userData?.mobilenumber || '' %>" required>
+
+  <label>Service Categories and Pricing:</label>
+
+  <div class="service-categories">
+    <!-- const availableServices = ['Cleaning', 'Repairs', 'Painting', 'Cooking', 'Maintenance', 'Plumbing', 'Electrical'];  -->
+    <% const selectedServices = (userData?.services || []).map(s => s.name); %>
+    <% const servicePrices = {}; (userData?.services || []).forEach(s => servicePrices[s.name] = s.price); %>
+
+    
+
+    <% availableServices.forEach(service => { %>
+      <div class="service-item">
+        <label class="service-checkbox">
+          <input type="checkbox" name="services" value="<%= service %>"
+            <%= selectedServices.includes(service) ? 'checked' : '' %>
+            class="service-toggle" data-service="<%= service %>">
+          <%= service %>
+        </label>
+        <div class="price-input <%= selectedServices.includes(service) ? 'active' : 'inactive' %>">
+          <span>₹</span>
+          <input type="number" 
+                name="prices" 
+                placeholder="Price per hour" 
+                value="<%= servicePrices[service] || '' %>"
+                min="1" 
+                step="0.01"
+                <%= selectedServices.includes(service) ? '' : 'disabled' %>>
+          <span>/hr</span>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+
+  <label for="availability">Availability:</label>
+  <input type="text" id="availability" name="availability" value="<%= userData?.availability || '' %>" required>
+
+  <label for="certifications">Certifications:</label>
+  <input type="file" id="certifications" name="certifications" accept=".pdf, .jpg, .png">
+
+  <% if (Array.isArray(userData?.certifications) && userData.certifications.length > 0) { %>
+    <p>Current Certification:</p>
+    <% const cert = userData.certifications[0]; %>
+    <% if (typeof cert === 'string' && cert.endsWith('.pdf')) { %>
+      <iframe src="/uploads/<%= cert %>" width="100%" height="400px"></iframe>
+    <% } else { %>
+      <img src="/uploads/<%= cert %>" alt="Certification" style="max-width: 100%; height: auto;">
+    <% } %>
+  <% } else { %>
+    <p>No certification uploaded.</p>
+  <% } %>
+
+  <button id="formsubmit">Save Changes</button>
+</form>
+
+<style>
+  :root {
+    --cerulean: #007ea7;
+    --beige: #fffde7;
+    --white: #ffffff;
+    --black: #000000;
+    --gray: #e0e0e0;
+    --light-gray: #f5f5f5;
+  }
+
+  #profile-form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  #profile-form label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: var(--black);
+  }
+
+  #profile-form input[type="text"],
+  #profile-form input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--gray);
+    border-radius: 5px;
+    font-size: 1rem;
+    margin-bottom: 15px;
+  }
+
+  #profile-form input[type="file"] {
+    margin-bottom: 15px;
+  }
+
+  .service-categories {
+    border: 1px solid var(--gray);
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: var(--beige);
+  }
+
+  .service-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--gray);
+  }
+
+  .service-item:last-child {
+    border-bottom: none;
+  }
+
+  .service-checkbox {
+    display: flex;
+    align-items: center;
+    font-weight: normal;
+    margin: 0;
+  }
+
+  .service-checkbox input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+    cursor: pointer;
+  }
+
+  .price-input {
+    display: flex;
+    align-items: center;
+    background-color: var(--white);
+    border-radius: 5px;
+    padding: 2px 5px;
+    border: 1px solid var(--gray);
+  }
+
+  .price-input.inactive {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .price-input input {
+    width: 80px !important;
+    margin: 0 5px !important;
+    padding: 5px !important;
+    border: none !important;
+    text-align: center;
+  }
+
+  .price-input span {
+    color: var(--cerulean);
+    font-weight: 600;
+  }
+
+  button[type="submit"] {
+    background-color: var(--cerulean);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+  }
+
+  button[type="submit"]:hover {
+    background-color: #0099cc;
+  }
+
+  p {
+    margin: 10px 0;
+  }
+
+  iframe, img {
+    border: 1px solid var(--gray);
+    margin: 10px 0;
+    border-radius: 5px;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('profile-form');
+    const serviceToggles = document.querySelectorAll('.service-toggle');
+
+    // 🔁 Toggle price input on checkbox change
+    serviceToggles.forEach(toggle => {
+      toggle.addEventListener('change', function () {
+        const priceInput = this.closest('.service-item').querySelector('.price-input');
+        const priceField = priceInput.querySelector('input');
+
+        if (this.checked) {
+          priceInput.classList.remove('inactive');
+          priceInput.classList.add('active');
+          priceField.disabled = false;
+          priceField.required = true;
+        } else {
+          priceInput.classList.remove('active');
+          priceInput.classList.add('inactive');
+          priceField.disabled = true;
+          priceField.required = false;
+        }
+      });
+    });
+
+    // ✅ On submit: ensure ALL price inputs are enabled
+    document.getElementById("formsubmit").addEventListener('click', function (event) {
+      event.preventDefault();
+      form.submit();
+    });
+  });
+</script>
