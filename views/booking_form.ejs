@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Booking Form</title>
+  <link rel="stylesheet" href="/styles/booking_form.css">
+</head>
+<body>
+  <h1>Book <%= helper.name %></h1>
+
+  <!-- <div id="error-message" style="color: red; margin-bottom: 10px;"></div> -->
+
+  <form action="/booking" method="POST" onsubmit="return validateForm(event)">
+    <div id="error-message" style="color: red; margin-bottom: 10px;"></div>
+    <input type="hidden" name="helperID" value="<%= helper.id %>">
+    <input type="hidden" name="servicetype" value="<%= service %>">
+    <input type="hidden" name="price" value="<%= price %>">
+
+    <div id="error-message" style="color: red; margin-bottom: 10px;"></div>
+
+    <label for="customerName">Your Name:</label>
+    <input type="text" name="customerName" required>
+
+    <label for="date">Select Date:</label>
+    <input type="date" name="date" required>
+
+    <label for="time">Select Time:</label>
+    <input type="time" name="time" required>
+
+    <label for="address">Address:</label>
+    <textarea name="address" required></textarea>
+
+    <button type="submit">Confirm Booking</button>
+  </form>
+  <script>
+    // Client-side validation script
+    function validateForm(event) {
+      const dateInput = document.querySelector('input[name="date"]');
+      const timeInput = document.querySelector('input[name="time"]');
+      const today = new Date();
+      const selectedDate = new Date(dateInput.value);
+
+    // Set time of both dates to 00:00:00 to only compare the date part
+    today.setHours(0,0,0,0);
+    selectedDate.setHours(0,0,0,0);
+
+    // Move to next day
+    today.setDate(today.getDate() + 1);
+
+      // Clear previous error
+      const errorDiv = document.getElementById('error-message');
+      errorDiv.textContent = '';
+
+      // Check if date is valid (not in the past)
+      if (selectedDate < today) {
+        errorDiv.textContent = 'Please select a valid date.';
+        event.preventDefault();
+        return false;
+      }
+
+      // Optional: Check if time is entered
+      if (!timeInput.value) {
+        errorDiv.textContent = 'Please select a valid time.';
+        event.preventDefault();
+        return false;
+      }
+
+      return true;
+    }
+  </script>
+</body>
+</html>
