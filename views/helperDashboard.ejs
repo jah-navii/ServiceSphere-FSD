@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Helper Dashboard - ServiceSphere</title>
+  <link rel="stylesheet" href="/styles/helperDashboard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-profile">
+        <img src="/pics/profile-picture.png" alt="Profile Picture">
+        <h3><%= typeof userData !== 'undefined' ? userData.name : "Guest" %></h3>
+        <p>Helper</p>
+      </div>
+
+      <nav>
+        <ul>
+          <li><a href="/helper/profile"><i class="fas fa-user"></i>Profile</a></li>
+          <li><a href="/helper/requests"><i class="fas fa-list"></i>Service Requests</a></li>
+          <li><a href="/helper/schedule"><i class="fas fa-calendar"></i>Schedule</a></li>
+          <li><a href="/helper/earnings"><i class="fas fa-wallet"></i>Earnings</a></li>
+          <li><a href="/helper/feedback"><i class="fas fa-comments"></i>Feedback</a></li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p>&copy; 2025 ServiceSphere</p>
+        <p>
+          <a href="/about">About Us</a> | 
+          <a href="/contact">Contact</a> | 
+          <a href="/terms">Terms & Conditions</a>
+        </p>
+      </div>      
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header>
+        <h1><%= title %></h1>
+      </header>
+
+      <div class="content">
+        <% if (content) { %>
+          <%- include(content) %>
+        <% } %>
+      </div>      
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+  <script src="/javascript/helperDashboard.js"></script>
+</body>
+
+</html>
