@@ -1,0 +1,21 @@
+<div id="requests-list">
+  <% if (requests.length === 0) { %>
+      <p>No service requests found.</p>
+  <% } else { %>
+      <% requests.forEach(request => { %>
+          <div class="request-card" data-request-id="<%= request.id %>">
+              <h3><%= request.service_type %> Service</h3>
+              <p><strong>Customer:</strong> <%= request.seeker.name %></p>
+              <p><strong>Date:</strong> <%= request.date %> at <%= request.time %></p>
+              <p><strong>Address:</strong> <%= request.address %></p>
+              <p><strong>Status:</strong> <span id="status-<%= request.id %>"><%= request.status %></span></p>
+              <% if (request.status === 'pending') { %>
+                  <button onclick="updateRequestStatus('<%= request.id %>', 'Accepted')">Accept</button>
+                  <button onclick="updateRequestStatus('<%= request.id %>', 'Rejected')">Reject</button>
+              <% } else { %>
+                  <p><em>Request <%= request.status %></em></p>
+              <% } %>
+          </div>
+      <% }); %>
+  <% } %>
+</div>
