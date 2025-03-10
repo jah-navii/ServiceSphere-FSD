@@ -5,7 +5,13 @@
 //         .then(data => displayServices(data))
 //         .catch(error => console.error('Error fetching services:', error));
 // }
-
+// Fetch searched services
+function fetchSearchedServices(searchTerm) {
+    fetch(`/services/search?term=${searchTerm}`)
+        .then(response => response.json())
+        .then(data => displayServices(data))
+        .catch(error => console.error('Error fetching searched services:', error));
+}
 // // Fetch filtered services
 // function fetchFilteredServices(maxPrice, availability, type, gender) {
 //     fetch(`/services/filter?maxPrice=${maxPrice}&availability=${availability}&type=${type}&gender=${gender}`)
@@ -14,13 +20,7 @@
 //         .catch(error => console.error('Error fetching filtered services:', error));
 // }
 
-// Fetch searched services
-function fetchSearchedServices(searchTerm) {
-    fetch(`/services/search?term=${searchTerm}`)
-        .then(response => response.json())
-        .then(data => displayServices(data))
-        .catch(error => console.error('Error fetching searched services:', error));
-}
+
 
 // Display services
 // function displayServices(services) {
@@ -50,8 +50,6 @@ function fetchSearchedServices(searchTerm) {
 //     });
 // }
 
-// // Initial display of services
-// fetchServices();
 
 // Search functionality
 const searchButton = document.getElementById("searchButton");
@@ -73,7 +71,6 @@ document.getElementById("priceRange").addEventListener("input", function() {
 // document.getElementById("availabilityFilter").addEventListener("change", applyFilters);
 document.getElementById("serviceTypeFilter").addEventListener("change", applyFilters);
 document.getElementById("genderFilter").addEventListener("change", applyFilters);
-
 function applyFilters() {
     const maxPrice = parseFloat(document.getElementById("priceRange").value);
     const availabilityFilter = document.getElementById("availabilityFilter").value;
@@ -82,6 +79,9 @@ function applyFilters() {
 
     fetchFilteredServices(maxPrice, availabilityFilter, serviceTypeFilter, genderFilter);
 }
+
+
+
 
 // Reset filters
 document.getElementById("resetFilters").addEventListener("click", () => {
@@ -92,3 +92,13 @@ document.getElementById("resetFilters").addEventListener("click", () => {
     document.getElementById("genderFilter").value = "all";
     fetchServices();
 });
+
+
+function applyFilters() {
+    const maxPrice = parseFloat(document.getElementById("priceRange").value);
+    const availabilityFilter = document.getElementById("availabilityFilter").value;
+    const serviceTypeFilter = document.getElementById("serviceTypeFilter").value;
+    const genderFilter = document.getElementById("genderFilter").value;
+
+    fetchFilteredServices(maxPrice, availabilityFilter, serviceTypeFilter, genderFilter);
+}
