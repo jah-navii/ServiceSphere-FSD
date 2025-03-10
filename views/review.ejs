@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - ServiceSphere</title>
+    <!-- <link rel="stylesheet" href="/styles/review.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="/styles/review1.css">
+</head>
+<body>
+    <!-- Payment Success Container -->
+    <div class="success-container">
+        <i class="fas fa-check-circle success-icon"></i>
+        <h1 class="success-title">Payment Successful!</h1>
+        <p class="success-message">Your booking has been confirmed and payment has been completed successfully.</p>
+        
+        <div class="booking-details">
+            <div class="booking-item">
+                <span>Service:</span>
+                <span id="service-name"><%= serviceType %></span>
+            </div>
+            <div class="booking-item">
+                <span>Helper:</span>
+                <span id="helper-name"><%= helperName %></span>
+            </div>
+            <div class="booking-item">
+                <span>Date & Time:</span>
+                <span id="service-datetime"><%= date %>, <%= time %></span>
+            </div>
+            <div class="booking-item">
+                <span>Amount Paid:</span>
+                <span id="amount-paid">₹<%= price.toFixed(2) %></span>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn primary-btn" onclick="openModal()">Rate & Review</button>
+            <button class="btn secondary-btn" onclick="goToCart()">Back to Bookings</button>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">Rate & Review</h2>
+
+            <label>Your Rating:</label>
+            <div class="star-rating">
+                <span class="star" data-value="1">&#9733;</span>
+                <span class="star" data-value="2">&#9733;</span>
+                <span class="star" data-value="3">&#9733;</span>
+                <span class="star" data-value="4">&#9733;</span>
+                <span class="star" data-value="5">&#9733;</span>
+            </div>
+
+            <label for="review">Your Review:</label>
+            <textarea id="review" rows="3" placeholder="Write your review here..."></textarea>
+
+            <div class="modal-buttons">
+                <button class="btn secondary-btn" onclick="closeModal()">Cancel</button>
+                <button class="btn primary-btn" onclick="submitReview()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bookingId = "<%= bookingId %>";
+        // Get URL parameters to populate booking details
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                bookingId: params.get('bookingId')
+            };
+        }
+        
+        // Populate booking details (in a real app, this would fetch from your API)
+        function populateBookingDetails() {
+            const params = getUrlParams();
+            
+            // In a real app, you would use the bookingId to fetch details from your backend
+            console.log(`Loading details for booking: ${params.bookingId}`);
+            
+            // For now, we're using the hardcoded data in the HTML
+        }
+        
+        // Rating modal functions
+        function openModal() {
+            document.getElementById('ratingModal').style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('ratingModal').style.display = 'none';
+        }
+        
+        async function submitReview() {
+            const activeStars = document.querySelectorAll('.star.active');
+            const rating = activeStars.length;
+            const reviewText = document.getElementById('review').value;
+
+            const params = getUrlParams(); // Assuming you can get bookingId from here
+
+            // Example payload — update as per your schema
+            const feedbackData = {
+                bookingId: params.bookingId,
+                rating: rating,
+                review: reviewText,
+                helperName: document.getElementById('helper-name').textContent // if needed
+            };
+
+            try {
+                const response = await fetch('/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(feedbackData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to submit feedback');
+                }
+
+                const result = await response.json();
+                console.log('Feedback submitted:', result);
+
+                alert('Thank you for your feedback!');
+                closeModal();
+                goToCart();
+
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+                alert('Something went wrong while submitting feedback.');
+            }
+        }
+
+        
+        function goToCart() {
+            // Redirect to the cart/bookings page
+            window.location.href = '/cart';
+        }
+        
+        // Initialize star rating functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const stars = document.querySelectorAll('.star');
+            
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const value = parseInt(this.getAttribute('data-value'));
+                    
+                    // Reset all stars
+                    stars.forEach(s => s.classList.remove('active'));
+                    
+                    // Set active stars up to the clicked one
+                    stars.forEach(s => {
+                        if (parseInt(s.getAttribute('data-value')) <= value) {
+                            s.classList.add('active');
+                        }
+                    });
+                });
+                
+                // Hover effects
+                star.addEventListener('mouseover', function() {
+                    const value = parseInt(this.getAttribute('data-value'));
+                    
+                    stars.forEach(s => {
+                        if (parseInt(s.getAttribute('data-value')) <= value) {
+                            s.style.color = '#FFD700';
+                        }
+                    });
+                });
+                
+                star.addEventListener('mouseout', function() {
+                    stars.forEach(s => {
+                        if (!s.classList.contains('active')) {
+                            s.style.color = '#ddd';
+                        }
+                    });
+                });
+            });
+            
+            // Initialize booking details
+            populateBookingDetails();
+        });
+    </script>
+</body>
+</html>
