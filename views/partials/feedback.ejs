@@ -1,0 +1,87 @@
+<style>
+    .feedback-section {
+  background: var(--white);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
+}
+
+.feedback-section h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--cerulean);
+  margin-bottom: 20px;
+}
+
+.feedback-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.feedback-item {
+  background: var(--beige);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.feedback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.seeker-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--cerulean);
+}
+
+.rating {
+  font-size: 16px;
+  color: #ffc107; /* Gold color for stars */
+}
+
+.feedback-content p {
+  font-size: 16px;
+  color: var(--black);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.feedback-date {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.7);
+  margin-top: 10px;
+  text-align: right;
+}
+</style>
+
+<!-- Feedback Section -->
+<section class="feedback-section">
+  <div class="feedback-list">
+    <% if (feedback && feedback.length > 0) { %>
+      <% feedback.forEach(item => { %>
+        <div class="feedback-item">
+          <div class="feedback-header">
+            <span class="seeker-name"><%= item.seeker.name %></span>
+            <span class="rating">
+              <%= '⭐️'.repeat(item.rating) + '☆'.repeat(5 - item.rating) %> (<%= item.rating %>/5)
+            </span>
+          </div>
+          <div class="feedback-content">
+            <p><%= item.feedback %></p>
+          </div>
+          <div class="feedback-date">
+            Date: <%= item.date.toISOString().split('T')[0] %>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p>No feedback available yet.</p>
+    <% } %>
+  </div>
+</section>
