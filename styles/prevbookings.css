@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Sequel+Sans&display=swap');
+
+:root {
+    --cerulean: #007ea7;
+    --beige: #fffde7;
+    --white: #ffffff;
+    --black: #000000;
+    --gold: #FFD700; /* Yellowish Gold */
+    --gray: #C0C0C0; /* Light Gray */
+}
+
+body {
+    font-family: 'Sequel Sans', sans-serif;
+    background-color: var(--beige);
+    color: var(--black);
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 80%;
+    margin: 20px auto;
+    text-align: center;
+}
+
+h1 {
+    color: var(--cerulean);
+}
+
+.service-card {
+    display: flex;
+    align-items: center;
+    background: var(--white);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.service-card img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.service-details {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.service-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.service-header h2 {
+    margin: 5px 0;
+    color: var(--cerulean);
+    font-size: 18px;
+}
+
+.rating {
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.star {
+    font-size: 18px;
+}
+
+.filled {
+    color: var(--gold); /* Yellowish Gold */
+}
+
+.outlined {
+    color: var(--gray); /* Light Gray */
+}
+
+.details {
+    font-size: 14px;
+    color: var(--black);
+}
+
+.review-button {
+    background-color: var(--cerulean);
+    color: var(--white);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    width: 100px;
+    text-align: center;
+}
+
+.review-button:hover {
+    background-color: var(--black);
+}
