@@ -228,7 +228,7 @@ function createEarningsChart() {
   // Extract data for the chart
   const labels = pastMonthEarnings.map((item) => item.date);
   const earnings = pastMonthEarnings.map((item) => item.earnings);
-
+  
   // Create the line chart
   new Chart(ctx, {
     type: "line", // Line chart
