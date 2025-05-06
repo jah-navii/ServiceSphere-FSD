@@ -184,9 +184,10 @@ function formatAsIndianRupees(amount) {
 
 // Function to populate the earnings table and calculate totals
 function populateEarningsTable() {
-  const earningsBody = document.getElementById("earnings-body");
+
   const pastMonthTotal = document.getElementById("past-month-total");
   const lifetimeTotal = document.getElementById("lifetime-total");
+  const earningsBody = document.getElementById("earnings-body");
 
   if (!earningsBody || !pastMonthTotal || !lifetimeTotal) {
     // Element(s) not found on the current page, skip
