@@ -2,8 +2,8 @@ import express from 'express';
 import multer from 'multer';
 import {
   getHelperProfile,
-  updateHelperProfile,
   getHelperRequests,
+  updateHelperProfile,
   updateRequestStatus,
   getHelperSchedule
 } from '../controllers/helperController.js';
