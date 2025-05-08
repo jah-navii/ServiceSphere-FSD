@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Sequel+Sans&display=swap');
+
+:root {
+    --cerulean: #007ea7;
+    --beige: #fffde7;
+    --white: #ffffff;
+    --black: #000000;
+}
+
+body {
+    font-family: 'Sequel Sans', sans-serif;
+    background-color: var(--beige);
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 30px;
+    color: var(--black);
+}
+
+form {
+    background-color: var(--white);
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: var(--black);
+}
+
+input[type="date"],
+input[type="time"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border: 1px solid var(--cerulean);
+    border-radius: 8px;
+    box-sizing: border-box;
+    resize: none;
+    font-family: 'Sequel Sans', sans-serif;
+}
+
+button[type="submit"] {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    background-color: var(--cerulean);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #005f7a;
+}
+
+h1 span {
+    color: var(--cerulean);
+}
