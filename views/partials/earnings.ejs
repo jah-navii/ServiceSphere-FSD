@@ -1,0 +1,40 @@
+<!-- Embed backend data in a hidden JSON script tag -->
+<script id="earnings-data" type="application/json">
+  {
+    "pastMonthEarnings": <%- JSON.stringify(pastMonthEarnings) %>,
+    "lifetimeEarnings": <%= lifetimeEarnings %>
+  }
+</script>
+
+<div class="content">
+  <h2>Past Month Earnings</h2>
+  <table class="earnings-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Service</th>
+        <th>Customer</th>
+        <th>Earnings</th>
+      </tr>
+    </thead>
+    <tbody id="earnings-body">
+      <!-- Will be populated by JS -->
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" class="total-label">Total (Past Month)</td>
+        <td id="past-month-total" class="total-amount">Rs 0.00</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <!-- Graph Section -->
+  <div class="graph-container">
+    <canvas id="earningsChart"></canvas>
+  </div>
+
+  <div class="lifetime-earnings">
+    <h2>Lifetime Earnings</h2>
+    <p><span id="lifetime-total">Rs 0.00</span></p>
+  </div>
+</div>
