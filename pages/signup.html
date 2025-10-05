@@ -8,14 +8,11 @@
     <style>
         :root {
             --cerulean: #007ea7;
-            --cerulean-dark: #004d73;
-            --blue: #007bff;
-            --blue-dark: #0056b3;
-            --green: #28a745;
-            --green-dark: #1e7e34;
+            --beige: #fffde7;
             --white: #ffffff;
             --black: #000000;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --primary: #007bff;
+            --primary-dark: #0056b3;
         }
 
         @import url('https://fonts.googleapis.com/css2?family=Sequel+Sans&display=swap');
@@ -28,7 +25,7 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background: linear-gradient(135deg, var(--cerulean), var(--cerulean-dark));
+            background: linear-gradient(135deg, var(--cerulean), #004d73);
             background-size: cover;
             background-position: center;
             font-family: 'Sequel Sans', sans-serif;
@@ -37,20 +34,13 @@
             overflow: hidden;
         }
 
-        .logo img {
-            width: 250px;
-            height: auto;
-            animation: float 3s ease-in-out infinite;
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            animation: fadeInDown 1s ease-out;
         }
 
-        .tag {
-            font-size: 25px;
-            margin: 20px 0 30px;
-            color: var(--white);
-            animation: fadeIn 1.5s ease-out;
-        }
-
-        .buttons {
+        .button {
             display: flex;
             gap: 20px;
             animation: fadeInUp 1s ease-out;
@@ -59,51 +49,34 @@
         button {
             padding: 15px 30px;
             border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
+            border-radius: 12px;
+            font-size: 1.2rem;
             cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-            box-shadow: var(--shadow);
-        }
-
-        .login {
-            background-color: var(--blue);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            background-color: var(--primary);
             color: var(--white);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .login:hover {
-            background-color: var(--blue-dark);
+        button:hover {
             transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            background-color: var(--primary-dark);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
         }
 
-        .signup {
-            background-color: var(--green);
-            color: var(--white);
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .signup:hover {
-            background-color: var(--green-dark);
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
-        @keyframes fadeIn {
+        @keyframes fadeInDown {
             0% {
                 opacity: 0;
+                transform: translateY(-20px);
             }
             100% {
                 opacity: 1;
+                transform: translateY(0);
             }
         }
 
@@ -144,15 +117,11 @@
 </head>
 
 <body>
-    <div class="logo">
-        <img src="/pics/logo.png" alt="ServiceSphere Logo">
-    </div>
-    <div class="tag">Your Orbit to Assistance</div>
-    <div class="buttons">
-        <a href="/login"><button class="login">Login</button></a>
-        <a href="/signup"><button class="signup">Sign Up</button></a>
+    <h1>Sign Up as</h1>
+    <div class="button">
+        <a href="/signup/helper"><button type="button" class="helper">Helper</button></a>
+        <a href="/signup/seeker"><button type="button" class="seeker">Seeker</button></a>
     </div>    
 </body>
 
 </html>
-
