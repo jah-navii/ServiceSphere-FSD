@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiceSphere</title>
+    <style>
+        :root {
+            --cerulean: #007ea7;
+            --cerulean-dark: #004d73;
+            --blue: #007bff;
+            --blue-dark: #0056b3;
+            --white: #ffffff;
+            --black: #000000;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Sequel+Sans&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--cerulean), var(--cerulean-dark));
+            background-size: cover;
+            background-position: center;
+            font-family: 'Sequel Sans', sans-serif;
+            color: var(--white);
+            text-align: center;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .button {
+            display: flex;
+            gap: 20px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            box-shadow: var(--shadow);
+            color: var(--white);
+            background-color: var(--blue);
+        }
+
+        button:hover {
+            background-color: var(--blue-dark);
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Background animation */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 10%, transparent 10.01%);
+            background-size: 20px 20px;
+            animation: moveBackground 10s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes moveBackground {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-200px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Login As</h1>
+    <div class="button">
+        <a href="/login/helper"><button type="button" class="helper">Helper</button></a>
+        <a href="/login/seeker"><button type="button" class="seeker">Seeker</button></a>
+    </div>    
+</body>
+
+</html>
