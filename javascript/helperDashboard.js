@@ -70,6 +70,10 @@ function updateRequestStatus(requestId, status) {
     .catch((error) => console.error("Error:", error));
 }
 
+function rejectRequest(requestId) {
+  showModal(`Request ${requestId} rejected!`);
+}
+
 function acceptRequest(requestId) {
   const requestCard = document.querySelector(
     `.request-card[data-request-id="${requestId}"]`
@@ -87,9 +91,6 @@ function acceptRequest(requestId) {
   updateCalendarWithAcceptedRequests();
 }
 
-function rejectRequest(requestId) {
-  showModal(`Request ${requestId} rejected!`);
-}
 
 // // Custom Modal Function
 // function showModal(message) {
