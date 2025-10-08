@@ -2,8 +2,6 @@ import Helper from '../models/Helper.js';
 import Service from '../models/Service.js';
 import Feedback from '../models/Feedback.js';
 
-
-
 // GET /search — all helpers with services
 export const showAllServices = async (req, res) => {
   try {
@@ -58,6 +56,32 @@ export const showAllServices = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+// GET /search/search — keyword search for service name
+export const searchByName = async (req, res) => {
+  const { term } = req.query;
+
+  try {
+    const [helpers, services] = await Promise.all([
+      Helper.find({
+        'services.name': { $regex: term, $options: 'i' },
+        approved: true
+      }),
+      Service.find()
+    ]);
+
+    res.render('search', {
+      helpers,
+      services,
+      availabilityFilter: 'all',
+      typeFilter: 'all',
+      genderFilter: 'all',
+      maxPrice: 1500
+    });
+  } catch (err) {
+    console.error("Search error:", err);
+    res.status(500).send("Search failed.");
+  }
+};
 
 // GET /search/filter — filter by availability, gender, service type, price
 export const filterServices = async (req, res) => {
@@ -92,32 +116,7 @@ export const filterServices = async (req, res) => {
   }
 };
 
-// GET /search/search — keyword search for service name
-export const searchByName = async (req, res) => {
-  const { term } = req.query;
 
-  try {
-    const [helpers, services] = await Promise.all([
-      Helper.find({
-        'services.name': { $regex: term, $options: 'i' },
-        approved: true
-      }),
-      Service.find()
-    ]);
-
-    res.render('search', {
-      helpers,
-      services,
-      availabilityFilter: 'all',
-      typeFilter: 'all',
-      genderFilter: 'all',
-      maxPrice: 1500
-    });
-  } catch (err) {
-    console.error("Search error:", err);
-    res.status(500).send("Search failed.");
-  }
-};
 
 // POST /search — combined filter + search
 export const postSearch = async (req, res) => {
