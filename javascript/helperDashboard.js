@@ -226,9 +226,9 @@ function createEarningsChart() {
 
   const ctx = canvas.getContext("2d");
   // Extract data for the chart
-  const labels = pastMonthEarnings.map((item) => item.date);
   const earnings = pastMonthEarnings.map((item) => item.earnings);
-
+  const labels = pastMonthEarnings.map((item) => item.date);
+  
   // Create the line chart
   new Chart(ctx, {
     type: "line", // Line chart
