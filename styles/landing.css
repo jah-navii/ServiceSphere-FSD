@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Sequel+Sans&display=swap');
+
+:root {
+    --cerulean: #007ea7;
+    --beige: #b0e0e6;
+    --white: #fffafa;
+    --black: #000000;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Sequel Sans', sans-serif;
+}
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: url('/pics/bglanding.jpg') no-repeat center center/cover;
+    position: relative;
+}
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.content {
+    text-align: center;
+    color: var(--black);
+    position: relative;
+    z-index: 1;
+}
+.logo {
+    font-size: 3rem;
+    font-weight: bold;
+}
+.tagline {
+    font-size: 1.5rem;
+    margin: 10px 0;
+}
+.buttons {
+    margin-top: 20px;
+}
+.buttons a {
+    text-decoration: none;
+    color: var(--white);
+    background: var(--cerulean);
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    transition: 0.3s;
+}
+.buttons a:hover {
+    background: var(--beige);
+    color: var(--black);
+}
+
+.logo img {
+    width: 150px; 
+    height: auto;
+    display: block;
+    margin: 0 auto; 
+}
