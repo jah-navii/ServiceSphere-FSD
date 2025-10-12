@@ -2,6 +2,15 @@ import Seeker from '../models/Seeker.js';
 import Booking from '../models/Booking.js';
 import Helper from '../models/Helper.js';
 
+// GET /home — Seeker Home
+export const renderHome = (req, res) => {
+  if (!req.session.user || req.session.user.role !== 'seeker') {
+    return res.redirect('/login/seeker');
+  }
+
+  res.render('home', { user: req.session.user });
+};
+
 // GET /profile — Seeker Profile Page
 export const getSeekerProfile = (req, res) => {
   if (!req.session.user || req.session.user.role !== 'seeker') {
@@ -11,14 +20,7 @@ export const getSeekerProfile = (req, res) => {
   res.render('seeker_profile', { seeker: req.session.user });
 };
 
-// GET /home — Seeker Home
-export const renderHome = (req, res) => {
-  if (!req.session.user || req.session.user.role !== 'seeker') {
-    return res.redirect('/login/seeker');
-  }
 
-  res.render('home', { user: req.session.user });
-};
 
 
 // POST /update-seeker-profile — Seeker Profile Update
