@@ -1,0 +1,175 @@
+<h2>Earnings Overview</h2>
+
+<div class="grid-container">
+  <!-- Monthly Earnings -->
+  <div class="chart-item">
+    <h3>Monthly Earnings</h3>
+    <canvas id="earningsChart"></canvas>
+  </div>
+
+  <!-- Category-wise Earnings -->
+  <div class="chart-item">
+    <h3>Category-wise Earnings</h3>
+    <canvas id="categoryChart"></canvas>
+  </div>
+
+  <!-- Daily Trends -->
+  <div class="chart-item">
+    <h3>Daily Trends</h3>
+    <canvas id="dailyTrendChart"></canvas>
+  </div>
+
+  <!-- Pending vs Received -->
+  <div class="chart-item">
+    <h3>Pending vs Received</h3>
+    <canvas id="paymentStatusChart"></canvas>
+  </div>
+</div>
+
+<!-- Top-Earning Helpers -->
+<div class="chart-full">
+  <h3>Top-Earning Helpers</h3>
+  <canvas id="topHelpersChart"></canvas>
+</div>
+
+<script>
+    // === Load Data on Page Load ===
+    document.addEventListener('DOMContentLoaded', () => {
+    fetchUsers();
+    fetchServices();
+    fetchEarnings();
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const earningsData = <%- JSON.stringify(earningsData) %>;
+    console.log("Loaded Earnings Data:", earningsData);
+
+    // 1. Monthly Earnings (Bar)
+    new Chart(document.getElementById('earningsChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: earningsData.monthlyEarnings.map(e => e.month),
+        datasets: [{
+          label: 'Earnings (₹)',
+          data: earningsData.monthlyEarnings.map(e => e.amount),
+          backgroundColor: 'rgba(0, 126, 167, 0.7)',
+          borderColor: 'rgba(0, 126, 167, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    // 2. Category-wise Earnings (Pie)
+    new Chart(document.getElementById('categoryChart').getContext('2d'), {
+      type: 'pie',
+      data: {
+        labels: earningsData.categoryEarnings.map(e => e.category),
+        datasets: [{
+          data: earningsData.categoryEarnings.map(e => e.amount),
+          backgroundColor: ['#007ea7', '#00a7c4', '#00c7e6', '#009688', '#4caf50']
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    // 3. Daily Trends (Line)
+    new Chart(document.getElementById('dailyTrendChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: earningsData.dailyTrends.map(e => e.date),
+        datasets: [{
+          label: 'Daily Earnings (₹)',
+          data: earningsData.dailyTrends.map(e => e.amount),
+          backgroundColor: 'rgba(0, 126, 167, 0.2)',
+          borderColor: 'rgba(0, 126, 167, 1)',
+          borderWidth: 2,
+          fill: true
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    // 4. Pending vs Received (Doughnut)
+    new Chart(document.getElementById('paymentStatusChart').getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Pending', 'Received'],
+        datasets: [{
+          data: [earningsData.paymentStatus.pending, earningsData.paymentStatus.received],
+          backgroundColor: ['#f44336', '#4caf50']
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    // 5. Top-Earning Helpers (Horizontal Bar)
+    new Chart(document.getElementById('topHelpersChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: earningsData.topHelpers.map(h => h.name),
+        datasets: [{
+          label: 'Earnings (₹)',
+          data: earningsData.topHelpers.map(h => h.amount),
+          backgroundColor: 'rgba(0, 126, 167, 0.7)',
+          borderColor: 'rgba(0, 126, 167, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
+    });
+  });
+</script>
+
+<style>
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2x2 grid */
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .chart-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 100%;
+    height: 350px; /* Fixed height to prevent expansion */
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .chart-full {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 100%;
+    height: 400px; /* Fixed height for larger chart */
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  h3 {
+    margin-bottom: 12px;
+    font-size: 18px;
+    color: #333;
+  }
+
+  /* Fix canvas size */
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+</style>

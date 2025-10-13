@@ -1,0 +1,43 @@
+<h2>Service Management</h2>
+<div class="service-form">
+  <input type="text" id="new-service" placeholder="Enter new service">
+  <button onclick="addService()">Add Service</button>
+</div>
+
+<ul id="service-list">
+  <% services.forEach(service => { %>
+    <li>
+      <span><%= service.name %></span>
+      <button onclick="removeService('<%= service.name %>')">Remove</button>
+    </li>
+  <% }) %>
+</ul>
+
+<script>
+  // public/js/serviceManagement.js
+
+// Add a new service
+
+
+// Remove a service
+function removeService(serviceName) {
+    fetch(`/admin/services/${serviceName}`, {
+        method: 'DELETE'
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.message === 'Service removed successfully') {
+            const items = document.querySelectorAll('#service-list li');
+            items.forEach(item => {
+                if (item.querySelector('span').textContent === serviceName) {
+                    item.remove();
+                }
+            });
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(err => console.error('Error removing service:', err));
+}
+
+</script>

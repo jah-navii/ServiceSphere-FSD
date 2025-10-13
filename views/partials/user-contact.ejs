@@ -1,0 +1,130 @@
+<h2>Contact Messages</h2>
+
+<table class="management-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Message</th>
+      <th>Date</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="messages-container">
+    <tr><td colspan="5">Loading messages...</td></tr>
+  </tbody>
+</table>
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const container = document.getElementById('messages-container');
+
+    try {
+        const res = await fetch('/api/admin/messages');
+        if (!res.ok) throw new Error('Failed to fetch messages');
+
+        const messages = await res.json();
+        console.log('Fetched messages:', messages);
+
+        container.innerHTML = '';
+
+        if (messages.length === 0) {
+            container.innerHTML = '<p>No messages found.</p>';
+            return;
+        }
+
+        // Dynamically create message cards
+        messages.forEach(msg => {
+            const tr = document.createElement('tr');
+
+            tr.innerHTML = `
+                <td>${msg.name}</td>
+                <td>${msg.email}</td>
+                <td>${msg.message}</td>
+                <td>${new Date(msg.submittedAt).toLocaleString()}</td>
+                <td>
+                    <button onclick="replyMessage('${msg.email}')">Reply</button>
+                    <button onclick="deleteMessage('${msg._id}')">Delete</button>
+                </td>
+            `;
+
+            container.appendChild(tr);
+        });
+
+
+    } catch (err) {
+        console.error(err);
+        container.innerHTML = '<p>Error loading messages</p>';
+    }
+});
+
+
+  function deleteMessage(id) {
+    fetch(`/admin/messages/delete`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ messageId: id })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.message === 'Message deleted successfully') {
+        // Just reload the page to reflect the updated messages
+        location.reload();
+      } else {
+        alert('Failed to delete message.');
+      }
+    })
+    .catch(err => {
+      console.error('Error deleting message:', err);
+      alert('Failed to delete message.');
+    });
+  }
+
+  function replyMessage(email) {
+    window.location.href = `mailto:${email}`;
+  }
+</script>
+
+
+<style>
+    .management-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.management-table th,
+.management-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.management-table th {
+  background-color: #007ea7;
+  color: #fff;
+}
+
+.management-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.management-table button {
+  padding: 6px 12px;
+  background-color: #007ea7;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  margin-right: 5px;
+  border-radius: 4px;
+}
+
+.management-table button:hover {
+  background-color: #005f7a;
+}
+
+</style>
