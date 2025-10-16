@@ -10,10 +10,11 @@ import LoginHelper from "./pages/LoginHelper";
 import LoginAdmin from "./pages/LoginAdmin";
 import Home from "./pages/Home/Home";
 import SearchPage from "./pages/SearchPage/SearchPage";
-import BookingForm from "./pages/BookingForm/BookingForm";
+// import BookingForm from "./pages/BookingForm/BookingForm";
 import CartPage from "./pages/CartPage/CartPage";
-import PaymentForm from "./pages/PaymentForm";
+// import PaymentForm from "./pages/PaymentForm";
 import ReviewForm from "./pages/ReviewForm";
+import SeekerProfile from "./pages/SeekerProfile/SeekerProfile";
 
 function App() {
   return (
@@ -29,8 +30,9 @@ function App() {
         <Route path="/login/admin" element={<LoginAdmin />} />
         <Route path="/home" element={<Home />} />
         <Route path="/search" element={<SearchPage />} />
-        <Route path="/booking" element={<BookingForm />} />
+        {/* <Route path="/booking" element={<BookingForm />} /> */}
         <Route path="/cart" element={<CartPage />} />
+        <Route path='/seeker-profile' element={<SeekerProfile />} />
       </Routes>
     </Router>
     // <BookingForm /> 
