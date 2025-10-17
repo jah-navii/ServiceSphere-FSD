@@ -1,5 +1,5 @@
 import express from 'express';
-import connectDB from './config/db.js';
+import connectDB from '../config/db.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -11,7 +11,7 @@ import feedbackRoutes from './routes/feedbackRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import seekerRoutes from './routes/seekerRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
-import messageRoutes from './routes/messageRoutes.js';
+import messageRoutes from './server/routes/messageRoutes.js';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -66,9 +66,6 @@ app.use('/', seekerRoutes);
 app.use('/', serviceRoutes);
 app.use('/', messageRoutes);
 
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/pages/landing.html");
-});
 
 // Signup page
 app.get('/signup', (req, res) => {
