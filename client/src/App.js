@@ -23,6 +23,8 @@ import CartPage from "./pages/CartPage/CartPage";
 import ReviewForm from "./pages/ReviewForm";
 import SeekerProfile from "./pages/SeekerProfile/SeekerProfile";
 
+import AboutUs from "./pages/AboutUs/AboutUs";
+
 function App() {
   return (
     <Router>
@@ -55,6 +57,8 @@ function App() {
         {/* <Route path="/booking" element={<BookingForm />} /> */}
         <Route path="/cart" element={<CartPage />} />
         <Route path='/seeker-profile' element={<SeekerProfile />} />
+
+        <Route path="/about" element={<AboutUs />} />
       </Routes>
     </Router>
     
