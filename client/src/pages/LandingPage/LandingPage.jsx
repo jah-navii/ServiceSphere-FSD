@@ -7,13 +7,15 @@ const LandingPage = () => {
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
-    // Show main content after the logo split + join sequence
+    // Show main content after the text + logo sequence (~4s)
     const timer = setTimeout(() => {
       setShowContent(true);
-    }, 4000); // matches CSS animation timing
+    }, 4000);
 
     return () => clearTimeout(timer);
   }, []);
+
+  const brandText = "Service Sphere";
 
   return (
     <div className={styles.landingContainer}>
@@ -39,7 +41,7 @@ const LandingPage = () => {
         ))}
       </div>
 
-      {/* Logo with split S -> Service Sphere -> full logo rotation */}
+      {/* Logo intro: "Service Sphere" text, then logo rotation */}
       <div
         className={`${styles.logoContainer} ${
           showContent ? styles.logoSettled : ""
@@ -48,22 +50,37 @@ const LandingPage = () => {
         <div className={styles.logo3DWrapper}>
           <div className={styles.logoGlow}></div>
 
-          {/* Split “S” animation + brand text */}
+          {/* Centered "Service Sphere" text, letter-by-letter */}
           <div className={styles.splitLogo}>
-            <span
-              className={`${styles.splitS} ${styles.splitSLeft}`}
-            >
-              S
-            </span>
-            <span className={styles.brandText}>Service Sphere</span>
-            <span
-              className={`${styles.splitS} ${styles.splitSRight}`}
-            >
-              S
+            <span className={styles.brandText}>
+              {brandText.split("").map((ch, index) => {
+                if (ch === " ") {
+                  return (
+                    <span
+                      key={index}
+                      className={styles.brandSpace}
+                    >
+                      &nbsp;
+                    </span>
+                  );
+                }
+
+                return (
+                  <span
+                    key={index}
+                    className={styles.brandChar}
+                    style={{
+                      animationDelay: `${0.6 + index * 0.06}s`,
+                    }}
+                  >
+                    {ch}
+                  </span>
+                );
+              })}
             </span>
           </div>
 
-          {/* Final logo image that appears after split animation and then rotates */}
+          {/* Final logo image that appears after text and then rotates */}
           <img
             src={logo}
             alt="ServiceSphere Logo"
