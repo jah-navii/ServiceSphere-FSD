@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupSeeker from "./pages/SignupSeeker";
 import SignupHelper from "./pages/SignupHelper";
 import LoginSeeker from "./pages/LoginSeeker";
+import LoginHelper from "./pages/LoginHelper";
 
 function App() {
   return (
@@ -16,7 +17,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup/seeker" element={<SignupSeeker />} />
         <Route path="/signup/helper" element={<SignupHelper />} />
-         <Route path="/login/seeker" element={<LoginSeeker />} />
+        <Route path="/login/seeker" element={<LoginSeeker />} />
+        <Route path="/login/helper" element={<LoginHelper />} />
         </Routes>
     </Router>
   );
