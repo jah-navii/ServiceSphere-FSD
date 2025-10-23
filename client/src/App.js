@@ -7,7 +7,8 @@ import SignupSeeker from "./pages/SignupSeeker";
 import SignupHelper from "./pages/SignupHelper";
 import LoginSeeker from "./pages/LoginSeeker";
 import LoginHelper from "./pages/LoginHelper";
-
+import LoginAdmin from "./pages/LoginAdmin";
+import Home from "./pages/Home";
 function App() {
   return (
     <Router>
@@ -19,6 +20,8 @@ function App() {
         <Route path="/signup/helper" element={<SignupHelper />} />
         <Route path="/login/seeker" element={<LoginSeeker />} />
         <Route path="/login/helper" element={<LoginHelper />} />
+        <Route path="/login/admin" element={<LoginAdmin />} />
+        <Route path="/home" element={<Home />} />
         </Routes>
     </Router>
   );
