@@ -1,0 +1,190 @@
+/* LoginSeeker.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.login-seeker-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1e90ff 0%, #0047ab 100%);
+  font-family: 'Sequel Sans', sans-serif;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* Floating dotted gradient background */
+.login-seeker-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10.01%);
+  background-size: 20px 20px;
+  animation: moveBackground 10s linear infinite;
+  z-index: -1;
+}
+
+@keyframes moveBackground {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-200px); }
+}
+
+/* Background animation */
+.bg-animation {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0.3;
+  z-index: 0;
+}
+
+/* Login box */
+.login-box {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  width: 400px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  animation: fadeInUp 1s ease-out;
+}
+
+/* Title */
+.login-box h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+
+/* Error message */
+.error-message {
+  background-color: rgba(255, 0, 0, 0.3);
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Input fields */
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #00d4ff 0%, #0088cc 100%);
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  transition: all 0.4s ease;
+}
+
+button:hover {
+  background: #ffffff;
+  color: #0066cc;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+/* Bottom link */
+p {
+  margin-top: 15px;
+  font-size: 0.95rem;
+}
+
+.signup-link {
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .login-box {
+    width: 350px;
+    padding: 30px;
+  }
+
+  .login-box h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+
+  input {
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+
+  button {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-box {
+    width: 90%;
+    padding: 25px;
+  }
+
+  .login-box h1 {
+    font-size: 1.6rem;
+    margin-bottom: 18px;
+  }
+
+  button {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+}
