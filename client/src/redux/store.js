@@ -1,8 +1,9 @@
-import { configureStore } from "@reduxjs/toolkit";
-import userReducer from "./userSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import bookingFormReducer from './bookingFormSlice'; // adjust path
+
 
 export const store = configureStore({
   reducer: {
-    user: userReducer,
+    bookingForm: bookingFormReducer,
   },
 });
