@@ -1,0 +1,142 @@
+/* AdminContact.module.css */
+:root {
+  --cerulean: #007ea7;
+  --cerulean-dark: #005f7a;
+  --beige: #fffde7;
+  --white: #ffffff;
+  --black: #333333;
+  --gray-light: #f4f4f9;
+}
+
+.contactPageWrapper {
+    background-color: var(--gray-light);
+    min-height: 100vh;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contactPageWrapper * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Sequel Sans', sans-serif;
+}
+
+.container {
+  display: flex;
+  max-width: 1000px;
+  width: 100%;
+  background-color: var(--white);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Section */
+.formContainer {
+  flex: 2;
+  padding: 40px;
+  background-color: var(--white);
+}
+
+.formContainer h1 {
+  color: var(--cerulean);
+  margin-bottom: 25px;
+  font-size: 28px;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.formContainer label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--black);
+}
+
+.formContainer input,
+.formContainer select,
+.formContainer textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.formContainer input:focus,
+.formContainer select:focus,
+.formContainer textarea:focus {
+  outline: none;
+  border-color: var(--cerulean);
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 15px;
+  background-color: var(--cerulean);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submitBtn:hover {
+  background-color: var(--cerulean-dark);
+}
+
+/* Sidebar Section */
+.sidebar {
+  flex: 1;
+  background-color: var(--cerulean);
+  color: var(--white);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.sidebarBox h3 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+  padding-bottom: 10px;
+}
+
+.sidebarBox p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  opacity: 0.9;
+}
+
+.helpLink {
+  color: var(--beige);
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  transition: opacity 0.2s;
+}
+
+.helpLink:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  .sidebar {
+    padding: 30px;
+  }
+}

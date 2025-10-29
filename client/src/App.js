@@ -24,7 +24,7 @@ import ReviewForm from "./pages/ReviewForm";
 import SeekerProfile from "./pages/SeekerProfile/SeekerProfile";
 
 import AboutUs from "./pages/AboutUs/AboutUs";
-
+import AdminContact from "./pages/AdminContact/AdminContact";
 function App() {
   return (
     <Router>
@@ -59,6 +59,7 @@ function App() {
         <Route path='/seeker-profile' element={<SeekerProfile />} />
 
         <Route path="/about" element={<AboutUs />} />
+        <Route path="/AdminContact" element={<AdminContact />} />
       </Routes>
     </Router>
     
