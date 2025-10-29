@@ -4,32 +4,73 @@ import ContactMessage from '../models/ContactMessage.js';
 import Service from '../models/Service.js';
 import Booking from '../models/Booking.js';
 
-// Admin login
+// Admin Signup - converted to API
+export const signupAdmin = async (req, res) => {
+  try {
+    const { name, email, password, confirmPassword } = req.body;
+
+    // 1. Validation
+    if (!name || !email || !password || !confirmPassword) {
+      return res.status(400).json({ error: "All fields are required." });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ error: "Passwords do not match." });
+    }
+
+    // 2. Check Exists
+    const existingAdmin = await Admin.findOne({ email });
+    if (existingAdmin) {
+      return res.status(409).json({ error: "Admin already exists." });
+    }
+
+    // 3. Create Admin
+    const newAdmin = new Admin({
+      name,
+      email,
+      password, // Note: In production, please hash this!
+    });
+
+    await newAdmin.save();
+
+    // 4. Success Response
+    return res.status(201).json({ message: "Admin registered successfully" });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Server Error" });
+  }
+};
+
+// ADMIN LOGIN - Converted to API 
 export const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.render('login-admin', { error: "Please fill in all fields", email });
+    return res.status(400).json({ error: "Please fill in all fields" });
   }
 
   try {
     const admin = await Admin.findOne({ email, password });
+    
     if (!admin) {
-      return res.render('login-admin', { error: "Invalid email or password!", email });
+      return res.status(401).json({ error: "Invalid email or password!" });
     }
 
-    req.session.user = {
+    // Construct User Data for Redux
+    const userData = {
       id: admin._id,
       name: admin.name,
       email: admin.email,
-      role: 'admin'
+      role: 'admin' // Important for redirect logic
     };
 
     console.log('Admin logged in ✅');
-    res.redirect('/admin/dashboard');
+    return res.status(200).json({ success: true, user: userData });
+
   } catch (err) {
     console.error("Admin Login Error:", err);
-    res.render('login-admin', { error: "Something went wrong!", email });
+    return res.status(500).json({ error: "Something went wrong!" });
   }
 };
 

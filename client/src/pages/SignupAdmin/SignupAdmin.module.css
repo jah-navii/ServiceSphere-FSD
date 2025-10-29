@@ -1,0 +1,126 @@
+/* Variables specific to this component or global if defined elsewhere */
+:root {
+  --cerulean: #007ea7;
+  --beige: #fffde7;
+  --white: #ffffff;
+  --black: #000000;
+}
+
+/* Main Container */
+.pageContainer {
+  background-color: #007ea7; /* Hardcoded color to ensure it works */
+  width: 100%;
+  min-height: 100vh; /* Full screen */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Animation */
+.animationWrapper {
+  width: 700px;
+  height: 700px;
+  margin-top: 100px;
+}
+
+/* Form Card */
+.formCard {
+  background-color: rgba(255, 253, 231, 0.95);
+  padding: 2rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  width: 400px;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Typography */
+.title {
+  text-align: center;
+  color: black;
+  margin-bottom: 1.2rem;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* Form Elements */
+.formGroup {
+  margin-bottom: 1.2rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: black;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.input {
+  width: 100%;
+  padding: 0.65rem;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+}
+
+.input:focus {
+  outline: 2px solid #007ea7;
+}
+
+/* Radio Buttons */
+.radioGroup {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.radioLabel {
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+/* Button */
+.submitButton {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #007ea7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.submitButton:hover {
+  background-color: #2f7a93;
+}
+
+/* Utility */
+.errorText {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
+
+.link {
+  color: #007ea7;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+  .animationWrapper {
+    display: none;
+  }
+}

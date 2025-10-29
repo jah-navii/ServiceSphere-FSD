@@ -1,5 +1,5 @@
 import express from 'express';
-import {
+import {signupAdmin,
   loginAdmin,
   renderDashboard,
   renderUsers,
@@ -20,11 +20,16 @@ function isAdmin(req, res, next) {
   res.redirect('/login/admin');
 }
 
-router.get('/login/admin', (req, res) => {
-  res.render('login-admin', { error: null, email: null });
-});
+// router.get('/login/admin', (req, res) => {
+//   res.render('login-admin', { error: null, email: null });
+// });
 
-router.post('/login/admin', loginAdmin);
+// router.post('/login/admin', loginAdmin);
+
+router.post("/signup/admin", signupAdmin);
+router.post("/login/admin", loginAdmin);
+
+//
 
 router.get('/admin/dashboard', isAdmin, renderDashboard);
 
