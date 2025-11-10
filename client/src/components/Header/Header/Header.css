@@ -37,26 +37,25 @@
   height: 40px;
 }
 
-.logo-text {
+/* Inline logo text */
+.logo-text-inline {
   display: flex;
-  flex-direction: column;
+  align-items: baseline;
+  gap: 5px;
   font-weight: 700;
   font-size: 1.4rem;
-  line-height: 1.2;
   color: #000;
 }
 
-.dark .logo-text {
+.dark .logo-text-inline {
   color: #fff;
 }
 
-.logo-text span:first-child {
-  font-size: 1rem;
-  letter-spacing: 0.5px;
+.service-text {
+  font-weight: 600;
 }
 
-.logo-text span:last-child {
-  font-size: 1.3rem;
+.sphere-text {
   font-weight: 800;
 }
 
@@ -129,31 +128,34 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.theme-toggle {
-  background: transparent;
-  border: 1px solid #ddd;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius);
-  font-size: 0.9rem;
-  font-weight: 500;
+/* Theme toggle icon */
+.theme-toggle-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
   transition: all 0.3s;
-  white-space: nowrap;
 }
 
-.dark .theme-toggle {
-  border-color: #444;
+.theme-toggle-icon svg {
+  width: 24px;
+  height: 24px;
+  color: #444;
+  transition: color 0.3s;
+}
+
+.dark .theme-toggle-icon svg {
   color: #ccc;
 }
 
-.theme-toggle:hover {
-  background: #000;
-  color: #fff;
-  border-color: #000;
+.theme-toggle-icon:hover {
+  transform: rotate(20deg) scale(1.1);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
-.dark .theme-toggle:hover {
-  background: #fff;
-  color: #000;
+.dark .theme-toggle-icon:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Responsive */
@@ -174,7 +176,7 @@
     justify-content: center;
   }
 
-  .logo-text {
+  .logo-text-inline {
     font-size: 1.2rem;
   }
 }
