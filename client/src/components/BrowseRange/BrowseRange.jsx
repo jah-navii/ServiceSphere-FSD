@@ -11,7 +11,7 @@ const BrowseRange = () => {
   return (
     <section className="browse-range">
       <div className="container">
-        <h2 className="section-title">Browse The Range</h2>
+        <h2 className="section-title">Most Booked Services</h2>
         <p className="section-subtitle">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
         <div className="range-grid">
           {categories.map((cat) => (

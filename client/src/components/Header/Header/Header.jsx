@@ -50,15 +50,15 @@ const Header = () => {
         <div className="left-section">
           <div className="logo">
             <img src={logo} alt="Service Sphere Logo" />
-            <div className="logo-text-inline">
-              <span className="service-text">Service</span>
-              <span className="sphere-text">Sphere</span>
-            </div>
+            <div className="logo-text-single">Service Sphere</div>
           </div>
+
           <nav className="nav">
             <ul>
               <li><a href="/" className="active">Home</a></li>
               <li><a href="/shop">Shop</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/contact">Contact</a></li>
             </ul>
           </nav>
         </div>

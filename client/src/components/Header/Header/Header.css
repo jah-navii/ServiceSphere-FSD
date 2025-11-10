@@ -37,33 +37,25 @@
   height: 40px;
 }
 
-/* Inline logo text */
-.logo-text-inline {
-  display: flex;
-  align-items: baseline;
-  gap: 5px;
+/* Inline logo text - same font, single line */
+.logo-text-single {
   font-weight: 700;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   color: #000;
+  letter-spacing: 0.5px;
 }
 
-.dark .logo-text-inline {
+.dark .logo-text-single {
   color: #fff;
 }
 
-.service-text {
-  font-weight: 600;
-}
-
-.sphere-text {
-  font-weight: 800;
-}
-
+/* Navigation */
 .nav ul {
   display: flex;
   list-style: none;
   gap: 2rem;
   margin: 0;
+  padding: 0;
 }
 
 .nav a {
@@ -128,7 +120,7 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Theme toggle icon */
+/* Theme toggle (sun/moon icon) */
 .theme-toggle-icon {
   background: none;
   border: none;
@@ -174,9 +166,10 @@
 
   .nav ul {
     justify-content: center;
+    flex-wrap: wrap;
   }
 
-  .logo-text-inline {
-    font-size: 1.2rem;
+  .logo-text-single {
+    font-size: 1.3rem;
   }
 }
