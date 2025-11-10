@@ -48,6 +48,25 @@ document
   });
 
 //Schedule page js
+
+
+function acceptRequest(requestId) {
+  const requestCard = document.querySelector(
+    `.request-card[data-request-id="${requestId}"]`
+  );
+  const date = requestCard
+    .querySelector("p:nth-child(3)")
+    .textContent.split(": ")[1]; // Extract date from the request card
+
+  const acceptedRequests =
+    JSON.parse(localStorage.getItem("acceptedRequests")) || [];
+  acceptedRequests.push(date);
+  localStorage.setItem("acceptedRequests", JSON.stringify(acceptedRequests));
+
+  showModal(`Request ${requestId} accepted!`);
+  updateCalendarWithAcceptedRequests();
+}
+
 function updateRequestStatus(requestId, status) {
   console.log(`Updating request ${requestId} to status: ${status}`);
 
@@ -68,23 +87,6 @@ function updateRequestStatus(requestId, status) {
       }
     })
     .catch((error) => console.error("Error:", error));
-}
-
-function acceptRequest(requestId) {
-  const requestCard = document.querySelector(
-    `.request-card[data-request-id="${requestId}"]`
-  );
-  const date = requestCard
-    .querySelector("p:nth-child(3)")
-    .textContent.split(": ")[1]; // Extract date from the request card
-
-  const acceptedRequests =
-    JSON.parse(localStorage.getItem("acceptedRequests")) || [];
-  acceptedRequests.push(date);
-  localStorage.setItem("acceptedRequests", JSON.stringify(acceptedRequests));
-
-  showModal(`Request ${requestId} accepted!`);
-  updateCalendarWithAcceptedRequests();
 }
 
 function rejectRequest(requestId) {
