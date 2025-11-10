@@ -80,6 +80,7 @@ function App() {
           <Route path="locations" element={<ManageLocations />} />
         </Route>
 
+
         <Route path="/AdminContact" element={<AdminContact />} />
         <Route path="/TermsAndConditions" element={<TermsAndConditions />} />
       </Routes>
