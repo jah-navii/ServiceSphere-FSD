@@ -1,0 +1,123 @@
+/* AboutUs.module.css */
+:root {
+  --cerulean: #007ea7;
+  --beige: #fffde7;
+  --white: #ffffff;
+  --black: #000000;
+}
+
+.aboutContainer * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Sequel Sans', sans-serif;
+}
+
+/* The original HTML had padding on the body tag. We apply it to the main wrapper here. */
+.aboutWrapper {
+    background-color: var(--white);
+    color: var(--black);
+    padding: 20px;
+}
+
+.aboutHeader {
+  background-color: var(--cerulean);
+  color: var(--white);
+  padding: 20px;
+  font-size: 26px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 126, 167, 0.2);
+  border-radius: 12px 12px 0 0;
+}
+
+.content {
+  max-width: 900px;
+  margin: 30px auto;
+  background-color: var(--beige);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.content h2 {
+  color: var(--cerulean);
+  margin-bottom: 12px;
+  font-size: 28px;
+  font-weight: 600;
+  border-bottom: 2px solid var(--cerulean);
+  padding-bottom: 5px;
+}
+
+.content p {
+  font-size: 18px;
+  line-height: 1.8;
+  color: var(--black);
+  margin-bottom: 20px;
+  text-align: justify;
+}
+
+.highlights {
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+.highlights h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: var(--cerulean);
+}
+
+.highlights ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.highlights ul li {
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: var(--black);
+}
+
+.applySection {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.applyText {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--black);
+  margin-bottom: 10px;
+}
+
+/* Changed from 'a' tag to button style for better React usage, though kept as anchor in JSX */
+.applyButton {
+  display: inline-block;
+  background-color: var(--cerulean);
+  color: var(--white);
+  border: none;
+  padding: 12px 25px;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: bold;
+  text-decoration: none;
+  box-shadow: 0 4px 8px rgba(0, 126, 167, 0.3);
+}
+
+.applyButton:hover {
+  background-color: #005f7a;
+}
+
+.aboutFooter {
+  text-align: center;
+  padding: 15px;
+  background: var(--cerulean);
+  color: var(--white);
+  margin-top: 30px;
+  font-size: 16px;
+  border-radius: 0 0 10px 10px;
+}
