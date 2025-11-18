@@ -26,6 +26,7 @@ import SeekerProfile from "./pages/SeekerProfile/SeekerProfile";
 
 import AboutUs from "./pages/AboutUs/AboutUs";
 import AdminContact from "./pages/AdminContact/AdminContact";
+import TermsAndConditions from "./pages/TermsAndConditions/TermsAndConditions";
 function App() {
   return (
     <Router>
@@ -63,6 +64,7 @@ function App() {
         <Route path="/signup/admin" element={<SignupAdmin />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/AdminContact" element={<AdminContact />} />
+        <Route path="/TermsAndConditions" element={<TermsAndConditions />} />
       </Routes>
     </Router>
     

@@ -1,0 +1,108 @@
+/* TermsAndConditions.module.css */
+:root {
+  --cerulean: #007ea7;
+  --beige: #fffde7;
+  --white: #ffffff;
+  --black: #000000;
+}
+
+.termsContainer * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Sequel Sans', sans-serif;
+}
+
+.termsHeader {
+  background-color: var(--cerulean);
+  color: var(--white);
+  text-align: center;
+  padding: 20px;
+  font-size: 26px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 8px rgba(0, 126, 167, 0.2);
+}
+
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: var(--beige);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  line-height: 1.8;
+  color: var(--black);
+}
+
+.container h1 {
+  font-size: 30px;
+  color: var(--cerulean);
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.container h2 {
+  font-size: 22px;
+  color: var(--cerulean);
+  margin-top: 30px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  border-bottom: 2px solid var(--cerulean);
+  padding-bottom: 4px;
+}
+
+.container p {
+  font-size: 18px;
+  text-align: justify;
+  color: var(--black);
+  margin-bottom: 12px;
+}
+
+.container ul {
+  padding-left: 20px;
+  margin-bottom: 20px;
+  list-style: none; /* Remove default bullets to use custom one */
+}
+
+.container ul li {
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: var(--black);
+  position: relative;
+  padding-left: 30px; /* Adjusted padding for the custom checkmark */
+}
+
+.container ul li::before {
+  content: '✔';
+  position: absolute;
+  left: 0;
+  top: 2px;
+  color: var(--cerulean);
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.container a {
+  color: var(--cerulean);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.container a:hover {
+  color: #005f7a;
+  text-decoration: underline;
+}
+
+.termsFooter {
+  text-align: center;
+  padding: 15px;
+  background-color: var(--cerulean);
+  color: var(--white);
+  font-size: 16px;
+  margin-top: 30px;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 -4px 8px rgba(0, 126, 167, 0.2);
+}
