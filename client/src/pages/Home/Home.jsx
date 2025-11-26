@@ -137,7 +137,7 @@ const Home = () => {
                 <div className={styles.cardImageOverlay}></div>
               </div>
               <div className={styles.cardBody}>
-                <h3>Home Cleaning</h3>
+                <h3>Cleaning Assist</h3>
                 <p>
                   From daily upkeep to deep cleaning, keep every room fresh and
                   sparkling.
@@ -158,7 +158,7 @@ const Home = () => {
                 <div className={styles.cardImageOverlay}></div>
               </div>
               <div className={styles.cardBody}>
-                <h3>Electrical Repairs</h3>
+                <h3>Repairs Assist</h3>
                 <p>
                   Certified electricians for safe installations, quick fixes,
                   and smart home setups.

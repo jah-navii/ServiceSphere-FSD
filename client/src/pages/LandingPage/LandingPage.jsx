@@ -7,7 +7,7 @@ const LandingPage = () => {
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
-    // Show main content after the text + logo sequence (~4s)
+    // Show main content after the text + logo sequence (~4s as before)
     const timer = setTimeout(() => {
       setShowContent(true);
     }, 4000);
@@ -26,9 +26,9 @@ const LandingPage = () => {
         <div className={`${styles.orb} ${styles.orb3}`}></div>
       </div>
 
-      {/* Floating particles */}
+      {/* Floating particles (more bubbles going upwards) */}
       <div className={styles.particles}>
-        {[...Array(20)].map((_, i) => (
+        {[...Array(40)].map((_, i) => (   // ⬅️ increased from 20 to 80
           <div
             key={i}
             className={styles.particle}
@@ -56,10 +56,7 @@ const LandingPage = () => {
               {brandText.split("").map((ch, index) => {
                 if (ch === " ") {
                   return (
-                    <span
-                      key={index}
-                      className={styles.brandSpace}
-                    >
+                    <span key={index} className={styles.brandSpace}>
                       &nbsp;
                     </span>
                   );
@@ -70,7 +67,8 @@ const LandingPage = () => {
                     key={index}
                     className={styles.brandChar}
                     style={{
-                      animationDelay: `${0.6 + index * 0.06}s`,
+                      // ⏳ Slower letter-by-letter display
+                      animationDelay: `${0.8 + index * 0.12}s`,
                     }}
                   >
                     {ch}

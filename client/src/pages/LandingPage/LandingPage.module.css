@@ -95,8 +95,8 @@
 
 .particle {
   position: absolute;
-  width: 4px;
-  height: 4px;
+  width: 8px;
+  height: 8px;
   background: rgba(0, 113, 227, 0.6);
   border-radius: 50%;
   animation: floatParticle linear infinite;
