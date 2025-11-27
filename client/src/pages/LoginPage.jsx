@@ -1,20 +1,13 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import "./LoginPage.css";
+import SelectionPage from "../components/SelectionPage/SelectionPage";
 
 const LoginPage = () => {
   return (
-    <div className="login-body">
-      <h1 className="login-title">Login As</h1>
-      <div className="login-buttons">
-        <Link to="/login/helper">
-          <button className="login-btn helper">Helper</button>
-        </Link>
-        <Link to="/login/seeker">
-          <button className="login-btn seeker">Seeker</button>
-        </Link>
-      </div>
-    </div>
+    <SelectionPage 
+      title="Login As" 
+      helperPath="/login/helper" 
+      seekerPath="/login/seeker" 
+    />
   );
 };
 

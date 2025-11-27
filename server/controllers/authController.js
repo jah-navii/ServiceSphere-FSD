@@ -1,162 +1,204 @@
 import Helper from '../models/Helper.js';
 import Seeker from '../models/Seeker.js';
 
-// Helper Signup
+// Helper Signup - modified for react
 export const signupHelper = async (req, res) => {
-  const { name, gender, mobilenumber, aadharnumber, email, password, confirmPassword } = req.body;
-
-  // Validations
-  if (password !== confirmPassword) {
-    return res.render('signup-helper', { error: "Passwords do not match!", name, email, mobilenumber, aadharnumber, gender });
-  }
-  if (password.length < 6) {
-    return res.render('signup-helper', { error: "Password must be at least 6 characters long!", name, email, mobilenumber, aadharnumber, gender });
-  }
-  if (!/^[A-Za-z\s]+$/.test(name)) {
-    return res.render('signup-helper', { error: "Name should contain only alphabets!", name, email, mobilenumber, aadharnumber, gender });
-  }
-  if (!/^\d{10}$/.test(mobilenumber)) {
-    return res.render('signup-helper', { error: "Mobile number must be exactly 10 digits!", name, email, mobilenumber, aadharnumber, gender });
-  }
-  if (!/^\d{12}$/.test(aadharnumber)) {
-    return res.render('signup-helper', { error: "Aadhaar number must be exactly 12 digits!", name, email, mobilenumber, aadharnumber, gender });
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return res.render('signup-helper', { error: "Invalid email format!", name, email, mobilenumber, aadharnumber, gender });
-  }
-
   try {
-    // Check duplicate in both models
+    let { name, gender, mobilenumber, aadharnumber, email, password, confirmPassword } = req.body;
+
+    name = name?.trim();
+    email = email?.trim().toLowerCase();
+    mobilenumber = mobilenumber?.trim();
+    aadharnumber = aadharnumber?.trim();
+
+    if (!name || !gender || !mobilenumber || !aadharnumber || !email || !password || !confirmPassword) {
+      return res.status(400).json({ error: "All fields are required!" });
+    }
+
+    if (password !== confirmPassword)
+      return res.status(400).json({ error: "Passwords do not match!" });
+
+    if (password.length < 6)
+      return res.status(400).json({ error: "Password must be at least 6 characters long!" });
+
+    if (!/^[A-Za-z\s]+$/.test(name))
+      return res.status(400).json({ error: "Name should contain only alphabets!" });
+
+    if (!/^\d{10}$/.test(mobilenumber))
+      return res.status(400).json({ error: "Mobile number must be exactly 10 digits!" });
+
+    if (!/^\d{12}$/.test(aadharnumber))
+      return res.status(400).json({ error: "Aadhaar number must be exactly 12 digits!" });
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      return res.status(400).json({ error: "Invalid email format!" });
+
+    const [existingEmail, existingMobile, existingAadhar] = await Promise.all([
+      Helper.findOne({ email }) || Seeker.findOne({ email }),
+      Helper.findOne({ mobilenumber }) || Seeker.findOne({ mobilenumber }),
+      Helper.findOne({ aadharnumber }),
+    ]);
+
+    if (existingEmail)
+      return res.status(400).json({ error: "Email already exists!" });
+
+    if (existingMobile)
+      return res.status(400).json({ error: "Mobile number already registered!" });
+
+    if (existingAadhar)
+      return res.status(400).json({ error: "Aadhaar number already registered!" });
+
+    await Helper.create({
+      name,
+      gender,
+      mobilenumber,
+      aadharnumber,
+      email,
+      password,
+    });
+
+    console.log(`✅ Helper registered: ${name} (${email})`);
+    res.status(201).json({ message: "Helper registered successfully!" });
+  } catch (err) {
+    console.error("❌ Signup Error:", err);
+    res.status(500).json({ error: "Server error. Please try again later." });
+  }
+};
+
+// Seeker Signup - modified for react
+export const signupSeeker = async (req, res) => {
+  try {
+    const { name, email, password, confirmPassword, mobilenumber, address } = req.body;
+
+    // 1. Validations
+
+    if (!name || !email || !password || !mobilenumber) {
+       return res.status(400).json({ error: "All required fields must be filled!" });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ error: "Passwords do not match!" });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: "Password must be at least 6 characters!" });
+    }
+
+    if (!/^[A-Za-z\s]+$/.test(name)) {
+      return res.status(400).json({ error: "Name should contain only alphabets!" });
+    }
+
+    if (!/^\d{10}$/.test(mobilenumber)) {
+      return res.status(400).json({ error: "Mobile number must be 10 digits!" });
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: "Invalid email format!" });
+    }
+
+    //2. Database Checks 
+
     const existingEmail = await Helper.findOne({ email }) || await Seeker.findOne({ email });
     if (existingEmail) {
-      return res.render('signup-helper', { error: "Email already exists!", name, email, mobilenumber, aadharnumber, gender });
+      return res.status(409).json({ error: "Email already exists!" }); // 409 = Conflict
     }
 
     const existingMobile = await Helper.findOne({ mobilenumber }) || await Seeker.findOne({ mobilenumber });
     if (existingMobile) {
-      return res.render('signup-helper', { error: "Mobile number already registered!", name, email, mobilenumber, aadharnumber, gender });
+      return res.status(409).json({ error: "Mobile number already registered!" });
     }
 
-    const existingAadhar = await Helper.findOne({ aadharnumber });
-    if (existingAadhar) {
-      return res.render('signup-helper', { error: "Aadhaar number already registered!", name, email, mobilenumber, aadharnumber, gender });
-    }
+    // --- 3. Create User ---
+    await Seeker.create({ 
+        name, 
+        email, 
+        password, 
+        mobilenumber, 
+        address 
+    });
 
-    await Helper.create({ name, gender, mobilenumber, aadharnumber, email, password });
-    console.log('Helper registered ✅');
-    res.redirect('/login/helper');
+    console.log('Seeker registered ✅');
+
+    return res.status(201).json({ message: "Seeker registered successfully" });
+
   } catch (err) {
-    console.error("Signup Error:", err);
-    res.render('signup-helper', { error: "Something went wrong!", name, email, mobilenumber, aadharnumber, gender });
+    console.error("Seeker Signup Error:", err);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-// Helper Login
+// HELPER LOGIN - modified for react
 export const loginHelper = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.render('login-helper', { error: "Please fill in all fields", email });
+    return res.status(400).json({ error: "Please fill in all fields" });
   }
 
   try {
     const helper = await Helper.findOne({ email, password });
+
     if (!helper) {
-      return res.render('login-helper', { error: "Invalid email or password!", email });
+      return res.status(401).json({ error: "Invalid email or password!" });
     }
 
-    req.session.user = {
+    const userData = {
       id: helper._id,
       name: helper.name,
       email: helper.email,
       mobilenumber: helper.mobilenumber,
       aadharnumber: helper.aadharnumber,
       gender: helper.gender,
-      services: helper.services,
-      availability: helper.availability,
-      role: "helper"
+      role: "helper", // Useful for React to know which dashboard to show
     };
 
-    console.log('Helper logged in ✅');
-    res.redirect('/helper/profile');
+    console.log("Helper logged in ✅");
+    // Return 200 OK with JSON
+    return res.status(200).json({ success: true, user: userData });
+
   } catch (err) {
-    console.error("Login Error:", err);
-    res.render('login-helper', { error: "Something went wrong!", email });
+    console.error("Helper Login Error:", err);
+    return res.status(500).json({ error: "Something went wrong!" });
   }
 };
 
-// Seeker Signup
-export const signupSeeker = async (req, res) => {
-  const { name, email, password, confirm_password, mobilenumber, address } = req.body;
-
-  // Validations
-  if (password !== confirm_password) {
-    return res.render('signup-seeker', { error: "Passwords do not match!", name, email, mobilenumber, address });
-  }
-
-  if (password.length < 6) {
-    return res.render('signup-seeker', { error: "Password must be at least 6 characters!", name, email, mobilenumber, address });
-  }
-
-  if (!/^[A-Za-z\s]+$/.test(name)) {
-    return res.render('signup-seeker', { error: "Name should contain only alphabets!", name, email, mobilenumber, address });
-  }
-
-  if (!/^\d{10}$/.test(mobilenumber)) {
-    return res.render('signup-seeker', { error: "Mobile number must be 10 digits!", name, email, mobilenumber, address });
-  }
-
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return res.render('signup-seeker', { error: "Invalid email format!", name, email, mobilenumber, address });
-  }
-
-  try {
-    const existingEmail = await Helper.findOne({ email }) || await Seeker.findOne({ email });
-    if (existingEmail) {
-      return res.render('signup-seeker', { error: "Email already exists!", name, email, mobilenumber, address });
-    }
-
-    const existingMobile = await Helper.findOne({ mobilenumber }) || await Seeker.findOne({ mobilenumber });
-    if (existingMobile) {
-      return res.render('signup-seeker', { error: "Mobile number already registered!", name, email, mobilenumber, address });
-    }
-
-    await Seeker.create({ name, email, password, mobilenumber, address });
-    console.log('Seeker registered ✅');
-    res.redirect('/login/seeker');
-  } catch (err) {
-    console.error("Seeker Signup Error:", err);
-    res.render('signup-seeker', { error: "Something went wrong!", name, email, mobilenumber, address });
-  }
-};
-
-// Seeker Login
+// --- SEEKER LOGIN (Converted from EJS to React-JSON) ---
 export const loginSeeker = async (req, res) => {
   const { email, password } = req.body;
 
+  // 1. Validation (Return 400 JSON)
   if (!email || !password) {
-    return res.render('login-seeker', { error: "Please fill in all fields", email });
+    return res.status(400).json({ error: "Please fill in all fields" });
   }
 
   try {
+    // ⚠️ SECURITY NOTE: Ideally use bcrypt.compare here too
     const seeker = await Seeker.findOne({ email, password });
+
+    // 2. Auth Check (Return 401 JSON)
     if (!seeker) {
-      return res.render('login-seeker', { error: "Invalid email or password!", email });
+      return res.status(401).json({ error: "Invalid email or password!" });
     }
 
-    req.session.user = {
+    // 3. Construct Data
+    const userData = {
       id: seeker._id,
       name: seeker.name,
       email: seeker.email,
       mobilenumber: seeker.mobilenumber,
       address: seeker.address,
-      role: "seeker"
+      role: "seeker" // Crucial for Frontend logic
     };
 
     console.log('Seeker logged in ✅');
-    res.redirect('/home');
+
+    // 4. Success Response (Return 200 JSON)
+    // REMOVED: req.session (unless you configured CORS for cookies)
+    // REMOVED: res.redirect (React will handle navigation)
+    return res.status(200).json({ success: true, user: userData });
+
   } catch (err) {
     console.error("Seeker Login Error:", err);
-    res.render('login-seeker', { error: "Something went wrong!", email });
+    return res.status(500).json({ error: "Something went wrong!" });
   }
 };

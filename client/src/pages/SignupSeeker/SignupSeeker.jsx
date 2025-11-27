@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./SignupSeeker.css";
+import styles from "./SignupSeeker.module.css";
 
 const SignupSeeker = () => {
   const [formData, setFormData] = useState({
@@ -15,10 +15,12 @@ const SignupSeeker = () => {
 
   // Load dotlottie-player via CDN
   useEffect(() => {
-    const script = document.createElement("script");
-    script.type = "module";
-    script.src = "https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs";
-    document.body.appendChild(script);
+    if (!document.querySelector('script[src*="dotlottie-player"]')) {
+      const script = document.createElement("script");
+      script.type = "module";
+      script.src = "https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs";
+      document.body.appendChild(script);
+    }
   }, []);
 
   const handleChange = (e) => {
@@ -34,14 +36,22 @@ const SignupSeeker = () => {
     }
 
     try {
-      const response = await fetch("/signup/seeker", {
+      const response = await fetch("http://localhost:5000/signup/seeker", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Signup failed");
+      const data = await response.json();
+
+      if (!response.ok) {
+         setError(data.error || "Signup failed");
+         return;
+      }
+      
       alert("Seeker registered successfully!");
+      // Ideally navigate to login here: navigate('/login/seeker');
+      
       setFormData({
         name: "",
         email: "",
@@ -52,32 +62,37 @@ const SignupSeeker = () => {
       });
       setError("");
     } catch (err) {
+      console.error(err);
       setError("Registration failed. Please try again.");
     }
   };
 
   return (
-    <div className="signup-seeker-container">
-      {/* Lottie Background Animation */}
-      <dotlottie-player
-        class="bg-animation"
-        src="https://lottie.host/97ea0de2-8839-4b2e-92ce-455e8731f33c/WSoZpRrAis.lottie"
-        background="transparent"
-        speed="1"
-        style={{ width: "700px", height: "700px", marginTop: "100px" }}
-        loop
-        autoplay
-      ></dotlottie-player>
+    <div className={styles.pageContainer}>
+      {/* Lottie Background Animation Container */}
+      <div className={styles.animationWrapper}>
+        <dotlottie-player
+          src="https://lottie.host/97ea0de2-8839-4b2e-92ce-455e8731f33c/WSoZpRrAis.lottie"
+          background="transparent"
+          speed="1"
+          style={{ width: "100%", height: "100%" }}
+          loop
+          autoplay
+        ></dotlottie-player>
+      </div>
 
-      <div className="registration-container">
-        <h1>Join ServiceSphere as a Seeker</h1>
+      <div className={styles.formCard}>
+        <h1 className={styles.title}>Join ServiceSphere as a Seeker</h1>
 
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className={styles.errorText}>{error}</div>}
 
-        <form id="seeker-registration-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Full Name</label>
+        <form onSubmit={handleSubmit}>
+          
+          {/* Name */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Full Name</label>
             <input
+              className={styles.input}
               type="text"
               name="name"
               placeholder="Enter your full name"
@@ -87,9 +102,11 @@ const SignupSeeker = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label>Email Address</label>
+          {/* Email */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Email Address</label>
             <input
+              className={styles.input}
               type="email"
               name="email"
               placeholder="Enter your email"
@@ -99,9 +116,11 @@ const SignupSeeker = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label>Mobile Number</label>
+          {/* Mobile */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Mobile Number</label>
             <input
+              className={styles.input}
               type="tel"
               name="mobilenumber"
               placeholder="Enter your Mobile Number"
@@ -111,9 +130,11 @@ const SignupSeeker = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label>Password</label>
+          {/* Password */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Password</label>
             <input
+              className={styles.input}
               type="password"
               name="password"
               placeholder="Create a password"
@@ -123,9 +144,11 @@ const SignupSeeker = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label>Confirm Password</label>
+          {/* Confirm Password */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Confirm Password</label>
             <input
+              className={styles.input}
               type="password"
               name="confirmPassword"
               placeholder="Confirm your password"
@@ -135,25 +158,24 @@ const SignupSeeker = () => {
             />
           </div>
 
-          <div className="form-group">
-            <label>Address</label>
-            <input
-              type="text"
+          {/* Address */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Address</label>
+            <textarea
+              className={styles.textarea}
               name="address"
-              placeholder="Address"
+              placeholder="Enter your address"
               value={formData.address}
               onChange={handleChange}
             />
           </div>
 
-          <div className="form-group">
-            <button type="submit">Register</button>
-          </div>
+          <button type="submit" className={styles.submitButton}>Register</button>
         </form>
 
-        <p>
+        <p className={styles.loginText}>
           Already a seeker?{" "}
-          <a href="/login/seeker" className="login-link">
+          <a href="/login/seeker" className={styles.link}>
             Login here
           </a>
         </p>

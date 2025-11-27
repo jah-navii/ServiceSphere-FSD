@@ -1,0 +1,121 @@
+/* --- SelectionPage.module.css --- */
+
+/* Defining variables locally to ensure component works standalone.
+   If you have these in GlobalStyles, they will simply override these. */
+.pageContainer {
+  --spacing-md: 0.5rem;
+  --spacing-lg: 1rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 4rem;
+  --font-size-lg: 1.125rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* Layout Styles */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  padding: var(--spacing-xl);
+  gap: var(--spacing-2xl);
+  font-family: 'Sequel Sans', -apple-system, sans-serif;
+}
+
+.title {
+  font-size: var(--font-size-3xl);
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  color: #1d1d1f;
+  text-align: center;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: var(--spacing-lg);
+  animation: fadeInUp 0.8s ease-out;
+  animation-delay: 0.2s;
+  animation-fill-mode: backwards;
+}
+
+/* Base Button Style */
+.btn {
+  min-width: 200px;
+  padding: var(--spacing-lg) var(--spacing-2xl);
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.btn:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+}
+
+.btn:active {
+  transform: translateY(-1px);
+}
+
+/* Helper Variant */
+.helperBtn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+}
+
+.helperBtn:hover {
+  background: linear-gradient(135deg, #7889f1 0%, #8757b3 100%);
+}
+
+/* Seeker Variant */
+.seekerBtn {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: #ffffff;
+}
+
+.seekerBtn:hover {
+  background: linear-gradient(135deg, #f3a5fc 0%, #f66a7d 100%);
+}
+
+/* Animations */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .buttonGroup {
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .btn {
+    min-width: auto;
+    padding: 1rem 2rem;
+  }
+}

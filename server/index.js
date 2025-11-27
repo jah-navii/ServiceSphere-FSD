@@ -1,5 +1,5 @@
 import express from 'express';
-import connectDB from '../config/db.js';
+import connectDB from './config/db.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -11,15 +11,24 @@ import feedbackRoutes from './routes/feedbackRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import seekerRoutes from './routes/seekerRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
-import messageRoutes from './server/routes/messageRoutes.js';
+import messageRoutes from './routes/messageRoutes.js';
+import cors from 'cors';
 
 import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = 5000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+app.use(
+  cors({
+    origin: "http://localhost:5173", // your React dev server
+    credentials: true, // if using cookies or sessions later
+  })
+);
+
 
 // Set EJS as the view engine
 app.set('view engine', 'ejs');

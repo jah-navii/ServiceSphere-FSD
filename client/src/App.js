@@ -1,10 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LandingPage from "./pages/LandingPage";
+import LandingPage from "./pages/LandingPage/LandingPage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
-import SignupSeeker from "./pages/SignupSeeker";
-import SignupHelper from "./pages/SignupHelper";
+import SignupSeeker from "./pages/SignupSeeker/SignupSeeker";
+import SignupHelper from "./pages/SignupHelper/SignupHelper";
 import LoginSeeker from "./pages/LoginSeeker";
 import LoginHelper from "./pages/LoginHelper";
 import LoginAdmin from "./pages/LoginAdmin";
@@ -22,7 +22,7 @@ function App() {
         <Route path="/login/helper" element={<LoginHelper />} />
         <Route path="/login/admin" element={<LoginAdmin />} />
         <Route path="/home" element={<Home />} />
-        </Routes>
+      </Routes>
     </Router>
   );
 }

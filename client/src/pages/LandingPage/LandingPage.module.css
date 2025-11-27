@@ -1,0 +1,122 @@
+/* --- LandingPage.module.css --- */
+
+/* 1. We removed 'body' and '*' selectors to prevent global bugs. 
+   2. We apply those styles to 'landingContainer' instead. */
+
+.landingContainer {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  padding: 2rem;
+  /* If you want the gap, apply it to the content, not the container if possible, 
+     but gap works here for flex children */
+  gap: 2.5rem; 
+  /* Font needs to be inherited or set explicitly if not in index.css */
+  color: #1d1d1f;
+}
+
+.logo {
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.logo img {
+  width: 120px;
+  height: auto;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+}
+
+.tag {
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  color: #1d1d1f;
+  text-align: center;
+  animation: fadeInUp 0.8s ease-out;
+  animation-delay: 0.2s;
+  animation-fill-mode: backwards;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+  animation: fadeInUp 0.8s ease-out;
+  animation-delay: 0.4s;
+  animation-fill-mode: backwards;
+}
+
+/* Common button styles */
+.btn {
+  padding: 0.875rem 2.5rem;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 980px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
+  letter-spacing: -0.2px;
+  text-decoration: none; /* In case applied to link */
+}
+
+/* Specific Button Styles matched to your previous CSS */
+.loginBtn {
+  background: #ffffff;
+  color: #1d1d1f;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.loginBtn:hover {
+  background: #f5f5f7;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.signupBtn {
+  background: #0071e3;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.3);
+}
+
+.signupBtn:hover {
+  background: #0077ed;
+  box-shadow: 0 4px 16px rgba(0, 113, 227, 0.4);
+  transform: translateY(-2px);
+}
+
+.loginBtn:active,
+.signupBtn:active {
+  transform: translateY(0);
+}
+
+/* Animations */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tag { font-size: 2rem; }
+  
+  .buttons {
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .btn { width: 100%; } /* Changed from .buttons button to .btn */
+}
+
+@media (max-width: 480px) {
+  .tag { font-size: 1.75rem; }
+  .logo img { width: 100px; }
+}

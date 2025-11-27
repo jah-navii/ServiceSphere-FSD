@@ -1,0 +1,144 @@
+/* src/components/LoginForm/LoginForm.module.css */
+
+:root {
+  --cerulean: #007ea7;
+  --white: #ffffff;
+  --black: #000000;
+}
+
+/* Replaces the 'body' style */
+.pageContainer {
+  background-color: #007ea7;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  font-family: 'Sequel Sans', sans-serif;
+}
+
+/* Animation Wrapper */
+.animationWrapper {
+  width: 700px;
+  height: 700px;
+  margin-top: 100px;
+}
+
+/* Form Card (was .registration-container) */
+.formCard {
+  background-color: rgba(255, 253, 231, 0.95);
+  padding: 2rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  animation: fadeIn 0.5s ease-in-out;
+  /* Push it slightly right of the animation */
+  margin-left: 20px; 
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Typography */
+.title {
+  text-align: center;
+  color: black;
+  margin-bottom: 1.2rem;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* Form Groups */
+.formGroup {
+  margin-bottom: 1.2rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: black;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.input {
+  width: 100%;
+  padding: 0.65rem;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  background-color: white;
+  color: black;
+  box-sizing: border-box; /* Important for padding */
+}
+
+.input:focus {
+  outline: 2px solid #007ea7;
+  box-shadow: 0 0 8px rgba(0, 126, 167, 0.3);
+}
+
+/* Button */
+.submitButton {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #007ea7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.submitButton:hover {
+  background-color: #2f7a93;
+  transform: translateY(-2px);
+}
+
+.submitButton:active {
+  transform: translateY(0);
+}
+
+/* Utilities */
+.errorText {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+  background: rgba(255, 0, 0, 0.1);
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.signupText {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.link {
+  color: #007ea7;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+  .animationWrapper {
+    display: none;
+  }
+  .formCard {
+    margin-left: 0;
+  }
+}
