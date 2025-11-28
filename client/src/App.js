@@ -9,6 +9,7 @@ import LoginSeeker from "./pages/LoginSeeker";
 import LoginHelper from "./pages/LoginHelper";
 import LoginAdmin from "./pages/LoginAdmin";
 import Home from "./pages/Home/Home";
+import SearchPage from "./pages/SearchPage/SearchPage";
 function App() {
   return (
     <Router>
@@ -22,6 +23,7 @@ function App() {
         <Route path="/login/helper" element={<LoginHelper />} />
         <Route path="/login/admin" element={<LoginAdmin />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/search" element={<SearchPage />} />
       </Routes>
     </Router>
   );

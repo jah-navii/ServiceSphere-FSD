@@ -2,254 +2,76 @@ import Helper from '../models/Helper.js';
 import Service from '../models/Service.js';
 import Feedback from '../models/Feedback.js';
 
-// GET /search — all helpers with services
-export const showAllServices = async (req, res) => {
-  try {
-    const helpers = await Helper.find({ 'services.0': { $exists: true }, approved: true });
-    const services = await Service.find();
-
-    // Fetch all feedbacks at once to avoid multiple DB calls
-    const feedbacks = await Feedback.aggregate([
-      {
-        $group: {
-          _id: "$helper",
-          avgRating: { $avg: "$rating" }
-        }
-      }
-    ]);
-
-    // Map feedbacks to a quick lookup table for average ratings
-    const avgRatings = feedbacks.reduce((acc, feedback) => {
-      acc[feedback._id.toString()] = feedback.avgRating.toFixed(1);
-      return acc;
-    }, {});
-
-    console.log(avgRatings);
-
-    let newhelpers = [];
-
-    helpers.forEach((helper) => {
-      helper.services.forEach((service) => {
-        newhelpers.push({
-          id: helper._id,
-          name: helper.name,
-          availability: helper.availability,
-          gender: helper.gender,
-          rating: avgRatings[helper._id.toString()] || '4.5',
-          service: service.name,
-          price: service.price
-        });
-      });
-    });
-
-    res.render('search', {
-      helpers: newhelpers, // Pass it as `helpers` to match your EJS variable
-      services: services,
-      availabilityFilter: 'all',
-      typeFilter: 'all',
-      genderFilter: 'all',
-      maxPrice: 1500
-    });
-
-  } catch (err) {
-    console.error("Error fetching helpers:", err);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-
-// GET /search/filter — filter by availability, gender, service type, price
-export const filterServices = async (req, res) => {
-  const { maxPrice = 1500, availability = 'all', type = 'all', gender = 'all' } = req.query;
-
-  const query = {
-    'services.price': { $lte: Number(maxPrice) },
-    approved: true
-  };
-
-  if (availability !== 'all') query.availability = availability;
-  if (genderFilter !== 'all') query.gender = new RegExp(`^${genderFilter}$`, 'i');
-  if (type !== 'all') query['services.name'] = type;
-
-  try {
-    const [helpers, services] = await Promise.all([
-      Helper.find(query),
-      Service.find()
-    ]);
-
-    res.render('search', {
-      helpers,
-      services,
-      availabilityFilter: availability,
-      typeFilter: type,
-      genderFilter: gender,
-      maxPrice
-    });
-  } catch (err) {
-    console.error("Filter error:", err);
-    res.status(500).send("Error retrieving helpers.");
-  }
-};
-// GET /search/search — keyword search for service name
-export const searchByName = async (req, res) => {
-  const { term } = req.query;
-
-  try {
-    const [helpers, services] = await Promise.all([
-      Helper.find({
-        'services.name': { $regex: term, $options: 'i' },
-        approved: true
-      }),
-      Service.find()
-    ]);
-
-    res.render('search', {
-      helpers,
-      services,
-      availabilityFilter: 'all',
-      typeFilter: 'all',
-      genderFilter: 'all',
-      maxPrice: 1500
-    });
-  } catch (err) {
-    console.error("Search error:", err);
-    res.status(500).send("Search failed.");
-  }
-};
-
-
-
-// POST /search — combined filter + search
-export const postSearch = async (req, res) => {
-  const {
-    priceRange = 1500,
-    availabilityFilter = 'all',
-    serviceTypeFilter = 'all',
-    genderFilter = 'all',
-    searchQuery = ''
-  } = req.body;
-
-  const query = {
-    approved: true
-  };
-
-  if (availabilityFilter !== 'all') query.availability = availabilityFilter;
-  if (genderFilter !== 'all') query.gender = new RegExp(`^${genderFilter}$`, 'i');
-
-  try {
-    const [helpers, services] = await Promise.all([
-      Helper.find(query),
-      Service.find()
-    ]);
-
-    let newhelpers = [];
-
-    helpers.forEach((helper) => {
-      helper.services.forEach((service) => {
-        const serviceMatchesSearch =
-          searchQuery.trim() === '' ||
-          new RegExp(searchQuery.trim(), 'i').test(service.name);
-
-        const serviceMatchesType =
-          serviceTypeFilter === 'all' || service.name === serviceTypeFilter;
-
-        const serviceMatchesPrice =
-          !priceRange || service.price <= Number(priceRange);
-
-        if (serviceMatchesSearch && serviceMatchesType && serviceMatchesPrice) {
-          newhelpers.push({
-            id: helper._id,
-            name: helper.name,
-            availability: helper.availability,
-            gender: helper.gender,
-            rating: helper.rating || '4.5',
-            service: service.name,
-            price: service.price
-          });
-        }
-      });
-    });
-
-    res.render('search', {
-      helpers: newhelpers,
-      services,
-      availabilityFilter,
-      typeFilter: serviceTypeFilter,
-      genderFilter,
-      priceRange,
-      searchQuery
-    });
-  } catch (err) {
-    console.error("POST search error:", err);
-    res.status(500).send("Error retrieving helpers.");
-  }
-};
-
-// changes after making the search page dynamic - api end points
-
-// GET /api/services/filter
-export const filterServicesAPI = async (req, res) => {
-    const { maxPrice = 1500, availability = 'all', type = 'all', gender = 'all' } = req.query;
-    const query = { 'services.price': { $lte: Number(maxPrice) }, approved: true };
-
-    if (availability !== 'all') query.availability = availability;
-    if (gender !== 'all') query.gender = new RegExp(`^${gender}$`, 'i');
-    if (type !== 'all') query['services.name'] = type;
-
+// GET /api/services
+// Handles Search, Filtering, and Defaults all in one.
+export const getServicesAPI = async (req, res) => {
     try {
+        const { 
+            search = "", 
+            type = "all", 
+            gender = "all", 
+            price = 1500 
+        } = req.query;
+
+        // 1. Base Query: Only approved helpers
+        let query = { approved: true };
+
+        // 2. Gender Filter
+        if (gender !== 'all') {
+            query.gender = new RegExp(`^${gender}$`, 'i');
+        }
+
+        // 3. Search & Type Logic (Applied inside the loop for nested array filtering)
+        // Note: MongoDB $elemMatch is efficient, but your existing loop logic works fine for transformation.
+        
         const helpers = await Helper.find(query);
-        let newhelpers = [];
+        let results = [];
 
+        // 4. Fetch Feedbacks for Ratings (Optimized aggregation)
+        const feedbacks = await Feedback.aggregate([
+            { $group: { _id: "$helper", avgRating: { $avg: "$rating" } } }
+        ]);
+        const avgRatings = feedbacks.reduce((acc, f) => {
+            acc[f._id.toString()] = f.avgRating.toFixed(1);
+            return acc;
+        }, {});
+
+        // 5. Transform & Filter Services
         helpers.forEach(helper => {
+            if (!helper.services) return;
+
             helper.services.forEach(service => {
-                if (service.price <= Number(maxPrice) && (type === 'all' || service.name === type)) {
-                    newhelpers.push({
+                // Filter Logic
+                const matchesSearch = search === "" || new RegExp(search, 'i').test(service.name);
+                const matchesType = type === "all" || service.name === type;
+                const matchesPrice = service.price <= Number(price);
+
+                if (matchesSearch && matchesType && matchesPrice) {
+                    results.push({
                         id: helper._id,
                         name: helper.name,
                         availability: helper.availability,
                         gender: helper.gender,
-                        rating: helper.rating || '4.5',
+                        rating: avgRatings[helper._id.toString()] || '4.5', // Default rating if none
                         service: service.name,
-                        price: service.price
+                        price: service.price,
+                        image: helper.image || "/pics/profile-picture.png" // Fallback image
                     });
                 }
             });
         });
 
-        res.json({ helpers: newhelpers });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Failed to fetch filtered services" });
-    }
-};
+        // 6. Get List of Unique Service Types for the Dropdown
+        const allServices = await Service.find().select('name');
 
-// GET /api/services/search
-export const searchByNameAPI = async (req, res) => {
-    const { term = "" } = req.query;
-
-    try {
-        const helpers = await Helper.find({ 'services.name': { $regex: term, $options: 'i' }, approved: true });
-        let newhelpers = [];
-
-        helpers.forEach(helper => {
-            helper.services.forEach(service => {
-                if (new RegExp(term, 'i').test(service.name)) {
-                    newhelpers.push({
-                        id: helper._id,
-                        name: helper.name,
-                        availability: helper.availability,
-                        gender: helper.gender,
-                        rating: helper.rating || '4.5',
-                        service: service.name,
-                        price: service.price
-                    });
-                }
-            });
+        res.status(200).json({ 
+            success: true, 
+            helpers: results, 
+            serviceTypes: allServices 
         });
 
-        res.json({ helpers: newhelpers });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Failed to fetch search results" });
+        console.error("API Error:", err);
+        res.status(500).json({ error: "Server Error" });
     }
 };
