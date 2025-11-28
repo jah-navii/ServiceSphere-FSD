@@ -1,13 +1,6 @@
-<<<<<<< HEAD
-import React from 'react';
-import { Link } from 'react-router-dom';
-import '../styles/Home.css';
-=======
 import React from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import "./Home.css";
->>>>>>> a897fd21bb3d04360a6fbae44be0ba097e95140d
 
 const Home = () => {
   return (

@@ -8,7 +8,7 @@ import SignupHelper from "./pages/SignupHelper/SignupHelper";
 import LoginSeeker from "./pages/LoginSeeker";
 import LoginHelper from "./pages/LoginHelper";
 import LoginAdmin from "./pages/LoginAdmin";
-import Home from "./pages/Home";
+import Home from "./pages/Home/Home";
 function App() {
   return (
     <Router>

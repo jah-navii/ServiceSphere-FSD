@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./Search.css"; // Keep your original color palette
+import "../styles/Search.css"; // Keep your original color palette
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -16,7 +16,7 @@ const Navbar = () => {
       {/* Logo Section */}
       <div className="logo-container">
         <img
-          src="/assests/logo.png"
+          src="./assets/logo.png"
           alt="Service Sphere Logo"
           className="logo"
         />

@@ -1,0 +1,78 @@
+.homeContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* HERO SECTION */
+.hero {
+  /* Using a relative path - adjust if your image is elsewhere */
+  /* If importing in JS, we can use inline styles for the background */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  color: black;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 253, 231, 0.7); /* Beige overlay */
+}
+
+.heroContent {
+  z-index: 1;
+  padding: 2.5rem;
+  max-width: 800px;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.heroContent h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  color: #007ea7; /* Cerulean */
+}
+
+.heroContent p {
+  font-size: 1.4rem;
+  margin-bottom: 2.5rem;
+  color: black;
+}
+
+.ctaButton {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background-color: #007ea7;
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.ctaButton:hover {
+  background-color: #0099cc;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 126, 167, 0.3);
+}
+
+@media (max-width: 768px) {
+    .heroContent h1 {
+        font-size: 2.5rem;
+    }
+}

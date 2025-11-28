@@ -1,0 +1,68 @@
+.footer {
+  background-color: #ffffff; /* White background */
+  padding: 2rem 2rem 1rem;
+  color: #333; /* Dark text */
+  font-family: 'Sequel Sans', sans-serif;
+  margin-top: auto; /* Pushes footer to bottom if page is short */
+  border-top: 1px solid #e0e0e0; /* Subtle gray border */
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.05); /* Subtle shadow at top */
+}
+
+.container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 2rem;
+}
+
+.section h3 {
+  color: #007ea7; /* Blue headings */
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.section li {
+  margin-bottom: 0.5rem;
+}
+
+.section a {
+  text-decoration: none;
+  color: #555; /* Medium gray links */
+  transition: all 0.3s;
+}
+
+.section a:hover {
+  color: #007ea7; /* Blue on hover */
+  text-decoration: underline;
+}
+
+.socialIcons {
+  display: flex;
+  gap: 1rem;
+}
+
+.socialIcon {
+  color: #007ea7; /* Blue icons */
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.socialIcon:hover {
+  transform: translateY(-3px);
+  opacity: 0.7;
+}
+
+.bottom {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0; /* Light gray border */
+  font-size: 0.9rem;
+  color: #666;
+}

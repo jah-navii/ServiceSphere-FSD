@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./Search.css"; // keeping your same color palette
+// import "../styles/Search.css"; // keeping your same color palette
 
 const Footer = () => {
   return (
