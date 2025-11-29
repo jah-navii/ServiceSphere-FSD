@@ -27,15 +27,16 @@ document.addEventListener("DOMContentLoaded", function () {
               isValid = false;
           }
 
-          const mobilePattern = /^[0-9]{10}$/;
-          if (!mobilePattern.test(mobileNumber.value)) {
-              document.getElementById("mobile-error").textContent = "Please enter a valid 10-digit mobile number.";
-              isValid = false;
-          }
 
           const aadharPattern = /^[0-9]{12}$/;
           if (!aadharPattern.test(aadharNumber.value)) {
               document.getElementById("aadhar-error").textContent = "Please enter a valid 12-digit Aadhar number.";
+              isValid = false;
+          }
+
+          const mobilePattern = /^[0-9]{10}$/;
+          if (!mobilePattern.test(mobileNumber.value)) {
+              document.getElementById("mobile-error").textContent = "Please enter a valid 10-digit mobile number.";
               isValid = false;
           }
 
@@ -55,6 +56,8 @@ document.addEventListener("DOMContentLoaded", function () {
               isValid = false;
           }
 
+          
+
           if (isValid) {
               const user = {
                   name: name.value.trim(),
@@ -70,6 +73,8 @@ document.addEventListener("DOMContentLoaded", function () {
               successMessage.style.color = "green";
               successMessage.style.marginTop = "10px";
               successMessage.style.textAlign = "center";
+              
+              
 
               // Append the success message below the submit button
               const submitButton = document.querySelector(".form-group button");

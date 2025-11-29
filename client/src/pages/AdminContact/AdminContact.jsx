@@ -22,31 +22,34 @@ const AdminContact = () => {
   };
 
   // 3. Handle form submission and validation
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const { name, email, adminId, phone, issueType, message } = formData;
-    const phonePattern = /^[0-9]{10}$/;
+const handleSubmit = (event) => {
+  event.preventDefault();
+  const { name, email, adminId, phone, issueType, message } = formData;
 
-    // Basic required field check (though HTML required attribute also handles this)
-    if (!name || !email || !adminId || !phone || !issueType || !message) {
-      alert("All fields are required!");
-      return;
-    }
+  const phonePattern = /^[0-9]{10}$/;
+  const namePattern = /^[A-Za-z ]+$/; 
 
-    // Regex validation for phone
-    if (!phonePattern.test(phone)) {
-      alert("Please enter a valid 10-digit mobile number.");
-      return;
-    }
+  if (!name || !email || !adminId || !phone || !issueType || !message) {
+    alert("All fields are required!");
+    return;
+  }
 
-    // If validation passes:
-    // In a real React app, you would usually make an API call here (e.g., using fetch or axios)
-    console.log("Form submitting with data:", formData);
-    alert("Form submitted successfully! (Check console for data)");
+  // Name validation  <-- Added this validation block
+  if (!namePattern.test(name)) {
+    alert("Name should contain only alphabets and spaces.");
+    return;
+  }
 
-    // Optional: Reset form after successful submission
-    // setFormData({ name: '', email: '', adminId: '', phone: '', issueType: '', message: '' });
-  };
+  // Regex validation for phone
+  if (!phonePattern.test(phone)) {
+    alert("Please enter a valid 10-digit mobile number.");
+    return;
+  }
+
+  console.log("Form submitting with data:", formData);
+  alert("Form submitted successfully! (Check console for data)");
+};
+
 
   return (
     <div className={styles.contactPageWrapper}>
