@@ -45,13 +45,13 @@ document.addEventListener("DOMContentLoaded", function () {
               isValid = false;
           }
 
-          if (password.value !== confirmPassword.value) {
-              document.getElementById("confirm-password-error").textContent = "Passwords do not match.";
+          if (password.value.length < 6) {
+              document.getElementById("password-error").textContent = "Password must be at least 6 characters long.";
               isValid = false;
           }
 
-          if (password.value.length < 6) {
-              document.getElementById("password-error").textContent = "Password must be at least 6 characters long.";
+          if (password.value !== confirmPassword.value) {
+              document.getElementById("confirm-password-error").textContent = "Passwords do not match.";
               isValid = false;
           }
 
