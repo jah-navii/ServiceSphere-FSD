@@ -66,10 +66,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
               // Display success message
               const successMessage = document.createElement("div");
-              successMessage.style.marginTop = "10px";
-              successMessage.style.textAlign = "center";
               successMessage.textContent = "Registration successful!";
               successMessage.style.color = "green";
+              successMessage.style.marginTop = "10px";
+              successMessage.style.textAlign = "center";
+              
               
 
               // Append the success message below the submit button
