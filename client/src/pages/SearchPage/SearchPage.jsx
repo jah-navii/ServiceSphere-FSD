@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import styles from "./SearchPage.module.css";
@@ -7,6 +7,9 @@ import defaultProfile from "../../assets/logo.png";
 // backend api need to be updated to filter by 'place'
 
 const SearchPage = () => {
+
+  const navigate = useNavigate();
+
   const [searchParams, setSearchParams] = useSearchParams();
   const [helpers, setHelpers] = useState([]);
   const [serviceTypes, setServiceTypes] = useState([]);
@@ -185,7 +188,17 @@ const SearchPage = () => {
                 
                 <button 
                   className={styles.bookBtn}
-                  onClick={() => alert(`Booking ${helper.service} with ${helper.name}`)}
+                  onClick={() => {
+                        // Pass data to the Booking Form via State
+                        navigate("/booking", { 
+                          state: { 
+                            helperId: helper.id, 
+                            helperName: helper.name, 
+                            serviceName: helper.service,
+                            price: helper.price 
+                          } 
+                        });
+                      }}
                 >
                   Book Now
                 </button>

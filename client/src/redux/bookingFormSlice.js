@@ -1,16 +1,15 @@
-// src/features/bookingFormSlice.js
-import { createSlice, nanoid } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  customerName: '',
-  date: '',
-  time: '',
-  address: '',
-  bookings: [], // store confirmed bookings here
+  customerName: "",
+  date: "",
+  time: "",
+  address: "",
+  status: "idle", // idle | loading | succeeded | failed
 };
 
 const bookingFormSlice = createSlice({
-  name: 'bookingForm',
+  name: "bookingForm",
   initialState,
   reducers: {
     updateField: (state, action) => {
@@ -18,21 +17,12 @@ const bookingFormSlice = createSlice({
       state[name] = value;
     },
     clearForm: (state) => {
-      state.customerName = '';
-      state.date = '';
-      state.time = '';
-      state.address = '';
+      return initialState;
     },
-    addBooking: (state, action) => {
-      state.bookings.push({
-        id: nanoid(),
-        ...action.payload,
-        createdAt: new Date().toISOString(),
-        status: 'Pending',
-      });
-    },
+    // We can track submission status here if we used Thunks, 
+    // but for now we will control loading in the UI component.
   },
 });
 
-export const { updateField, clearForm, addBooking } = bookingFormSlice.actions;
+export const { updateField, clearForm } = bookingFormSlice.actions;
 export default bookingFormSlice.reducer;
