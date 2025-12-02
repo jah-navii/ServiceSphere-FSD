@@ -4,6 +4,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import styles from "./SearchPage.module.css";
 import defaultProfile from "../../assets/logo.png"; 
+// backend api need to be updated to filter by 'place'
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -15,6 +16,11 @@ const SearchPage = () => {
   const [price, setPrice] = useState(searchParams.get("price") || 1500);
   const [gender, setGender] = useState(searchParams.get("gender") || "all");
   const [type, setType] = useState(searchParams.get("type") || "all");
+  // 1. New State for 'place'
+  const [place, setPlace] = useState(searchParams.get("place") || "all"); 
+
+  // List of places for the dropdown
+  const PLACES = ["Chennai", "Banglore", "Hyderabad"];
 
   // 1. FETCH DATA (Triggers whenever URL changes)
   useEffect(() => {
@@ -22,6 +28,8 @@ const SearchPage = () => {
       setLoading(true);
       try {
         const query = searchParams.toString(); 
+        // NOTE: Your backend API at http://localhost:5000/api/services 
+        // MUST be updated to accept and filter by the 'place' query parameter.
         const response = await fetch(`http://localhost:5000/api/services?${query}`);
         const data = await response.json();
         
@@ -29,7 +37,7 @@ const SearchPage = () => {
           setHelpers(data.helpers);
           // Only set service types once to avoid dropdown flickering
           if (serviceTypes.length === 0) {
-             setServiceTypes(data.serviceTypes);
+              setServiceTypes(data.serviceTypes);
           }
         }
       } catch (err) {
@@ -53,6 +61,8 @@ const SearchPage = () => {
     // Update State & URL immediately
     if (key === "gender") setGender(value);
     if (key === "type") setType(value);
+    // 2. Update 'place' state
+    if (key === "place") setPlace(value); 
     
     setSearchParams(newParams);
   };
@@ -75,6 +85,8 @@ const SearchPage = () => {
     setPrice(1500);
     setGender("all");
     setType("all");
+    // 3. Reset 'place' state
+    setPlace("all"); 
     setSearchParams({});
   };
 
@@ -113,6 +125,21 @@ const SearchPage = () => {
               ))}
             </select>
           </div>
+          
+          {/* 4. NEW PLACE FILTER SECTION */}
+          <div className={styles.filterSection}>
+            <h3>Place</h3>
+            <select 
+              value={place} 
+              onChange={(e) => updateFilter("place", e.target.value)}
+              className={styles.selectInput}
+            >
+              <option value="all">All Places</option>
+              {PLACES.map(p => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
+          </div>
 
           <div className={styles.filterSection}>
             <h3>Gender</h3>
@@ -145,6 +172,8 @@ const SearchPage = () => {
                     <p><strong>Service:</strong> {helper.service}</p>
                     <p><strong>Price:</strong> ₹{helper.price}</p>
                     <p><strong>Gender:</strong> {helper.gender}</p>
+                    {/* Add Place display if helper object contains it */}
+                    {helper.place && <p><strong>Place:</strong> {helper.place}</p>} 
                     <div className={styles.rating}>⭐ {helper.rating}</div>
                   </div>
                   <img 
