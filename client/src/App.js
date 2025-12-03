@@ -33,6 +33,8 @@ import ManageServices from "./components/AdminDashboard/ManageServices";
 import AdminEarnings from "./components/AdminDashboard/AdminEarnings";
 import ManageLocations from "./components/AdminDashboard/ManageLocations";
 
+import AdminContact from "./pages/AdminContact/AdminContact";
+import TermsAndConditions from "./pages/TermsAndConditions/TermsAndConditions";
 function App() {
   return (
     <Router>
@@ -74,6 +76,9 @@ function App() {
           <Route path="earnings" element={<AdminEarnings />} />
           <Route path="locations" element={<ManageLocations />} />
         </Route>
+        
+        <Route path="/AdminContact" element={<AdminContact />} />
+        <Route path="/TermsAndConditions" element={<TermsAndConditions />} />
       </Routes>
     </Router>
     
