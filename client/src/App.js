@@ -18,7 +18,8 @@ import RequestsPage from "./components/HelperDashboard/RequestsPage";
 import SchedulePage from "./components/HelperDashboard/SchedulePage";
 import EarningsPage from "./components/HelperDashboard/EarningsPage";
 import FeedbackPage from "./components/HelperDashboard/FeedbackPage";
-// import BookingForm from "./pages/BookingForm/BookingForm";
+
+import BookingForm from "./pages/BookingForm/BookingForm";
 import CartPage from "./pages/CartPage/CartPage";
 // import PaymentForm from "./pages/PaymentForm";
 import ReviewForm from "./pages/ReviewForm";
@@ -60,7 +61,8 @@ function App() {
           <Route path="earnings" element={<EarningsPage />} />
           <Route path="feedback" element={<FeedbackPage />} />
         </Route>
-        {/* <Route path="/booking" element={<BookingForm />} /> */}
+
+        <Route path="/booking" element={<BookingForm />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path='/seeker-profile' element={<SeekerProfile />} />
 
@@ -76,7 +78,7 @@ function App() {
           <Route path="earnings" element={<AdminEarnings />} />
           <Route path="locations" element={<ManageLocations />} />
         </Route>
-        
+
         <Route path="/AdminContact" element={<AdminContact />} />
         <Route path="/TermsAndConditions" element={<TermsAndConditions />} />
       </Routes>

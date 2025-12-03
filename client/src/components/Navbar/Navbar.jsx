@@ -14,9 +14,8 @@ const Navbar = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${searchQuery}`);
-    }
+    // FIX: Using 'search=' instead of 'q='
+    navigate(`/search?search=${searchQuery}`);
   };
 
   return (

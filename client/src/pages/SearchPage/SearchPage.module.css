@@ -1,29 +1,101 @@
-/* SearchPage.module.css */
+/* Page Background */
+.pageWrapper {
+  background-color: var(--beige);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-/* Container */
+/* Category Tabs (New) */
+.categoryTabs {
+  background-color: var(--white);
+  padding: 15px 5%; /* 5% padding to match container width */
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  gap: 15px;
+  overflow-x: auto; /* Allow scrolling on mobile */
+  white-space: nowrap;
+  position: sticky;
+  top: 0; /* Sticks below the navbar (assuming navbar is sticky) */
+  z-index: 90;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+}
+
+.tab {
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: 1px solid #ddd;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #555;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  background-color: #f0f0f0;
+  color: var(--black);
+}
+
+.activeTab {
+  background-color: var(--cerulean);
+  color: var(--white);
+  border-color: var(--cerulean);
+  box-shadow: 0 4px 10px rgba(0, 126, 167, 0.3);
+}
+
+.activeTab:hover {
+  background-color: #005f73;
+  color: var(--white);
+}
+
+/* Main Layout */
 .container {
   display: flex;
   width: 90%;
-  margin: 20px auto;
-  gap: 20px;
-  min-height: 80vh;
+  max-width: 1300px;
+  margin: 30px auto;
+  gap: 30px;
+  flex: 1;
+  align-items: flex-start;
 }
 
-/* Filters Sidebar */
+/* --- SIDEBAR --- */
 .filters {
-  width: 250px;
-  padding: 20px;
+  width: 260px;
+  min-width: 260px;
   background-color: var(--white);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  height: fit-content;
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0; /* Subtle border */
   position: sticky;
-  top: 100px;
+  top: 100px; 
 }
 
-.filters h2 {
-  color: var(--cerulean);
+.filterHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #eee;
+}
+
+.filterHeader h2 {
+  font-size: 1.1rem;
+  color: var(--black);
+  margin: 0;
+}
+
+.resetLink {
+  background: none;
+  border: none;
+  color: #888;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.85rem;
 }
 
 .filterSection {
@@ -31,111 +103,134 @@
 }
 
 .filterSection h3 {
+  font-size: 0.9rem;
   margin-bottom: 10px;
-  font-size: 1rem;
-  color: #333;
+  color: var(--black);
+  font-weight: 700;
 }
 
-.rangeInput {
-  width: 100%;
-}
-
-.selectInput {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid var(--cerulean);
-  border-radius: 4px;
-}
-
-/* Note: Apply Button Removed */
-
-.resetBtn {
+.rangeInput, .selectInput {
   width: 100%;
   padding: 10px;
-  background-color: #007ea7; 
-  color: white; 
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 10px;
-  font-weight: bold;
-  transition: background-color 0.2s ease;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  background-color: #fafafa;
+  box-sizing: border-box;
 }
 
-.resetBtn:hover {
-  background-color: #005f7e;
-}
-
-/* Services Grid */
-.servicesGrid {
+/* --- RESULTS --- */
+.resultsArea {
   flex: 1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  align-content: flex-start;
 }
 
-/* Service Card */
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+/* --- CARD --- */
 .card {
   background-color: var(--white);
   padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  width: calc(33.333% - 14px); /* 3 per row */
+  border-radius: 12px;
+  border: 1px solid transparent;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03); /* Very subtle shadow */
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 126, 167, 0.2);
 }
 
 .cardHeader {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 15px;
 }
 
 .profileImg {
-  width: 80px;
-  height: 80px;
-  border-radius: 8px;
+  width: 65px;
+  height: 65px;
+  border-radius: 10px;
   object-fit: cover;
+  background-color: #eee;
+}
+
+.details {
+  flex: 1;
 }
 
 .details h3 {
-  color: var(--cerulean);
   margin: 0 0 5px 0;
+  font-size: 1.1rem;
+  color: var(--black);
 }
 
-.details p {
-  margin: 5px 0;
+.serviceTag {
+  color: var(--cerulean);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.infoRow {
   font-size: 0.9rem;
+  color: #555;
+  margin: 4px 0;
+  display: flex;
+  justify-content: space-between;
 }
 
 .rating {
-  color: #ffc107;
+  font-size: 0.9rem;
+  color: #f59e0b;
   font-weight: bold;
+  margin-top: 5px;
 }
 
 .bookBtn {
-  margin-top: 15px;
+  margin-top: auto;
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background-color: var(--cerulean);
-  color: white;
+  color: var(--white);
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
 }
 
 .bookBtn:hover {
-  background-color: var(--black);
+  background-color: #005f73;
 }
 
-@media (max-width: 1024px) {
-  .card { width: calc(50% - 10px); }
+.noResults {
+  text-align: center;
+  padding: 60px;
+  background-color: rgba(255,255,255,0.6);
+  border-radius: 12px;
+  color: #666;
 }
 
-@media (max-width: 768px) {
-  .container { flex-direction: column; }
-  .filters { width: 100%; position: static; }
-  .card { width: 100%; }
+@media (max-width: 850px) {
+  .container {
+    flex-direction: column;
+  }
+  .filters {
+    width: 100%;
+    position: static;
+  }
+  .categoryTabs {
+    padding: 15px;
+  }
 }

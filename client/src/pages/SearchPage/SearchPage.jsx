@@ -3,45 +3,75 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import styles from "./SearchPage.module.css";
-import defaultProfile from "../../assets/logo.png"; 
-// backend api need to be updated to filter by 'place'
+import defaultProfile from "../../assets/profile-picture.png"; 
 
 const SearchPage = () => {
-
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  // Data
   const [helpers, setHelpers] = useState([]);
   const [serviceTypes, setServiceTypes] = useState([]);
+  const [locationsList, setLocationsList] = useState([]);
+  const [allCategories, setAllCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Initialize local state from URL
+  // Filters
   const [price, setPrice] = useState(searchParams.get("price") || 1500);
   const [gender, setGender] = useState(searchParams.get("gender") || "all");
   const [type, setType] = useState(searchParams.get("type") || "all");
-  // 1. New State for 'place'
-  const [place, setPlace] = useState(searchParams.get("place") || "all"); 
+  const [location, setLocation] = useState(searchParams.get("location") || "all");
+  
+  // Get Category from URL
+  const activeCategoryId = searchParams.get("category");
 
-  // List of places for the dropdown
-  const PLACES = ["Chennai", "Banglore", "Hyderabad"];
-
-  // 1. FETCH DATA (Triggers whenever URL changes)
+  // 1. Fetch Options (Categories & Locations)
   useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const [locRes, catRes] = await Promise.all([
+          fetch("http://localhost:5000/api/admin/locations"),
+          fetch("http://localhost:5000/api/admin/services-data")
+        ]);
+        
+        const locData = await locRes.json();
+        const catData = await catRes.json();
+
+        setLocationsList(locData || []);
+        const cats = catData.categories || [];
+        setAllCategories(cats);
+
+        // --- ENFORCE CATEGORY LOGIC ---
+        // If no category in URL, default to the first one immediately
+        if (!activeCategoryId && cats.length > 0) {
+            setSearchParams(prev => {
+                prev.set("category", cats[0]._id);
+                return prev;
+            });
+        }
+
+      } catch (err) {
+        console.error("Failed to load options");
+      }
+    };
+    fetchOptions();
+  }, [activeCategoryId, setSearchParams]);
+
+  // 2. Fetch Helpers
+  useEffect(() => {
+    // Don't fetch if we are in the middle of redirecting to a default category
+    if (!activeCategoryId) return;
+
     const fetchServices = async () => {
       setLoading(true);
       try {
         const query = searchParams.toString(); 
-        // NOTE: Your backend API at http://localhost:5000/api/services 
-        // MUST be updated to accept and filter by the 'place' query parameter.
         const response = await fetch(`http://localhost:5000/api/services?${query}`);
         const data = await response.json();
         
         if (data.success) {
           setHelpers(data.helpers);
-          // Only set service types once to avoid dropdown flickering
-          if (serviceTypes.length === 0) {
-              setServiceTypes(data.serviceTypes);
-          }
+          setServiceTypes(data.serviceTypes || []);
         }
       } catch (err) {
         console.error("Fetch error:", err);
@@ -51,160 +81,152 @@ const SearchPage = () => {
     };
 
     fetchServices();
-  }, [searchParams]);
+  }, [searchParams, activeCategoryId]);
 
-  // 2. HANDLE IMMEDIATE CHANGES (Dropdowns)
+  // Handlers
+  const handleCategoryChange = (catId) => {
+    // When switching category, reset other filters but keep location if you want
+    // Here we reset 'service type' because types belong to specific categories
+    const newParams = { category: catId, price: 1500, gender: "all", location: location };
+    setSearchParams(newParams);
+    setType("all"); // Reset local state dropdown
+  };
+
   const updateFilter = (key, value) => {
-    // Create a new URLSearchParams object based on current params
     const currentParams = Object.fromEntries([...searchParams]);
-    
-    // Update the specific key
     const newParams = { ...currentParams, [key]: value };
     
-    // Update State & URL immediately
     if (key === "gender") setGender(value);
     if (key === "type") setType(value);
-    // 2. Update 'place' state
-    if (key === "place") setPlace(value); 
+    if (key === "location") setLocation(value);
     
     setSearchParams(newParams);
   };
 
-  // 3. HANDLE PRICE SLIDER (Debounced)
-  // We update the UI immediately, but the URL (and API call) after 500ms
   useEffect(() => {
     const timer = setTimeout(() => {
       const currentParams = Object.fromEntries([...searchParams]);
       if (currentParams.price !== price) {
         setSearchParams({ ...currentParams, price });
       }
-    }, 500); // 500ms delay
-
-    return () => clearTimeout(timer); // Cleanup timer if user slides again
+    }, 500);
+    return () => clearTimeout(timer);
   }, [price, searchParams, setSearchParams]);
 
-  // 4. RESET
   const resetFilters = () => {
     setPrice(1500);
     setGender("all");
     setType("all");
-    // 3. Reset 'place' state
-    setPlace("all"); 
-    setSearchParams({});
+    setLocation("all");
+    // Keep the current category
+    const params = { category: activeCategoryId };
+    setSearchParams(params);
   };
 
   return (
-    <div>
+    <div className={styles.pageWrapper}>
       <Navbar />
       
+      {/* CATEGORY TABS (Always Visible) */}
+      <div className={styles.categoryTabs}>
+        {allCategories.map(cat => (
+            <button
+                key={cat._id}
+                className={`${styles.tab} ${activeCategoryId === cat._id ? styles.activeTab : ''}`}
+                onClick={() => handleCategoryChange(cat._id)}
+            >
+                {cat.name}
+            </button>
+        ))}
+      </div>
+
       <div className={styles.container}>
-        {/* FILTERS SIDEBAR */}
+        {/* FILTERS */}
         <div className={styles.filters}>
-          <h2>Filters</h2>
+          <div className={styles.filterHeader}>
+            <h2>Filters</h2>
+            <button onClick={resetFilters} className={styles.resetLink}>Reset</button>
+          </div>
           
           <div className={styles.filterSection}>
-            <h3>Price: ₹{price}</h3>
-            <input 
-              type="range" 
-              min="100" 
-              max="5000" 
-              value={price} 
-              className={styles.rangeInput}
-              // Update local state immediately for smooth sliding
-              onChange={(e) => setPrice(e.target.value)} 
-            />
+            <h3>Max Price: ₹{price}</h3>
+            <input type="range" min="100" max="5000" value={price} className={styles.rangeInput} onChange={(e) => setPrice(e.target.value)} />
+          </div>
+
+          <div className={styles.filterSection}>
+            <h3>Location</h3>
+            <select value={location} onChange={(e) => updateFilter("location", e.target.value)} className={styles.selectInput}>
+              <option value="all">All Locations</option>
+              {locationsList.map(loc => <option key={loc._id} value={loc.name}>{loc.name}</option>)}
+            </select>
           </div>
 
           <div className={styles.filterSection}>
             <h3>Service Type</h3>
-            <select 
-              value={type} 
-              onChange={(e) => updateFilter("type", e.target.value)}
-              className={styles.selectInput}
-            >
+            <select value={type} onChange={(e) => updateFilter("type", e.target.value)} className={styles.selectInput}>
               <option value="all">All Services</option>
-              {serviceTypes.map(s => (
-                <option key={s._id} value={s.name}>{s.name}</option>
-              ))}
-            </select>
-          </div>
-          
-          {/* 4. NEW PLACE FILTER SECTION */}
-          <div className={styles.filterSection}>
-            <h3>Place</h3>
-            <select 
-              value={place} 
-              onChange={(e) => updateFilter("place", e.target.value)}
-              className={styles.selectInput}
-            >
-              <option value="all">All Places</option>
-              {PLACES.map(p => (
-                <option key={p} value={p}>{p}</option>
-              ))}
+              {serviceTypes.map(s => <option key={s._id} value={s.name}>{s.name}</option>)}
             </select>
           </div>
 
           <div className={styles.filterSection}>
             <h3>Gender</h3>
-            <select 
-              value={gender} 
-              onChange={(e) => updateFilter("gender", e.target.value)}
-              className={styles.selectInput}
-            >
-              <option value="all">All</option>
+            <select value={gender} onChange={(e) => updateFilter("gender", e.target.value)} className={styles.selectInput}>
+              <option value="all">Any</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </select>
           </div>
-
-          <button type="button" onClick={resetFilters} className={styles.resetBtn}>Reset All</button>
         </div>
 
-        {/* RESULTS GRID */}
-        <div className={styles.servicesGrid}>
-          {loading ? (
-            <p style={{ width: '100%', textAlign: 'center' }}>Updating results...</p>
-          ) : helpers.length === 0 ? (
-            <p>No services found matching your criteria.</p>
-          ) : (
-            helpers.map((helper, index) => (
-              <div key={`${helper.id}-${index}`} className={styles.card}>
-                <div className={styles.cardHeader}>
-                  <div className={styles.details}>
-                    <h3>{helper.name}</h3>
-                    <p><strong>Service:</strong> {helper.service}</p>
-                    <p><strong>Price:</strong> ₹{helper.price}</p>
-                    <p><strong>Gender:</strong> {helper.gender}</p>
-                    {/* Add Place display if helper object contains it */}
-                    {helper.place && <p><strong>Place:</strong> {helper.place}</p>} 
-                    <div className={styles.rating}>⭐ {helper.rating}</div>
-                  </div>
-                  <img 
-                    src={defaultProfile} 
-                    alt={helper.name} 
-                    className={styles.profileImg} 
-                  />
-                </div>
-                
-                <button 
-                  className={styles.bookBtn}
-                  onClick={() => {
-                        // Pass data to the Booking Form via State
-                        navigate("/booking", { 
-                          state: { 
-                            helperId: helper.id, 
-                            helperName: helper.name, 
-                            serviceName: helper.service,
-                            price: helper.price 
-                          } 
-                        });
-                      }}
-                >
-                  Book Now
-                </button>
+        {/* RESULTS */}
+        <div className={styles.resultsArea}>
+          <div className={styles.servicesGrid}>
+            {loading ? (
+              <p style={{width:'100%', textAlign:'center'}}>Finding experts...</p>
+            ) : helpers.length === 0 ? (
+              <div className={styles.noResults}>
+                  <h3>No helpers found in this category.</h3>
+                  <p>Try changing the location or price filters.</p>
               </div>
-            ))
-          )}
+            ) : (
+              helpers.map((helper, index) => (
+                <div key={`${helper.id}-${index}`} className={styles.card}>
+                  <div className={styles.cardHeader}>
+                    <img src={defaultProfile} alt={helper.name} className={styles.profileImg} />
+                    <div className={styles.details}>
+                      <span className={styles.serviceTag}>{helper.service}</span>
+                      <h3>{helper.name}</h3>
+                      
+                      <div className={styles.infoRow}>
+                        <span>Price:</span> 
+                        <strong>₹{helper.price}/hr</strong>
+                      </div>
+                      <div className={styles.infoRow}>
+                        <span>Location:</span> 
+                        <strong>{helper.address || "N/A"}</strong>
+                      </div>
+                      <div className={styles.infoRow}>
+                        <span>Gender:</span> 
+                        <strong>{helper.gender}</strong>
+                      </div>
+
+                      <div className={styles.rating}>⭐ {helper.rating}</div>
+                    </div>
+                  </div>
+                  
+                  <button 
+                    className={styles.bookBtn}
+                    onClick={() => navigate("/booking", { 
+                      state: { helperId: helper.id, helperName: helper.name, serviceName: helper.service, price: helper.price } 
+                    })}
+                  >
+                    Book Now
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 

@@ -2,62 +2,78 @@ import Helper from '../models/Helper.js';
 import Booking from '../models/Booking.js';
 import Seeker from '../models/Seeker.js';
 
-//get /booking booking_form page 
-export const getBookingForm = async (req, res) => {
-  if (!req.session.user || req.session.user.role !== "seeker") {
-    return res.redirect('/login/seeker');
-  }
 
+// POST /api/bookings
+export const createBooking = async (req, res) => {
   try {
-    const service = req.query.servicetype;
-    const price = req.query.price;
-    const helper = await Helper.findById(req.query.helperId);
-    if (!helper) return res.status(404).send("Helper not found.");
+    // 1. Extract data from React payload
+    const { 
+        userId,        // The logged-in Seeker's ID
+        helperId,      // The ID of the Helper being booked
+        serviceName,   // e.g. "Plumbing"
+        customerName,  // Name entered in the form
+        date, 
+        time, 
+        address, 
+        price 
+    } = req.body;
 
-    res.render('booking_form', {
-      helper: helper,
-      service: service,
-      price: price
+    // 2. Validations
+    if (!userId || !helperId || !date || !time || !address) {
+        return res.status(400).json({ error: "Missing required booking details." });
+    }
+
+    // Optional: Verify Seeker exists
+    const seeker = await Seeker.findById(userId);
+    if (!seeker) {
+        return res.status(404).json({ error: "User not found. Please login." });
+    }
+
+    // 3. Create Booking
+    const newBooking = await Booking.create({
+      seeker: userId,           // Link to User
+      helperID: helperId,       // Link to Helper (Note: check your Schema if it's 'helper' or 'helperID')
+      helperName: req.body.helperName, // Optional: store snapshot of helper name
+      customerName: customerName,
+      service_type: serviceName, // Map 'serviceName' to 'service_type'
+      date,
+      time,
+      address,
+      price,
+      status: "Pending",        // Initial status
+      paid: false
     });
+
+    console.log("🎯 Booking created:", newBooking._id);
+
+    // 4. Success Response
+    res.status(201).json({ 
+        success: true, 
+        message: "Booking submitted successfully", 
+        bookingId: newBooking._id 
+    });
+
   } catch (err) {
-    console.error("Booking Form Error:", err);
-    res.status(500).send("Internal Server Error");
+    console.error("Booking Error:", err);
+    res.status(500).json({ error: "Failed to submit booking." });
   }
 };
 
-//post /booking booking_form page 
-export const submitBooking = async (req, res) => {
-  // console.log(req.body);
-  const { servicetype, helperID, date, time, address, price } = req.body;
+// GET /api/bookings?userId=... (For the Cart Page)
+export const getUserBookings = async (req, res) => {
+    try {
+        const { userId } = req.query;
+        if (!userId) return res.status(400).json({ error: "User ID required" });
 
-  const today = new Date();
-  const selectedDate = new Date(date);
-  // if (selectedDate <= today.setHours(0, 0, 0, 0)) {
-  //   return res.status(400).send("Please select a valid date.");
-  // }
+        // Fetch bookings for this specific seeker
+        const bookings = await Booking.find({ seeker: userId })
+                                      .sort({ date: -1 }); // Newest first
 
-  try {
-    const seeker = await Seeker.findById(req.session.user.id);
-    if (!seeker) return res.status(404).send("Seeker not found");
-
-  const newBooking = await Booking.create({
-    seeker: seeker._id,
-    service_type: servicetype,
-    helper: helperID,
-    date,
-    time,
-    address,
-    status: "pending",
-    price
-  });
-// console.log("🎯 Booking created:", newBooking);
-
-
-    res.redirect('/cart'); // or bookings page
-  } catch (err) {
-    console.error("Booking Error:", err);
-    res.status(500).send("Error submitting booking!");
-  }
+        res.status(200).json({ success: true, bookings });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server Error" });
+    }
 };
 
 // Previous bookings page

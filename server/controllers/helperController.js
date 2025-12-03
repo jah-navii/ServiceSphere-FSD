@@ -7,6 +7,8 @@ import Feedback from "../models/Feedback.js"; // Ensure you have this model
 
 import fs from "fs"; // Needed if you want to delete old certs (optional)
 
+// Dealt with
+
 // GET /api/helper/profile/:id
 export const getHelperProfile = async (req, res) => {
   try {

@@ -1,13 +1,17 @@
 import express from 'express';
-import { getBookingForm, submitBooking, renderPreviouslyBookedServices, getPaymentDetails, submitPayment, getReviewDetails } from '../controllers/bookingController.js';
+import { renderPreviouslyBookedServices, getPaymentDetails, submitPayment, getReviewDetails } from '../controllers/bookingController.js';
+
+
+import { createBooking, getUserBookings } from '../controllers/bookingController.js';
 
 const router = express.Router();
 
-//Getting booking form
-router.get('/booking', getBookingForm);
+// Route to submit a new booking
+router.post('/', createBooking);
 
-// Submitting booking form
-router.post('/booking', submitBooking);
+// Route to get all bookings for the Cart/Dashboard page
+router.get('/', getUserBookings);
+
 
 //Rendering previously booked services 
 router.get('/prevbookings', renderPreviouslyBookedServices);

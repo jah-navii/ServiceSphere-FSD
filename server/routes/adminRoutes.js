@@ -18,6 +18,8 @@ import {signupAdmin,
 } from '../controllers/adminController.js';
 import Helper from '../models/Helper.js';
 
+// dealt with
+
 const router = express.Router();
 
 // Middleware to protect admin routes

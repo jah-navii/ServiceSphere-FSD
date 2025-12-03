@@ -68,7 +68,7 @@ connectDB();
 
 app.use('/', authRoutes);
 app.use('/', helperRoutes);
-app.use('/', bookingRoutes);
+app.use('/api/bookings', bookingRoutes);
 app.use('/', feedbackRoutes);
 app.use('/', adminRoutes);
 app.use('/', seekerRoutes);

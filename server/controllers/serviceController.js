@@ -3,31 +3,33 @@ import Service from '../models/Service.js';
 import Feedback from '../models/Feedback.js';
 
 // GET /api/services
-// Handles Search, Filtering, and Defaults all in one.
 export const getServicesAPI = async (req, res) => {
     try {
+        // FIX 1: Check for 'search' OR 'q' (handles mismatch)
+        const rawSearch = req.query.search || req.query.q || "";
+        // Clean the string to prevent Regex errors
+        const search = rawSearch.trim();
+
         const { 
-            search = "", 
             type = "all", 
             gender = "all", 
-            price = 1500 
+            price = 5000,
+            category = "all",
+            location = "all"
         } = req.query;
 
-        // 1. Base Query: Only approved helpers
+        console.log(`Searching for: "${search}"`); // Debug log
+
         let query = { approved: true };
 
-        // 2. Gender Filter
-        if (gender !== 'all') {
-            query.gender = new RegExp(`^${gender}$`, 'i');
-        }
+        if (category !== "all") query.category = category; 
+        if (gender !== 'all') query.gender = new RegExp(`^${gender}$`, 'i');
+        if (location !== 'all') query.address = new RegExp(`^${location}$`, 'i');
 
-        // 3. Search & Type Logic (Applied inside the loop for nested array filtering)
-        // Note: MongoDB $elemMatch is efficient, but your existing loop logic works fine for transformation.
-        
-        const helpers = await Helper.find(query);
+        const helpers = await Helper.find(query).populate('category');
         let results = [];
 
-        // 4. Fetch Feedbacks for Ratings (Optimized aggregation)
+        // ... (Ratings logic remains same) ...
         const feedbacks = await Feedback.aggregate([
             { $group: { _id: "$helper", avgRating: { $avg: "$rating" } } }
         ]);
@@ -36,13 +38,14 @@ export const getServicesAPI = async (req, res) => {
             return acc;
         }, {});
 
-        // 5. Transform & Filter Services
         helpers.forEach(helper => {
             if (!helper.services) return;
 
             helper.services.forEach(service => {
-                // Filter Logic
+                // FIX 2: Stronger Search Logic
+                // If search is empty, it matches. If not, Regex test.
                 const matchesSearch = search === "" || new RegExp(search, 'i').test(service.name);
+                
                 const matchesType = type === "all" || service.name === type;
                 const matchesPrice = service.price <= Number(price);
 
@@ -52,22 +55,24 @@ export const getServicesAPI = async (req, res) => {
                         name: helper.name,
                         availability: helper.availability,
                         gender: helper.gender,
-                        rating: avgRatings[helper._id.toString()] || '4.5', // Default rating if none
+                        address: helper.address,
+                        rating: avgRatings[helper._id.toString()] || '4.5',
                         service: service.name,
                         price: service.price,
-                        image: helper.image || "/pics/profile-picture.png" // Fallback image
+                        categoryName: helper.category?.name,
+                        categoryId: helper.category?._id
                     });
                 }
             });
         });
 
-        // 6. Get List of Unique Service Types for the Dropdown
-        const allServices = await Service.find().select('name');
-
+        // ... (Rest of function remains same) ...
+        const availableServiceTypes = await Service.find(category !== "all" ? { category } : {}).select('name');
+        
         res.status(200).json({ 
             success: true, 
             helpers: results, 
-            serviceTypes: allServices 
+            serviceTypes: availableServiceTypes
         });
 
     } catch (err) {
