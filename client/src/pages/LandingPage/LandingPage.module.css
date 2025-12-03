@@ -1,7 +1,4 @@
-/* --- LandingPage.module.css --- */
-
-/* 1. We removed 'body' and '*' selectors to prevent global bugs. 
-   2. We apply those styles to 'landingContainer' instead. */
+/* LandingPage.module.css - Enhanced 3D Landing Page */
 
 .landingContainer {
   min-height: 100vh;
@@ -12,111 +9,431 @@
   justify-content: center;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
   padding: 2rem;
-  /* If you want the gap, apply it to the content, not the container if possible, 
-     but gap works here for flex children */
-  gap: 2.5rem; 
-  /* Font needs to be inherited or set explicitly if not in index.css */
+  position: relative;
+  overflow: hidden;
   color: #1d1d1f;
+  perspective: 1000px;
 }
 
-.logo {
-  animation: fadeInDown 0.8s ease-out;
+/* ============================================
+   ANIMATED BACKGROUND ORBS
+   ============================================ */
+.backgroundOrbs {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  overflow: hidden;
 }
 
-.logo img {
-  width: 120px;
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.4;
+  animation: floatOrb 20s ease-in-out infinite;
+}
+
+.orb1 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, #0071e3, #00c6ff);
+  top: -100px;
+  left: -100px;
+  animation-delay: 0s;
+}
+
+.orb2 {
+  width: 350px;
+  height: 350px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 7s;
+}
+
+.orb3 {
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: 14s;
+}
+
+@keyframes floatOrb {
+  0%, 100% { 
+    transform: translate(0, 0) scale(1); 
+  }
+  25% { 
+    transform: translate(50px, -50px) scale(1.1); 
+  }
+  50% { 
+    transform: translate(-30px, 30px) scale(0.9); 
+  }
+  75% { 
+    transform: translate(40px, 50px) scale(1.05); 
+  }
+}
+
+/* ============================================
+   FLOATING PARTICLES
+   ============================================ */
+.particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(0, 113, 227, 0.6);
+  border-radius: 50%;
+  animation: floatParticle linear infinite;
+}
+
+@keyframes floatParticle {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) scale(1);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   3D LOGO WITH INTRO ANIMATION
+   ============================================ */
+.logoContainer {
+  position: relative;
+  z-index: 10;
+  animation: logoIntro 2.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transform-style: preserve-3d;
+}
+
+.logoSettled {
+  animation: logoSettle 0.8s ease-out forwards;
+}
+
+@keyframes logoIntro {
+  0% {
+    transform: scale(0.3) rotateY(0deg) rotateX(0deg) translateZ(-200px);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotateY(720deg) rotateX(360deg) translateZ(100px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotateY(1080deg) rotateX(720deg) translateZ(0);
+    opacity: 1;
+  }
+}
+
+@keyframes logoSettle {
+  0% {
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    transform: scale(0.7) translateY(-80px);
+  }
+}
+
+.logo3DWrapper {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  transform-style: preserve-3d;
+  animation: floatLogo 3s ease-in-out infinite;
+}
+
+@keyframes floatLogo {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.logoGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(0, 113, 227, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+.logo3D {
+  width: 140px;
   height: auto;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+  filter: drop-shadow(0 10px 30px rgba(0, 113, 227, 0.4));
+  position: relative;
+  z-index: 2;
+  animation: logoRotate 6s linear infinite;
+}
+
+@keyframes logoRotate {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+
+/* ============================================
+   MAIN CONTENT REVEAL
+   ============================================ */
+.mainContent {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  pointer-events: none;
+}
+
+.contentVisible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ============================================
+   HEADING & SUBTITLE
+   ============================================ */
+.tagContainer {
+  text-align: center;
+  animation: slideInText 0.8s ease-out;
 }
 
 .tag {
-  font-size: 2.5rem;
-  font-weight: 600;
-  letter-spacing: -0.5px;
-  color: #1d1d1f;
-  text-align: center;
-  animation: fadeInUp 0.8s ease-out;
-  animation-delay: 0.2s;
-  animation-fill-mode: backwards;
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, #1d1d1f 0%, #0071e3 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 0.5rem 0;
+  animation: gradientText 3s ease infinite;
 }
 
+@keyframes gradientText {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #666;
+  font-weight: 400;
+  margin: 0;
+  animation: fadeInUp 0.8s ease-out 0.2s backwards;
+}
+
+/* ============================================
+   ENHANCED BUTTONS
+   ============================================ */
 .buttons {
   display: flex;
-  gap: 1rem;
-  animation: fadeInUp 0.8s ease-out;
-  animation-delay: 0.4s;
-  animation-fill-mode: backwards;
+  gap: 1.5rem;
+  animation: fadeInUp 0.8s ease-out 0.4s backwards;
 }
 
-/* Common button styles */
+.btnLink {
+  text-decoration: none;
+}
+
 .btn {
-  padding: 0.875rem 2.5rem;
-  font-size: 1.0625rem;
-  font-weight: 500;
+  position: relative;
+  padding: 1rem 3rem;
+  font-size: 1.1rem;
+  font-weight: 600;
   border: none;
-  border-radius: 980px;
+  border-radius: 50px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: inherit;
-  letter-spacing: -0.2px;
-  text-decoration: none; /* In case applied to link */
+  letter-spacing: -0.3px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
-/* Specific Button Styles matched to your previous CSS */
+.btn:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.btnText {
+  position: relative;
+  z-index: 2;
+}
+
+.btnShine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover .btnShine {
+  left: 100%;
+}
+
 .loginBtn {
-  background: #ffffff;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f5f7 100%);
   color: #1d1d1f;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .loginBtn:hover {
-  background: #f5f5f7;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ea 100%);
 }
 
 .signupBtn {
-  background: #0071e3;
+  background: linear-gradient(135deg, #0071e3 0%, #0077ed 100%);
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.3);
+  box-shadow: 0 8px 30px rgba(0, 113, 227, 0.4);
 }
 
 .signupBtn:hover {
-  background: #0077ed;
-  box-shadow: 0 4px 16px rgba(0, 113, 227, 0.4);
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, #0077ed 0%, #0084ff 100%);
+  box-shadow: 0 15px 40px rgba(0, 113, 227, 0.5);
 }
 
-.loginBtn:active,
-.signupBtn:active {
-  transform: translateY(0);
-}
-
-/* Animations */
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ============================================
+   UTILITY ANIMATIONS
+   ============================================ */
+@keyframes slideInText {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Responsive Design */
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
 @media (max-width: 768px) {
-  .tag { font-size: 2rem; }
-  
+  .tag {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
   .buttons {
     flex-direction: column;
     width: 100%;
     max-width: 300px;
   }
-  
-  .btn { width: 100%; } /* Changed from .buttons button to .btn */
+
+  .btn {
+    width: 100%;
+  }
+
+  .featureCards {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .featureCard {
+    padding: 1rem 1.5rem;
+  }
+
+  .logo3DWrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .logo3D {
+    width: 100px;
+  }
 }
 
 @media (max-width: 480px) {
-  .tag { font-size: 1.75rem; }
-  .logo img { width: 100px; }
+  .tag {
+    font-size: 1.75rem;
+  }
+
+  .orb {
+    filter: blur(40px);
+  }
+
+  .orb1,
+  .orb2 {
+    width: 250px;
+    height: 250px;
+  }
+
+  .orb3 {
+    width: 200px;
+    height: 200px;
+  }
 }
