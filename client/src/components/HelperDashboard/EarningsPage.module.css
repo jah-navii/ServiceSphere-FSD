@@ -1,0 +1,100 @@
+/* Container */
+.content {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.heading {
+  color: var(--cerulean);
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+/* Table Styles */
+.earningsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.earningsTable th,
+.earningsTable td {
+  padding: 15px;
+  text-align: left;
+}
+
+.earningsTable th {
+  background-color: var(--cerulean);
+  color: var(--white);
+  font-weight: bold;
+}
+
+.earningsTable tbody tr {
+  border-bottom: 1px solid #ddd;
+}
+
+.earningsTable tbody tr:last-child {
+  border-bottom: none;
+}
+
+.earningsTable tbody tr:hover {
+  background-color: var(--beige);
+}
+
+.earningsTable tfoot {
+  background-color: var(--cerulean);
+  color: var(--white);
+  font-weight: bold;
+}
+
+.totalLabel {
+  text-align: right;
+  padding-right: 20px;
+}
+
+.totalAmount {
+  font-size: 18px;
+}
+
+/* Graph Section */
+.graphContainer {
+  margin-top: 30px;
+  padding: 20px;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  height: 400px; /* Important for Chart.js responsive sizing */
+  position: relative;
+}
+
+/* Lifetime Earnings Card */
+.lifetimeEarnings {
+  margin-top: 30px;
+  padding: 20px;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.lifetimeEarnings h2 {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--cerulean);
+  margin-bottom: 15px;
+}
+
+.lifetimeTotal {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--black);
+}
+
+.amountHighlight {
+  color: var(--cerulean);
+}

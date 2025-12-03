@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-// CORRECTED: Path changed from '../components/HelperDashboard/Sidebar' to '../Sidebar'
-// to reach 'client/src/components/Sidebar.jsx' from 'client/src/components/HelperDashboard/'
 import Sidebar from "./Sidebar";
-// CORRECTED: Path changed from '../components/HelperDashboard/helperDashboard.css'
-// to './helperDashboard.css' as the file is in the same directory.
-import "./helperDashboard.css";
+import styles from "./HelperDashboard.module.css"; 
+
 
 // Placeholder for fetching user data
-// In a real app, this data would come from an API call
 const mockUserData = {
   name: "Jane Doe",
   mobilenumber: "9876543210",
@@ -44,18 +40,15 @@ function HelperDashboard() {
   }, [location.pathname]);
 
   return (
-    <div className="dashboard-container">
-      {/* Sidebar component passes mockUserData as a prop */}
+    <div className={styles.dashboardContainer}>
       <Sidebar userData={userData} />
 
-      <main className="main-content">
-        <header>
+      <main className={styles.mainContent}>
+        <header className={styles.header}>
           <h1>{title}</h1>
-          {/* Notifications can be added here */}
         </header>
 
-        <div className="content">
-          {/* The Outlet renders the matched child route element (e.g., ProfilePage, EarningsPage) */}
+        <div className={styles.content}>
           <Outlet context={{ userData, setUserData }} />
         </div>
       </main>

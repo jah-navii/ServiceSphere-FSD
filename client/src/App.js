@@ -57,12 +57,6 @@ function App() {
         <Route path='/seeker-profile' element={<SeekerProfile />} />
       </Routes>
     </Router>
-    // <BookingForm /> 
-    // <CartPage/>
-    // <PaymentForm />
-    // <ReviewForm />
-
-
     
 );
 }

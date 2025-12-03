@@ -1,0 +1,52 @@
+/* Layout container */
+.dashboardContainer {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--beige);
+  font-family: 'Sequel Sans', sans-serif;
+}
+
+/* Main Content Area */
+.mainContent {
+  flex: 1;
+  padding: 30px;
+  background-color: var(--white);
+  /* The sidebar is fixed width (250px) + some margin */
+  margin-left: 250px; 
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Header inside Main Content */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--cerulean);
+  margin: 0;
+}
+
+/* Content Wrapper */
+.content {
+  /* This ensures child pages take full width */
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .dashboardContainer {
+    flex-direction: column;
+  }
+  .mainContent {
+    margin-left: 0; /* Remove margin on mobile */
+    padding: 15px;
+    margin-top: 60px; /* Space for mobile header if needed */
+  }
+}

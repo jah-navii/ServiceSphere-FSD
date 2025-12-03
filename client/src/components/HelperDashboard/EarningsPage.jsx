@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-// Assuming Chart.js is installed: npm install chart.js react-chartjs-2
 import Chart from 'chart.js/auto';
+import styles from './EarningsPage.module.css';
 
-// --- Mock Data simulating backend API response ---
+// Mock Data
 const mockPastMonthEarnings = [
   { date: '2025-11-05', service: 'Plumbing Repair', customer: 'Alice Smith', amount: 450.00 },
   { date: '2025-11-12', service: 'Deep Cleaning', customer: 'Bob Johnson', amount: 800.00 },
@@ -11,32 +11,26 @@ const mockPastMonthEarnings = [
   { date: '2025-11-28', service: 'Painting', customer: 'Eve Davis', amount: 1200.00 },
 ];
 const mockLifetimeEarnings = 15420.50;
-// ------------------------------------------------
 
 function EarningsPage() {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   
-  // State to manage earnings data
   const [earningsData] = useState({
     pastMonthEarnings: mockPastMonthEarnings,
     lifetimeEarnings: mockLifetimeEarnings,
   });
 
-  // Calculate the total for the past month
   const pastMonthTotal = earningsData.pastMonthEarnings.reduce(
     (sum, item) => sum + item.amount, 0
   );
 
-  // Function to initialize and destroy the Chart.js graph
   useEffect(() => {
     if (chartRef.current) {
-      // Destroy previous chart instance before creating a new one
       if (chartInstanceRef.current) {
         chartInstanceRef.current.destroy();
       }
 
-      // Prepare data for the chart (example: earnings over the last 5 services)
       const dataPoints = earningsData.pastMonthEarnings.slice(-5);
       const labels = dataPoints.map(item => `${item.date} (${item.service})`);
       const amounts = dataPoints.map(item => item.amount);
@@ -49,7 +43,7 @@ function EarningsPage() {
           datasets: [{
             label: 'Earnings per Service (Past Month)',
             data: amounts,
-            backgroundColor: '#007ea7', // var(--cerulean)
+            backgroundColor: '#007ea7',
             borderColor: '#005f73',
             borderWidth: 1
           }]
@@ -60,17 +54,13 @@ function EarningsPage() {
           scales: {
             y: {
               beginAtZero: true,
-              title: {
-                display: true,
-                text: 'Earnings (Rs)'
-              }
+              title: { display: true, text: 'Earnings (Rs)' }
             }
           }
         }
       });
     }
 
-    // Cleanup function to destroy the chart when the component unmounts
     return () => {
       if (chartInstanceRef.current) {
         chartInstanceRef.current.destroy();
@@ -78,20 +68,20 @@ function EarningsPage() {
     };
   }, [earningsData.pastMonthEarnings]);
 
-
-  // Helper function to format currency
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'INR', // Assuming Indian Rupees (Rs) based on the EJS file
+      currency: 'INR',
       minimumFractionDigits: 2,
-    }).format(amount).replace('₹', 'Rs '); // Replace the default currency symbol with 'Rs '
+    }).format(amount).replace('₹', 'Rs ');
   };
 
   return (
-    <div className="content">
-      <h2>Past Month Earnings</h2>
-      <table className="earnings-table">
+    <div className={styles.content}>
+      <h2 className={styles.heading}>Past Month Earnings</h2>
+      
+      {/* Table */}
+      <table className={styles.earningsTable}>
         <thead>
           <tr>
             <th>Date</th>
@@ -100,7 +90,7 @@ function EarningsPage() {
             <th>Earnings</th>
           </tr>
         </thead>
-        <tbody id="earnings-body">
+        <tbody>
           {earningsData.pastMonthEarnings.map((item, index) => (
             <tr key={index}>
               <td>{item.date}</td>
@@ -112,24 +102,24 @@ function EarningsPage() {
         </tbody>
         <tfoot>
           <tr>
-            <td colSpan="3" className="total-label">Total (Past Month)</td>
-            <td id="past-month-total" className="total-amount">
+            <td colSpan="3" className={styles.totalLabel}>Total (Past Month)</td>
+            <td className={styles.totalAmount}>
               {formatCurrency(pastMonthTotal)}
             </td>
           </tr>
         </tfoot>
       </table>
 
-      {/* Graph Section */}
-      <div className="graph-container">
-        {/* The canvas element is where Chart.js draws the graph */}
-        <canvas id="earningsChart" ref={chartRef}></canvas>
+      {/* Graph */}
+      <div className={styles.graphContainer}>
+        <canvas ref={chartRef}></canvas>
       </div>
 
-      <div className="lifetime-earnings">
+      {/* Lifetime */}
+      <div className={styles.lifetimeEarnings}>
         <h2>Lifetime Earnings</h2>
-        <p>
-          <span id="lifetime-total">{formatCurrency(earningsData.lifetimeEarnings)}</span>
+        <p className={styles.lifetimeTotal}>
+          <span className={styles.amountHighlight}>{formatCurrency(earningsData.lifetimeEarnings)}</span>
         </p>
       </div>
     </div>

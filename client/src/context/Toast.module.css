@@ -1,0 +1,58 @@
+.toast {
+  position: fixed;
+  top: 90px; /* Below the navbar */
+  right: 20px;
+  background-color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: 'Sequel Sans', sans-serif;
+  font-size: 1rem;
+  z-index: 9999; /* Ensure it stays on top of everything */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 300px;
+  animation: slideIn 0.3s ease-out;
+  border: 1px solid #eee;
+}
+
+/* Success Variant */
+.success {
+  border-left: 5px solid #28a745;
+}
+
+/* Error Variant */
+.error {
+  border-left: 5px solid #dc3545;
+}
+
+.icon {
+  font-size: 1.2rem;
+}
+
+.message {
+  color: #333;
+  font-weight: 500;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .toast {
+    left: 20px;
+    right: 20px;
+    min-width: auto;
+    top: 20px;
+  }
+}

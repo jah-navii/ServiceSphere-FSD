@@ -1,11 +1,10 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { logout } from "../../redux/userSlice";
+import { logout } from "../../redux/userSlice"; 
 import profilePicture from "../../assets/profile-picture.png";
-
-// Note: You'll need to install react-router-dom: npm install react-router-dom
-// Assumes Font Awesome is available via the CSS file.
+// Import the module styles
+import styles from "./Sidebar.module.css";
 
 function Sidebar({ userData }) {
   const location = useLocation();
@@ -27,23 +26,24 @@ function Sidebar({ userData }) {
   ];
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-profile">
-        {/* Placeholder image, replace with actual logic for profile picture */}
-        <img src={profilePicture} alt="Profile Picture" />
+    <aside className={styles.sidebar}>
+      <div className={styles.profile}>
+        <img src={profilePicture} alt="Profile" className={styles.profileImg} />
         <h3>{name}</h3>
         <p>Helper</p>
       </div>
 
-      <nav>
+      <nav className={styles.nav}>
         <ul>
           {navItems.map((item) => (
             <li key={item.to}>
               <Link
                 to={item.to}
-                // Optional: Add an 'active' class based on the current path
-                className={location.pathname === item.to ? "active" : ""}
+                className={`${styles.navLink} ${
+                  location.pathname === item.to ? styles.active : ""
+                }`}
               >
+                {/* Ensure you have FontAwesome loaded in index.html for these classes to work */}
                 <i className={item.icon}></i>
                 {item.label}
               </Link>
@@ -52,34 +52,14 @@ function Sidebar({ userData }) {
         </ul>
       </nav>
 
-      <div className="sidebar-footer">
-        <button
-          onClick={handleLogout}
-          className="logout-btn"
-          style={{
-            width: "100%",
-            padding: "10px 15px",
-            marginBottom: "15px",
-            backgroundColor: "#e74c3c",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "14px",
-            fontWeight: "600",
-            transition: "background-color 0.3s",
-          }}
-          onMouseEnter={(e) => (e.target.style.backgroundColor = "#c0392b")}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = "#e74c3c")}
-        >
+      <div className={styles.footer}>
+        <button onClick={handleLogout} className={styles.logoutBtn}>
           <i className="fas fa-sign-out-alt"></i> Logout
         </button>
-        <p>&copy; 2025 ServiceSphere</p>
-        <p>
-          {/* These will be regular anchor tags as they navigate outside the SPA */}
-          <a href="/about">About Us</a> |<a href="/contact">Contact</a> |
-          <a href="/terms">Terms & Conditions</a>
-        </p>
+        <p className={styles.footerText}>&copy; 2025 ServiceSphere</p>
+        <div className={styles.footerLinks}>
+          <Link to="/about">About</Link> | <Link to="/contact">Contact</Link> | <Link to="/terms">Terms</Link>
+        </div>
       </div>
     </aside>
   );

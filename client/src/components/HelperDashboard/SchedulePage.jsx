@@ -3,49 +3,35 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import styles from "./SchedulePage.module.css";
 
-// --- Mock Data simulating backend API response ---
-// This simulates the data passed via the EJS script tag
-const mockBlockedDates = [
-  "2025-12-15", // Example of a fully blocked day
-  "2025-12-25", // Christmas
-];
-// Helper to transform blocked dates into FullCalendar events
+const mockBlockedDates = ["2025-12-15", "2025-12-25"];
+
 const getCalendarEvents = (blockedDates) => {
-  // Assuming the blockedDates array contains strings in 'YYYY-MM-DD' format
   return blockedDates.map((date) => ({
     title: "Unavailable",
     start: date,
     allDay: true,
-    // Add a custom class for styling blocked days (defined in helperDashboard.css)
-    classNames: ["unavailable"],
+    classNames: ["unavailable"], // Matches :global(.unavailable) in CSS
   }));
 };
-// ------------------------------------------------
 
 function SchedulePage() {
   const [blockedDates, setBlockedDates] = useState(mockBlockedDates);
   const calendarRef = useRef(null);
-  // In a real application, you would fetch this data on component mount
-  useEffect(() => {
-    // Simulated API call to fetch blocked dates
-    // fetch('/api/helper/blocked-dates')
-    //   .then(res => res.json())
-    //   .then(data => setBlockedDates(data));
-  }, []);
-  // Prepare events for the calendar
+
   const events = getCalendarEvents(blockedDates);
-  // Optional: Function to handle when a user clicks on a day (e.g., to block/unblock it)
+
   const handleDateClick = (info) => {
+    // Ideally, toggle availability logic here
     alert(`Date clicked: ${info.dateStr}`);
-    // Logic here to update blockedDates state and send an API request
   };
 
   return (
-    <div className="content">
-      <h2>Your Schedule</h2>
-      <div id="availability-calendar">
-        {/* FullCalendar Component */}
+    <div className={styles.container}>
+      <h2 className={styles.heading}>Your Schedule</h2>
+      
+      <div className={styles.calendarWrapper}>
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -56,9 +42,9 @@ function SchedulePage() {
           headerToolbar={{
             left: "prev,next today",
             center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
+            right: "dayGridMonth,timeGridWeek",
           }}
-          className="availability-calendar"
+          height="auto"
         />
       </div>
     </div>
