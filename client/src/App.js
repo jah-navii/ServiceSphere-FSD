@@ -5,6 +5,7 @@ import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import SignupSeeker from "./pages/SignupSeeker/SignupSeeker";
 import SignupHelper from "./pages/SignupHelper/SignupHelper";
+import SignupAdmin from "./pages/SignupAdmin/SignupAdmin";
 import LoginSeeker from "./pages/LoginSeeker";
 import LoginHelper from "./pages/LoginHelper";
 import LoginAdmin from "./pages/LoginAdmin";
@@ -55,6 +56,9 @@ function App() {
         {/* <Route path="/booking" element={<BookingForm />} /> */}
         <Route path="/cart" element={<CartPage />} />
         <Route path='/seeker-profile' element={<SeekerProfile />} />
+
+        <Route path="/login/admin" element={<LoginAdmin />} />
+        <Route path="/signup/admin" element={<SignupAdmin />} />
       </Routes>
     </Router>
     
