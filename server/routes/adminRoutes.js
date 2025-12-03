@@ -1,14 +1,20 @@
 import express from 'express';
 import {signupAdmin,
   loginAdmin,
-  renderDashboard,
-  renderUsers,
-  renderServices,
-  renderEarnings,
-  approveHelper,
-  rejectHelper, 
+  getContactMessages,
+  deleteContactMessage,
+  getUsers,
+  approveUser,
+  rejectUser,
+  getServiceManagementData,
+  addCategory,
+  deleteCategory,
   addService,
-  removeService
+  deleteService,
+  getEarningsData,
+  getLocations,
+  addLocation,
+  deleteLocation
 } from '../controllers/adminController.js';
 import Helper from '../models/Helper.js';
 
@@ -20,74 +26,27 @@ function isAdmin(req, res, next) {
   res.redirect('/login/admin');
 }
 
-// router.get('/login/admin', (req, res) => {
-//   res.render('login-admin', { error: null, email: null });
-// });
-
-// router.post('/login/admin', loginAdmin);
-
 router.post("/signup/admin", signupAdmin);
 router.post("/login/admin", loginAdmin);
 
-//
+router.get('/api/admin/messages', getContactMessages);
+router.delete('/api/admin/messages/:id', deleteContactMessage);
 
-router.get('/admin/dashboard', isAdmin, renderDashboard);
+router.get('/api/admin/users', getUsers);
+router.patch('/api/admin/users/approve', approveUser);
+router.patch('/api/admin/users/reject', rejectUser);
 
-// router.get('/admin/users', isAdmin, renderUsers);
-router.get('/admin/users', async (req, res) => {
-  try {
-      const helpers = await Helper.find(); // Fetch all helpers
-      res.render('adminDashboard', { 
-          title: 'User Management', 
-          content: 'partials/user-management',
-          helpers 
-      });
-  } catch (error) {
-      console.error('Error fetching helpers:', error);
-      res.status(500).send('Error fetching helpers');
-  }
-});
+router.get('/api/admin/services-data', getServiceManagementData);
+router.post('/api/admin/categories/add', addCategory);
+router.delete('/api/admin/categories/:id', deleteCategory);
+router.post('/api/admin/services/add', addService);
+router.delete('/api/admin/services/:id', deleteService);
 
-// Approve user
-router.patch('/admin/users/approve', async (req, res) => {
-  try {
-      const { helperId } = req.body;
-      const helper = await Helper.findByIdAndUpdate(helperId, { approved: true }, { new: true });
-      if (helper) {
-          res.json({ message: 'User approved successfully' });
-      } else {
-          res.status(404).json({ message: 'User not found' });
-      }
-  } catch (error) {
-      console.error('Error approving user:', error);
-      res.status(500).json({ message: 'Failed to approve user' });
-  }
-});
+router.get('/api/admin/earnings-data', getEarningsData);
 
-// Reject user
-router.patch('/admin/users/reject', async (req, res) => {
-  try {
-      const { helperId } = req.body;
-      const helper = await Helper.findByIdAndUpdate(helperId, { approved: false }, { new: true });
-      if (helper) {
-          res.json({ message: 'User rejected successfully' });
-      } else {
-          res.status(404).json({ message: 'User not found' });
-      }
-  } catch (error) {
-      console.error('Error rejecting user:', error);
-      res.status(500).json({ message: 'Failed to reject user' });
-  }
-});
-
-
-router.get('/admin/services', isAdmin, renderServices);
-router.post('/admin/services/add', isAdmin, addService);
-router.delete('/admin/services/:serviceName', isAdmin, removeService);
-
-router.get('/admin/earnings', isAdmin, renderEarnings);
-
-router.post('/admin/users/approve/:id', isAdmin, approveHelper);
-router.post('/admin/users/reject/:id', isAdmin, rejectHelper);
+// Location Management
+router.get('/api/admin/locations', getLocations);
+router.post('/api/admin/locations/add', addLocation);
+router.delete('/api/admin/locations/:id', deleteLocation);
 
 export default router;

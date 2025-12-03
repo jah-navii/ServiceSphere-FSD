@@ -1,0 +1,88 @@
+.container {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 15px;
+}
+
+.table th, 
+.table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #007ea7; /* Cerulean */
+  color: #fff;
+  font-weight: 600;
+}
+
+.table tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Links */
+.link {
+  color: #007ea7;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* Status Badge */
+.statusBadge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.approved {
+  background-color: #e8f5e9;
+  color: #388e3c;
+  border: 1px solid #c8e6c9;
+}
+
+.pending {
+  background-color: #fff8e1;
+  color: #ffa000;
+  border: 1px solid #ffecb3;
+}
+
+/* Buttons */
+.actionBtn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: opacity 0.2s;
+  font-weight: 500;
+}
+
+.actionBtn:hover {
+  opacity: 0.9;
+}
+
+.approveBtn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.rejectBtn {
+  background-color: #f44336;
+  color: white;
+}

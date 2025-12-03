@@ -1,67 +1,72 @@
 import Helper from '../models/Helper.js';
 import Seeker from '../models/Seeker.js';
 
-// Helper Signup - modified for react
+// Helper Signup - API
 export const signupHelper = async (req, res) => {
   try {
-    let { name, gender, mobilenumber, aadharnumber, email, password, confirmPassword } = req.body;
+    // 1. EXTRACT DATA - Added 'category' and 'address' here
+    const { 
+        name, 
+        email, 
+        password, 
+        confirmPassword, 
+        mobilenumber, 
+        aadharnumber, 
+        gender, 
+        category, // <--- CRITICAL FIX
+        address,  // <--- Added address too since we added it to the form
+        services 
+    } = req.body;
 
-    name = name?.trim();
-    email = email?.trim().toLowerCase();
-    mobilenumber = mobilenumber?.trim();
-    aadharnumber = aadharnumber?.trim();
-
-    if (!name || !gender || !mobilenumber || !aadharnumber || !email || !password || !confirmPassword) {
-      return res.status(400).json({ error: "All fields are required!" });
+    // --- Validations ---
+    if (!name || !email || !password || !mobilenumber || !aadharnumber || !category) {
+       return res.status(400).json({ error: "All required fields (including Category) must be filled!" });
     }
 
-    if (password !== confirmPassword)
+    if (password !== confirmPassword) {
       return res.status(400).json({ error: "Passwords do not match!" });
+    }
 
-    if (password.length < 6)
-      return res.status(400).json({ error: "Password must be at least 6 characters long!" });
+    // --- Database Checks ---
+    const existingEmail = await Helper.findOne({ email }) || await Seeker.findOne({ email });
+    if (existingEmail) {
+      return res.status(409).json({ error: "Email already exists!" });
+    }
 
-    if (!/^[A-Za-z\s]+$/.test(name))
-      return res.status(400).json({ error: "Name should contain only alphabets!" });
+    const existingMobile = await Helper.findOne({ mobilenumber }) || await Seeker.findOne({ mobilenumber });
+    if (existingMobile) {
+      return res.status(409).json({ error: "Mobile number already registered!" });
+    }
 
-    if (!/^\d{10}$/.test(mobilenumber))
-      return res.status(400).json({ error: "Mobile number must be exactly 10 digits!" });
-
-    if (!/^\d{12}$/.test(aadharnumber))
-      return res.status(400).json({ error: "Aadhaar number must be exactly 12 digits!" });
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      return res.status(400).json({ error: "Invalid email format!" });
-
-    const [existingEmail, existingMobile, existingAadhar] = await Promise.all([
-      Helper.findOne({ email }) || Seeker.findOne({ email }),
-      Helper.findOne({ mobilenumber }) || Seeker.findOne({ mobilenumber }),
-      Helper.findOne({ aadharnumber }),
-    ]);
-
-    if (existingEmail)
-      return res.status(400).json({ error: "Email already exists!" });
-
-    if (existingMobile)
-      return res.status(400).json({ error: "Mobile number already registered!" });
-
-    if (existingAadhar)
-      return res.status(400).json({ error: "Aadhaar number already registered!" });
-
-    await Helper.create({
-      name,
-      gender,
-      mobilenumber,
-      aadharnumber,
-      email,
-      password,
+    // --- Create Helper ---
+    const newHelper = await Helper.create({ 
+        name, 
+        email, 
+        password, // Ideally hash this
+        mobilenumber, 
+        aadharnumber,
+        gender,
+        address,
+        category, // <--- PASSING THE CATEGORY ID HERE
+        services: services || [], // Defaults to empty array if not sent
+        approved: false 
     });
 
-    console.log(`✅ Helper registered: ${name} (${email})`);
-    res.status(201).json({ message: "Helper registered successfully!" });
+    console.log('Helper registered ✅', newHelper._id);
+    
+    return res.status(201).json({ message: "Helper registered successfully", userId: newHelper._id });
+
   } catch (err) {
     console.error("❌ Signup Error:", err);
-    res.status(500).json({ error: "Server error. Please try again later." });
+    
+    // Send a clear error message back to React
+    if (err.name === 'ValidationError') {
+        // Extract the specific message (e.g., "Path `category` is required")
+        const messages = Object.values(err.errors).map(val => val.message);
+        return res.status(400).json({ error: messages[0] });
+    }
+
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 

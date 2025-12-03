@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-// IMPORT STYLES AS AN OBJECT
+// 1. Import the Toast Hook
+import { useToast } from "../../context/ToastContext";
 import styles from "./SignupHelper.module.css"; 
 
 const SignupHelper = () => {
+  const navigate = useNavigate();
+  // 2. Get the showToast function
+  const { showToast } = useToast();
+  
+  const [categories, setCategories] = useState([]);
+  const [locations, setLocations] = useState([]);
+  
   const [formData, setFormData] = useState({
     name: "",
     gender: "",
@@ -12,12 +20,12 @@ const SignupHelper = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    address: "", 
+    category: "", 
   });
 
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
-  // Load Animation Script
   useEffect(() => {
     if (!document.querySelector('script[src*="dotlottie-player"]')) {
       const script = document.createElement("script");
@@ -25,6 +33,22 @@ const SignupHelper = () => {
       script.src = "https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs";
       document.body.appendChild(script);
     }
+
+    const fetchData = async () => {
+      try {
+        const catRes = await fetch("http://localhost:5000/api/admin/services-data");
+        const catData = await catRes.json();
+        setCategories(catData.categories || []);
+
+        const locRes = await fetch("http://localhost:5000/api/admin/locations");
+        const locData = await locRes.json();
+        setLocations(locData || []);
+      } catch (err) {
+        console.error("Failed to load options", err);
+        // Optional: showToast("Failed to load form options", "error");
+      }
+    };
+    fetchData();
   }, []);
 
   const handleChange = (e) => {
@@ -33,37 +57,57 @@ const SignupHelper = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match!");
       return;
     }
+    
+    if (!formData.address) {
+        setError("Please select your city/location.");
+        return;
+    }
+
+    if (!formData.category) {
+      setError("Please select your specialty category.");
+      return;
+    }
+
+    const finalPayload = {
+      ...formData,
+      services: [] 
+    };
+
     try {
       const response = await fetch("http://localhost:5000/signup/helper", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(finalPayload),
       });
 
-      const data = await response.json(); // Parse server response
+      const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || "Signup failed. Please try again.");
-        console.error("Server error details:", data);
+        const errorMsg = data.error || "Signup failed.";
+        setError(errorMsg);
+        // Also show a toast for visibility
+        showToast(errorMsg, "error");
         return;
       }
 
-      // If successful
+      // 3. SUCCESS TOAST (Replaces Alert)
+      showToast("Registration successful! Please login.", "success");
+      
       navigate("/login/helper");
     } catch (err) {
-      console.error("Network error:", err);
       setError("Registration failed. Please try again later.");
+      showToast("Network error. Please try again.", "error");
     }
   };
 
   return (
     <div className={styles.pageContainer}>
-      
-      {/* Animation */}
       <div className={styles.animationWrapper}>
         <dotlottie-player
           src="https://lottie.host/97ea0de2-8839-4b2e-92ce-455e8731f33c/WSoZpRrAis.lottie"
@@ -75,82 +119,69 @@ const SignupHelper = () => {
         ></dotlottie-player>
       </div>
 
-      {/* Form */}
       <div className={styles.formCard}>
-        <h1 className={styles.title}>Join ServiceSphere as a Helper</h1>
-
+        <h1 className={styles.title}>Join as a Helper</h1>
         {error && <div className={styles.errorText}>{error}</div>}
 
         <form onSubmit={handleSubmit}>
           
-          {/* Name */}
           <div className={styles.formGroup}>
             <label className={styles.label}>Full Name</label>
-            <input
-              className={styles.input}
-              type="text"
-              name="name"
-              placeholder="Enter your full name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
+            <input className={styles.input} type="text" name="name" placeholder="Enter your full name" value={formData.name} onChange={handleChange} required />
           </div>
 
-          {/* Gender */}
           <div className={styles.formGroup}>
             <label className={styles.label}>Gender</label>
             <div className={styles.radioGroup}>
-              <input
-                type="radio"
-                id="male"
-                name="gender"
-                value="Male"
-                checked={formData.gender === "Male"}
-                onChange={handleChange}
-              />
+              <input type="radio" id="male" name="gender" value="Male" checked={formData.gender === "Male"} onChange={handleChange} />
               <label htmlFor="male" className={styles.radioLabel}>Male</label>
-
-              <input
-                type="radio"
-                id="female"
-                name="gender"
-                value="Female"
-                checked={formData.gender === "Female"}
-                onChange={handleChange}
-              />
+              
+              <input type="radio" id="female" name="gender" value="Female" checked={formData.gender === "Female"} onChange={handleChange} />
               <label htmlFor="female" className={styles.radioLabel}>Female</label>
             </div>
           </div>
 
-          {/* Mobile */}
           <div className={styles.formGroup}>
-            <label className={styles.label}>Mobile Number</label>
-            <input className={styles.input} type="tel" name="mobilenumber" placeholder="Mobile Number" value={formData.mobilenumber} onChange={handleChange} required />
+            <label className={styles.label}>Mobile & Aadhar</label>
+            <div style={{display:'flex', gap:'10px'}}>
+                <input className={styles.input} type="tel" name="mobilenumber" placeholder="Mobile Number" value={formData.mobilenumber} onChange={handleChange} required />
+                <input className={styles.input} type="number" name="aadharnumber" placeholder="Aadhar Number" value={formData.aadharnumber} onChange={handleChange} required />
+            </div>
           </div>
 
-          {/* Aadhar */}
           <div className={styles.formGroup}>
-            <label className={styles.label}>Aadhar Number</label>
-            <input className={styles.input} type="number" name="aadharnumber" placeholder="Aadhar Number" value={formData.aadharnumber} onChange={handleChange} required />
+            <label className={styles.label}>Location / City</label>
+            <select className={styles.selectInput} name="address" value={formData.address} onChange={handleChange} required>
+                <option value="">-- Select Your City --</option>
+                {locations.length > 0 ? (
+                    locations.map(loc => (
+                        <option key={loc._id} value={loc.name}>{loc.name}</option>
+                    ))
+                ) : (
+                    <option disabled>Loading locations...</option>
+                )}
+            </select>
           </div>
 
-          {/* Email */}
           <div className={styles.formGroup}>
-            <label className={styles.label}>Email</label>
-            <input className={styles.input} type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
+            <label className={styles.label}>Login Details</label>
+            <input className={styles.input} type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleChange} required style={{marginBottom:'10px'}}/>
+            <div style={{display:'flex', gap:'10px'}}>
+                <input className={styles.input} type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
+                <input className={styles.input} type="password" name="confirmPassword" placeholder="Confirm" value={formData.confirmPassword} onChange={handleChange} required />
+            </div>
           </div>
 
-          {/* Password */}
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Password</label>
-            <input className={styles.input} type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
-          </div>
-
-          {/* Confirm Password */}
-          <div className={styles.formGroup}>
-            <label className={styles.label}>Confirm Password</label>
-            <input className={styles.input} type="password" name="confirmPassword" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} required />
+          <div className={styles.categorySection}>
+            <label className={styles.categoryLabel}>Select Your Specialty</label>
+            <p className={styles.subText}>You can add specific services later in your profile.</p>
+            
+            <select name="category" className={styles.selectInput} value={formData.category} onChange={handleChange} required>
+              <option value="">-- Choose Category --</option>
+              {categories.map(cat => (
+                <option key={cat._id} value={cat._id}>{cat.name}</option>
+              ))}
+            </select>
           </div>
 
           <button type="submit" className={styles.submitButton}>Register</button>

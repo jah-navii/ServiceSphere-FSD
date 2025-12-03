@@ -26,6 +26,13 @@ import SeekerProfile from "./pages/SeekerProfile/SeekerProfile";
 
 import AboutUs from "./pages/AboutUs/AboutUs";
 
+import AdminLayout from "./components/AdminDashboard/AdminLayout";
+import DashboardHome from "./components/AdminDashboard/DashboardHome";
+import ManageUsers from "./components/AdminDashboard/ManageUsers";
+import ManageServices from "./components/AdminDashboard/ManageServices";
+import AdminEarnings from "./components/AdminDashboard/AdminEarnings";
+import ManageLocations from "./components/AdminDashboard/ManageLocations";
+
 function App() {
   return (
     <Router>
@@ -42,12 +49,8 @@ function App() {
         <Route path="/search" element={<SearchPage />} />
 
         <Route path="/helper" element={<HelperDashboard />}>
-          {/* Index Route: This loads by default when navigating to /helper */}
-          {/* We default to the Requests page, as per the usual dashboard pattern */}
           <Route index element={<RequestsPage />} />
 
-          {/* Child Routes: These load into the <Outlet /> inside HelperDashboard */}
-          {/* Dashboard alias route so /helper/dashboard works (maps to RequestsPage) */}
           <Route path="dashboard" element={<RequestsPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="requests" element={<RequestsPage />} />
@@ -62,6 +65,15 @@ function App() {
         <Route path="/login/admin" element={<LoginAdmin />} />
         <Route path="/signup/admin" element={<SignupAdmin />} />
         <Route path="/about" element={<AboutUs />} />
+
+        {/* ADMIN ROUTES */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="dashboard" element={<DashboardHome />} />
+          <Route path="users" element={<ManageUsers />} />
+          <Route path="services" element={<ManageServices />} />
+          <Route path="earnings" element={<AdminEarnings />} />
+          <Route path="locations" element={<ManageLocations />} />
+        </Route>
       </Routes>
     </Router>
     
