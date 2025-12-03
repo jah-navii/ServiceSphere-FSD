@@ -1,6 +1,8 @@
 import Helper from '../models/Helper.js';
 import Seeker from '../models/Seeker.js';
 
+//Dealt with
+
 // Helper Signup - API
 export const signupHelper = async (req, res) => {
   try {

@@ -30,7 +30,7 @@ function Sidebar({ userData }) {
       <div className={styles.profile}>
         <img src={profilePicture} alt="Profile" className={styles.profileImg} />
         <h3>{name}</h3>
-        <p>Helper</p>
+        <p>{userData?.category}</p>
       </div>
 
       <nav className={styles.nav}>

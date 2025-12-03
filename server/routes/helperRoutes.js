@@ -1,30 +1,46 @@
 import express from 'express';
 import multer from 'multer';
+import path from 'path';
 import {
   getHelperProfile,
   getHelperRequests,
   updateHelperProfile,
   updateRequestStatus,
-  getHelperSchedule
+  getHelperSchedule,
+  getHelperEarnings,
+  getHelperFeedback
 } from '../controllers/helperController.js';
-import { getHelperEarnings } from '../controllers/earningController.js';
 
 const router = express.Router();
 
+// --- Multer Config ---
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Ensure this folder exists in your root
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
 });
+
 const upload = multer({ storage });
 
-router.get('/helper/profile', getHelperProfile);
-router.post('/helper/profile', upload.single('certifications'), updateHelperProfile);
+// GET Profile (needs ID)
+router.get('/profile/:id', getHelperProfile);
 
-router.get('/helper/requests', getHelperRequests);
-router.post('/helper/requests/update', updateRequestStatus);
+// PUT Profile (Update) - Handles 'certifications' file field
+router.put('/profile', upload.single('certifications'), updateHelperProfile);
 
-router.get('/helper/schedule', getHelperSchedule);
+// Request Routes
+router.get('/requests/:helperId', getHelperRequests);
+router.patch('/requests/update', updateRequestStatus);
 
-router.get('/helper/earnings', getHelperEarnings);
+router.get('/schedule/:helperId', getHelperSchedule);
+
+router.get('/earnings/:helperId', getHelperEarnings);
+
+router.get('/feedback/:helperId', getHelperFeedback);
 
 export default router;
+
+

@@ -1,49 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useOutletContext } from 'react-router-dom';
+import { useToast } from '../../context/ToastContext';
 import styles from './RequestsPage.module.css';
 
-// Mock data
-const mockRequests = [
-  { 
-    id: 'req1', 
-    service_type: 'Cleaning', 
-    seeker: { name: 'Alice Smith' }, 
-    date: '2025-12-10', 
-    time: '10:00 AM', 
-    address: '123 Main St, Apt 2B', 
-    status: 'pending' 
-  },
-  { 
-    id: 'req2', 
-    service_type: 'Plumbing', 
-    seeker: { name: 'Bob Johnson' }, 
-    date: '2025-12-11', 
-    time: '02:30 PM', 
-    address: '456 Oak Ave', 
-    status: 'Accepted' 
-  },
-  { 
-    id: 'req3', 
-    service_type: 'Painting', 
-    seeker: { name: 'Charlie Brown' }, 
-    date: '2025-12-12', 
-    time: '09:00 AM', 
-    address: '789 Pine Ln', 
-    status: 'Rejected' 
-  },
-];
-
 function RequestsPage() {
-  const [requests, setRequests] = useState(mockRequests);
+  const { userData } = useOutletContext();
+  const { showToast } = useToast();
+  
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const updateRequestStatus = async (requestId, newStatus) => {
-    // Optimistic UI Update
-    setRequests(prevRequests => 
-      prevRequests.map(req => 
-        req.id === requestId ? { ...req, status: newStatus } : req
-      )
-    );
-    console.log(`Updating request ${requestId} to ${newStatus}`);
+  // 1. Get Helper ID safely
+  const helperId = userData?.helper?._id || userData?.helper?.id || userData?._id;
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      if (!helperId) return;
+
+      try {
+        // Match the Route: GET /api/helper/requests/:helperId
+        const res = await fetch(`http://localhost:5000/api/helper/requests/${helperId}`);
+        const data = await res.json();
+
+        if (res.ok) {
+          setRequests(data);
+        } else {
+          console.error("Failed to fetch requests");
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRequests();
+  }, [helperId]);
+
+  const handleStatusUpdate = async (requestId, newStatus) => {
+    try {
+      // Match the Route: PATCH /api/helper/requests/update
+      const res = await fetch(`http://localhost:5000/api/helper/requests/update`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestId, status: newStatus }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        // Update UI locally
+        setRequests(prev => 
+          prev.map(req => 
+            req._id === requestId ? { ...req, status: newStatus } : req
+          )
+        );
+        showToast(`Request ${newStatus}`, "success");
+      } else {
+        showToast(data.message || "Update failed", "error");
+      }
+    } catch (err) {
+      console.error(err);
+      showToast("Network error", "error");
+    }
   };
+
+  if (loading) return <p style={{padding:'20px'}}>Loading requests...</p>;
 
   return (
     <div className={styles.list}>
@@ -51,39 +73,46 @@ function RequestsPage() {
         <p className={styles.emptyMsg}>No service requests found.</p>
       ) : (
         requests.map(request => (
-          <div className={styles.card} key={request.id}>
-            <h3>{request.service_type} Service</h3>
+          <div className={styles.card} key={request._id}>
+            {/* Note: Check your Booking model fields. Is it 'servicetype' or 'serviceType'? */}
+            <h3>{request.servicetype || request.serviceName} Service</h3>
             
             <p className={styles.infoRow}>
-              <span className={styles.label}>Customer:</span> {request.seeker.name}
+              <span className={styles.label}>Customer:</span> {request.customerName}
             </p>
             <p className={styles.infoRow}>
-              <span className={styles.label}>Date:</span> {request.date} at {request.time}
+              <span className={styles.label}>Date:</span> {new Date(request.date).toLocaleDateString()} at {request.time}
             </p>
             <p className={styles.infoRow}>
               <span className={styles.label}>Address:</span> {request.address}
             </p>
             <p className={styles.infoRow}>
+              <span className={styles.label}>Price:</span> ₹{request.price}
+            </p>
+            
+            {/* Status Display */}
+            <p className={styles.infoRow}>
               <span className={styles.label}>Status:</span> 
               <span className={styles.status} style={{
-                  color: request.status === 'Accepted' ? 'green' : 
-                         request.status === 'Rejected' ? 'red' : 'orange'
+                  color: request.status === 'Accepted' ? '#388e3c' : 
+                         request.status === 'Rejected' ? '#d32f2f' : '#ffa000'
               }}>
                 {request.status}
               </span>
             </p>
             
-            {request.status === 'pending' && (
+            {/* Action Buttons (Only for Pending) */}
+            {request.status === 'Pending' && (
               <div className={styles.actions}>
                 <button 
                   className={styles.acceptBtn} 
-                  onClick={() => updateRequestStatus(request.id, 'Accepted')}
+                  onClick={() => handleStatusUpdate(request._id, 'Accepted')}
                 >
                   Accept
                 </button>
                 <button 
                   className={styles.rejectBtn} 
-                  onClick={() => updateRequestStatus(request.id, 'Rejected')}
+                  onClick={() => handleStatusUpdate(request._id, 'Rejected')}
                 >
                   Reject
                 </button>

@@ -1,26 +1,6 @@
 import Feedback from '../models/Feedback.js';
 import Booking from '../models/Booking.js';
 
-export const getHelperFeedback = async (req, res) => {
-  if (!req.session.user || req.session.user.role !== 'helper') {
-    return res.redirect('/login/helper');
-  }
-
-  try {
-    const feedbackList = await Feedback.find({ helper: req.session.user.id })
-      .populate('seeker', 'name email');
-
-    res.render('helperDashboard', {
-      title: 'Feedback',
-      content: 'partials/feedback',
-      userData: req.session.user,
-      feedback: feedbackList
-    });
-  } catch (err) {
-    console.error("Error fetching feedback:", err);
-    res.status(500).send("Internal Server Error");
-  }
-};
 
 export const postFeedback = async (req, res) => {
   try {

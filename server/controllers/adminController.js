@@ -6,6 +6,8 @@ import Category from '../models/Category.js';
 import Booking from '../models/Booking.js';
 import Location from "../models/Location.js";
 
+//Dealt with
+
 
 // Admin Signup - converted to API
 export const signupAdmin = async (req, res) => {

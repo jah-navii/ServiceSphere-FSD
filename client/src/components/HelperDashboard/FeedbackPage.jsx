@@ -1,38 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import styles from './FeedbackPage.module.css';
 
-const mockFeedback = [
-  { 
-    id: 101, 
-    seeker: { name: 'Alice Smith' }, 
-    rating: 5, 
-    feedback: 'Excellent cleaning service! Punctual and very thorough. Highly recommend.', 
-    date: new Date('2025-11-30T10:00:00Z') 
-  },
-  { 
-    id: 102, 
-    seeker: { name: 'Bob Johnson' }, 
-    rating: 4, 
-    feedback: 'Good service for the plumbing repair. Took a little longer than expected but the fix was solid.', 
-    date: new Date('2025-11-25T14:30:00Z') 
-  },
-];
-
-const renderRatingStars = (rating) => {
-  const fullStars = '⭐️'.repeat(rating);
-  const emptyStars = '☆'.repeat(5 - rating);
-  return `${fullStars}${emptyStars} (${rating}/5)`;
-};
-
-const formatDate = (date) => {
-  if (date instanceof Date) {
-      return date.toLocaleDateString();
-  }
-  return 'N/A';
-};
-
 function FeedbackPage() {
-  const [feedbackList] = useState(mockFeedback);
+  const { userData } = useOutletContext();
+  const [feedbackList, setFeedbackList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Get Helper ID safely
+  const helperId = userData?.helper?._id || userData?.helper?.id || userData?._id;
+
+  // 1. Fetch Feedback
+  useEffect(() => {
+    const fetchFeedback = async () => {
+      if (!helperId) return;
+
+      try {
+        const res = await fetch(`http://localhost:5000/api/helper/feedback/${helperId}`);
+        const data = await res.json();
+
+        if (res.ok) {
+          setFeedbackList(data);
+        } else {
+          console.error("Failed to load feedback");
+        }
+      } catch (err) {
+        console.error("Network error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeedback();
+  }, [helperId]);
+
+  // Helper to render stars
+  const renderRatingStars = (rating) => {
+    const fullStars = '⭐️'.repeat(rating);
+    const emptyStars = '☆'.repeat(5 - rating);
+    return `${fullStars}${emptyStars} (${rating}/5)`;
+  };
+
+  // Helper to format date
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  if (loading) return <p style={{padding:'20px'}}>Loading feedback...</p>;
 
   return (
     <section className={styles.section}>
@@ -41,9 +56,12 @@ function FeedbackPage() {
       <div className={styles.list}>
         {feedbackList && feedbackList.length > 0 ? (
           feedbackList.map(item => (
-            <div className={styles.card} key={item.id}>
+            <div className={styles.card} key={item._id}>
               <div className={styles.header}>
-                <span className={styles.seekerName}>{item.seeker.name}</span>
+                {/* Check if seeker exists (might be deleted user) */}
+                <span className={styles.seekerName}>
+                    {item.seeker?.name || "Unknown User"}
+                </span>
                 <span className={styles.rating}>
                   {renderRatingStars(item.rating)}
                 </span>
@@ -54,7 +72,7 @@ function FeedbackPage() {
               </div>
               
               <div className={styles.date}>
-                Date: {formatDate(item.date)}
+                Date: {formatDate(item.createdAt || item.date)}
               </div>
             </div>
           ))
