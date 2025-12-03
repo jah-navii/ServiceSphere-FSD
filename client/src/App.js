@@ -17,6 +17,10 @@ import RequestsPage from "./components/HelperDashboard/RequestsPage";
 import SchedulePage from "./components/HelperDashboard/SchedulePage";
 import EarningsPage from "./components/HelperDashboard/EarningsPage";
 import FeedbackPage from "./components/HelperDashboard/FeedbackPage";
+// import BookingForm from "./pages/BookingForm/BookingForm";
+import CartPage from "./pages/CartPage/CartPage";
+import PaymentForm from "./pages/PaymentForm";
+import ReviewForm from "./pages/ReviewForm";
 
 function App() {
   return (
@@ -47,9 +51,18 @@ function App() {
           <Route path="earnings" element={<EarningsPage />} />
           <Route path="feedback" element={<FeedbackPage />} />
         </Route>
+        {/* <Route path="/booking" element={<BookingForm />} /> */}
+        <Route path="/cart" element={<CartPage />} />
       </Routes>
     </Router>
-  );
+    // <BookingForm /> 
+    // <CartPage/>
+    // <PaymentForm />
+    // <ReviewForm />
+
+
+    
+);
 }
 
 export default App;
