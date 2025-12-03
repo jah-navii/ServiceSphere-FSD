@@ -6,73 +6,339 @@
 
 /* HERO SECTION */
 .hero {
-  /* Using a relative path - adjust if your image is elsewhere */
-  /* If importing in JS, we can use inline styles for the background */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: 600px;
+  min-height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
   position: relative;
   color: black;
 }
 
 .hero::before {
-  content: '';
+  content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 253, 231, 0.7); /* Beige overlay */
+  inset: 0;
+  /* Softer white overlay instead of cream */
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
-.heroContent {
+.heroInner {
+  position: relative;
   z-index: 1;
-  padding: 2.5rem;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 3.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+  transform: translateY(-20px); /* moves content slightly up */
+}
+
+/* ================================
+   AD CAROUSEL
+   ================================ */
+.adCarousel {
+  width: 100%;
+  max-width: 900px;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 999px;
+  padding: 0.75rem 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(6px);
+  gap: 1.5rem;
+  overflow: hidden;
+  animation: slideDown 0.7s ease-out;
+}
+
+.adContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  animation: fadeIn 0.6s ease;
+}
+
+.adBadge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #007ea7, #00b4d8);
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.adTextBlock h3 {
+  font-size: 1.05rem;
+  margin: 0 0 0.2rem;
+  color: #005f7b;
+}
+
+.adTextBlock p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.adDots {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.adDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(0, 126, 167, 0.3);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.adDotActive {
+  background-color: #007ea7;
+  transform: scale(1.4);
+}
+
+/* ================================
+   HERO CONTENT
+   ================================ */
+
+.heroContent {
+  padding: 2.25rem 3rem;
   max-width: 800px;
-  border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  background-color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  text-align: center;
+  animation: floatUp 0.8s ease-out;
 }
 
 .heroContent h1 {
-  font-size: 3.5rem;
-  margin-bottom: 1.5rem;
+  font-size: 3rem;
+  margin-bottom: 1.25rem;
   font-weight: 700;
-  color: #007ea7; /* Cerulean */
+  color: #007ea7;
 }
 
 .heroContent p {
-  font-size: 1.4rem;
-  margin-bottom: 2.5rem;
-  color: black;
+  font-size: 1.25rem;
+  margin: 0;
+  color: #222;
 }
 
-.ctaButton {
+/* ================================
+   SERVICE CARDS
+   ================================ */
+
+.serviceCards {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1000px;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.serviceCard {
+  flex: 1;
+  min-width: 260px;
+  max-width: 310px;
+  padding: 1.6rem 1.8rem 1.7rem;
+  background-color: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(0, 126, 167, 0.08);
+  transform: translateY(0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+    border-color 0.3s ease, background 0.3s ease;
+}
+
+/* subtle gradient glow on hover */
+.serviceCard::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(
+    circle at top,
+    rgba(0, 126, 167, 0.16),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.serviceCard:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 18px 40px rgba(0, 126, 167, 0.25);
+  border-color: rgba(0, 126, 167, 0.4);
+  background: #ffffff;
+}
+
+.serviceCard:hover::before {
+  opacity: 1;
+}
+
+.cardIcon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.serviceCard h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #005f7b;
+}
+
+.serviceCard p {
+  font-size: 0.98rem;
+  margin-bottom: 1.2rem;
+  color: #444;
+}
+
+/* per-card slight variation (optional subtle accents) */
+.card1 .cardIcon {
+  filter: drop-shadow(0 4px 8px rgba(0, 126, 167, 0.3));
+}
+.card2 .cardIcon {
+  filter: drop-shadow(0 4px 8px rgba(0, 184, 148, 0.3));
+}
+.card3 .cardIcon {
+  filter: drop-shadow(0 4px 8px rgba(255, 159, 64, 0.3));
+}
+
+/* Book Now button in cards */
+.cardButton {
   display: inline-block;
-  padding: 1rem 2rem;
-  background-color: #007ea7;
+  padding: 0.7rem 1.6rem;
+  background: linear-gradient(135deg, #007ea7, #00b4d8);
   color: white;
   text-decoration: none;
-  border-radius: 50px;
-  font-weight: bold;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
   border: none;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease,
+    background 0.25s ease;
+  box-shadow: 0 6px 16px rgba(0, 126, 167, 0.4);
 }
 
-.ctaButton:hover {
-  background-color: #0099cc;
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 126, 167, 0.3);
+.cardButton:hover {
+  background: linear-gradient(135deg, #00b4d8, #0099cc);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 22px rgba(0, 126, 167, 0.5);
+}
+
+/* ================================
+   ANIMATIONS
+   ================================ */
+
+@keyframes floatUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+
+@media (max-width: 900px) {
+  .heroInner {
+    padding-inline: 1.5rem;
+  }
+
+  .heroContent {
+    padding: 1.8rem 1.6rem;
+  }
+
+  .heroContent h1 {
+    font-size: 2.4rem;
+  }
+
+  .heroContent p {
+    font-size: 1.1rem;
+  }
+
+  .adCarousel {
+    flex-direction: column;
+    align-items: stretch;
+    border-radius: 18px;
+  }
+
+  .adDots {
+    justify-content: center;
+  }
 }
 
 @media (max-width: 768px) {
-    .heroContent h1 {
-        font-size: 2.5rem;
-    }
+  .serviceCards {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .serviceCard {
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroContent h1 {
+    font-size: 2rem;
+  }
+
+  .heroContent {
+    padding: 1.5rem 1.3rem;
+  }
+
+  .adTextBlock h3 {
+    font-size: 0.95rem;
+  }
+
+  .adTextBlock p {
+    font-size: 0.8rem;
+  }
 }
