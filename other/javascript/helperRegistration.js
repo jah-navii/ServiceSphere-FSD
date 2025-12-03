@@ -27,15 +27,16 @@ document.addEventListener("DOMContentLoaded", function () {
               isValid = false;
           }
 
-          const mobilePattern = /^[0-9]{10}$/;
-          if (!mobilePattern.test(mobileNumber.value)) {
-              document.getElementById("mobile-error").textContent = "Please enter a valid 10-digit mobile number.";
-              isValid = false;
-          }
 
           const aadharPattern = /^[0-9]{12}$/;
           if (!aadharPattern.test(aadharNumber.value)) {
               document.getElementById("aadhar-error").textContent = "Please enter a valid 12-digit Aadhar number.";
+              isValid = false;
+          }
+
+          const mobilePattern = /^[0-9]{10}$/;
+          if (!mobilePattern.test(mobileNumber.value)) {
+              document.getElementById("mobile-error").textContent = "Please enter a valid 10-digit mobile number.";
               isValid = false;
           }
 
