@@ -87,6 +87,7 @@ function acceptRequest(requestId) {
   updateCalendarWithAcceptedRequests();
 }
 
+
 function rejectRequest(requestId) {
   showModal(`Request ${requestId} rejected!`);
 }

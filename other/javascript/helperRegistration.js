@@ -70,6 +70,8 @@ document.addEventListener("DOMContentLoaded", function () {
               successMessage.style.color = "green";
               successMessage.style.marginTop = "10px";
               successMessage.style.textAlign = "center";
+              
+              
 
               // Append the success message below the submit button
               const submitButton = document.querySelector(".form-group button");
