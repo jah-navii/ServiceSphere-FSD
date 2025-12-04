@@ -27,7 +27,7 @@ const handleSubmit = (event) => {
   const { name, email, adminId, phone, issueType, message } = formData;
 
   const phonePattern = /^[0-9]{10}$/;
-  const namePattern = /^[A-Za-z ]+$/; // <-- Added validation pattern here
+  const namePattern = /^[A-Za-z ]+$/; 
 
   if (!name || !email || !adminId || !phone || !issueType || !message) {
     alert("All fields are required!");
