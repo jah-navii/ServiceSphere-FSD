@@ -1,5 +1,5 @@
 import express from 'express';
-import { renderPreviouslyBookedServices, getPaymentDetails, submitPayment, getReviewDetails } from '../controllers/bookingController.js';
+import { renderPreviouslyBookedServices, payForBooking, getPaymentDetails, submitPayment, getReviewDetails } from '../controllers/bookingController.js';
 
 
 import { createBooking, getUserBookings } from '../controllers/bookingController.js';
@@ -11,6 +11,8 @@ router.post('/', createBooking);
 
 // Route to get all bookings for the Cart/Dashboard page
 router.get('/', getUserBookings);
+
+router.patch('/:id/pay', payForBooking);
 
 
 //Rendering previously booked services 

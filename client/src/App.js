@@ -21,7 +21,7 @@ import FeedbackPage from "./components/HelperDashboard/FeedbackPage";
 
 import BookingForm from "./pages/BookingForm/BookingForm";
 import CartPage from "./pages/CartPage/CartPage";
-// import PaymentForm from "./pages/PaymentForm";
+import PaymentPage from "./pages/PaymentPage/PaymentPage";
 import ReviewForm from "./pages/ReviewForm";
 import SeekerProfile from "./pages/SeekerProfile/SeekerProfile";
 
@@ -64,6 +64,7 @@ function App() {
 
         <Route path="/booking" element={<BookingForm />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/payment" element={<PaymentPage />} />
         <Route path='/seeker-profile' element={<SeekerProfile />} />
 
         <Route path="/login/admin" element={<LoginAdmin />} />

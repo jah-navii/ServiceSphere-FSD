@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import { useSelector } from "react-redux";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
@@ -9,26 +9,24 @@ const CartPage = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0); 
+  const navigate = useNavigate(); // Initialize Navigation
 
-  // Fetch Bookings from API
+  // Fetch Bookings
   useEffect(() => {
     const fetchBookings = async () => {
-      // If no user is logged in, we can't fetch bookings
       if (!currentUser?.id) {
         setLoading(false);
         return;
       }
 
       try {
-        // Replace with your actual API endpoint
-        // e.g., GET /api/bookings?userId=...
         const response = await fetch(`http://localhost:5000/api/bookings?userId=${currentUser.id}`);
         const data = await response.json();
         
         if (data.success) {
             setBookings(data.bookings);
         } else {
-            // Fallback for demo if API isn't ready
             setBookings([]);
         }
       } catch (error) {
@@ -39,11 +37,26 @@ const CartPage = () => {
     };
 
     fetchBookings();
-  }, [currentUser]);
+  }, [currentUser, refreshKey]);
 
-  const handlePayment = (bookingId) => {
-    alert(`Redirecting to payment for Booking ID: ${bookingId}`);
-    // navigate('/payment', { state: { bookingId } });
+  // --- FIX IS HERE ---
+  // We accept the whole 'booking' object, not just an ID
+  const handlePayment = (booking) => {
+    navigate('/payment', { 
+      state: { 
+        bookingId: booking.id || booking._id, // Handle both ID formats
+        serviceName: booking.serviceType || booking.serviceName, // Map service name
+        price: booking.price,
+        helperName: booking.helperName,
+        date: booking.date,
+        time: booking.time
+      } 
+    });
+  };
+
+  const handleRefresh = () => {
+    setLoading(true);
+    setRefreshKey(prev => prev + 1);
   };
 
   return (
@@ -57,13 +70,19 @@ const CartPage = () => {
               <h1>My Bookings</h1>
               <p>Manage your confirmed service bookings</p>
             </div>
-            <Link to="/home" className={styles.homeButton}>
-              {/* Home Icon */}
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z"/>
-              </svg>
-              Home
-            </Link>
+            
+            <div style={{display: 'flex', gap: '10px'}}>
+                <button 
+                    onClick={handleRefresh} 
+                    className={styles.homeButton} 
+                    style={{backgroundColor: '#6c757d'}}
+                >
+                    ↻ Refresh
+                </button>
+                <Link to="/home" className={styles.homeButton}>
+                    Home
+                </Link>
+            </div>
           </div>
         </header>
 
@@ -96,7 +115,10 @@ const CartPage = () => {
                       <div className={styles.bookingTime}>
                         <div className={styles.timeItem}>
                           <svg className={styles.icon} viewBox="0 0 24 24" fill="currentColor"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
-                          <span>{booking.date ? new Date(booking.date).toLocaleDateString() : 'N/A'}</span>
+                          {/* Handle Date formatting safely */}
+                          <span>
+                            {booking.date ? new Date(booking.date).toLocaleDateString() : 'N/A'}
+                          </span>
                         </div>
                         <div className={styles.timeItem}>
                           <svg className={styles.icon} viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
@@ -116,7 +138,8 @@ const CartPage = () => {
                       {booking.status === "Accepted" && !booking.paid ? (
                         <button 
                             className={styles.paymentBtn}
-                            onClick={() => handlePayment(booking._id)}
+                            // --- FIX: Pass the whole booking object ---
+                            onClick={() => handlePayment(booking)} 
                         >
                           Complete Payment
                         </button>

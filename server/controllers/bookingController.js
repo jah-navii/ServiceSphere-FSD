@@ -6,47 +6,49 @@ import Seeker from '../models/Seeker.js';
 // POST /api/bookings
 export const createBooking = async (req, res) => {
   try {
-    // 1. Extract data from React payload
     const { 
-        userId,        // The logged-in Seeker's ID
-        helperId,      // The ID of the Helper being booked
-        serviceName,   // e.g. "Plumbing"
-        customerName,  // Name entered in the form
+        userId,        
+        helperId,      
+        serviceName,   
+        customerName,  
         date, 
         time, 
         address, 
         price 
     } = req.body;
 
-    // 2. Validations
+    // 1. Validations
     if (!userId || !helperId || !date || !time || !address) {
         return res.status(400).json({ error: "Missing required booking details." });
     }
 
-    // Optional: Verify Seeker exists
     const seeker = await Seeker.findById(userId);
     if (!seeker) {
         return res.status(404).json({ error: "User not found. Please login." });
     }
 
-    // 3. Create Booking
+    // 2. Create Booking
     const newBooking = await Booking.create({
-      seeker: userId,           // Link to User
-      helperID: helperId,       // Link to Helper (Note: check your Schema if it's 'helper' or 'helperID')
-      helperName: req.body.helperName, // Optional: store snapshot of helper name
+      seeker: userId,           
+      
+      // --- FIX IS HERE ---
+      // Old: helperID: helperId, 
+      // New: helper: helperId (Matches your Schema Definition)
+      helper: helperId,       
+      
+      helperName: req.body.helperName, 
       customerName: customerName,
-      service_type: serviceName, // Map 'serviceName' to 'service_type'
+      service_type: serviceName, 
       date,
       time,
       address,
       price,
-      status: "Pending",        // Initial status
+      status: "Pending",        
       paid: false
     });
 
     console.log("🎯 Booking created:", newBooking._id);
 
-    // 4. Success Response
     res.status(201).json({ 
         success: true, 
         message: "Booking submitted successfully", 
@@ -59,21 +61,77 @@ export const createBooking = async (req, res) => {
   }
 };
 
-// GET /api/bookings?userId=... (For the Cart Page)
+
+// GET /api/bookings?userId=...
 export const getUserBookings = async (req, res) => {
-    try {
-        const { userId } = req.query;
-        if (!userId) return res.status(400).json({ error: "User ID required" });
-
-        // Fetch bookings for this specific seeker
-        const bookings = await Booking.find({ seeker: userId })
-                                      .sort({ date: -1 }); // Newest first
-
-        res.status(200).json({ success: true, bookings });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server Error" });
+  try {
+    const { userId } = req.query;
+    
+    if (!userId) {
+      return res.status(400).json({ error: "User ID required" });
     }
+
+    // Optional: Date Logic (If you only want upcoming bookings like your EJS code)
+    // const today = new Date().toISOString().split("T")[0];
+    
+    const bookings = await Booking.find({ 
+      seeker: userId,
+      // Uncomment this line if you ONLY want upcoming bookings:
+      // date: { $gte: today } 
+    })
+    .populate('helper', 'name') // Get helper's name from ID
+    .sort({ date: -1 }); // Newest first
+
+    // Format data for React (Flattening the object)
+    const formattedBookings = bookings.map(booking => ({
+      id: booking._id,
+      // Safety check in case helper was deleted
+      helperName: booking.helper ? booking.helper.name : "Unknown Helper",
+      serviceType: booking.service_type, // Matches 'servicetype' in Schema
+      serviceName: booking.service_type, // Redundant fallback for UI
+      date: booking.date,
+      time: booking.time,
+      address: booking.address,
+      price: booking.price,
+      status: booking.status,
+      paid: booking.paid || false
+    }));
+
+    res.status(200).json({ success: true, bookings: formattedBookings });
+
+  } catch (err) {
+    console.error("Error fetching user bookings:", err);
+    res.status(500).json({ error: "Failed to load bookings" });
+  }
+};
+
+
+// PATCH /api/bookings/:id/pay
+export const payForBooking = async (req, res) => {
+  try {
+    // 1. Get ID from URL params (matches the route /:id/pay)
+    const { id } = req.params;
+
+    // 2. Find and Update
+    const booking = await Booking.findByIdAndUpdate(
+      id,
+      { paid: true, status: 'Accepted' }, // Ensure it stays accepted
+      { new: true }
+    );
+
+    if (!booking) {
+      return res.status(404).json({ error: "Booking not found." });
+    }
+
+    console.log("Payment successful for:", booking._id);
+    
+    // 3. Send JSON response (React expects JSON, not text)
+    res.status(200).json({ success: true, message: "Payment successful.", booking });
+
+  } catch (err) {
+    console.error("Payment update error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 // Previous bookings page

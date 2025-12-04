@@ -128,14 +128,13 @@ export const updateHelperProfile = async (req, res) => {
   }
 };
 
-// GET /api/helper/requests/:helperId
+// GET /requests/:helperId
 export const getHelperRequests = async (req, res) => {
   try {
     const { helperId } = req.params;
 
-    // Fetch all bookings for this helper
-    // Sorted by date (descending) so newest requests appear first
-    const requests = await Booking.find({ helperID: helperId })
+    // FIX: Changed 'helperID' to 'helper' to match your Mongoose Schema
+    const requests = await Booking.find({ helper: helperId })
                                   .sort({ date: -1 });
 
     res.status(200).json(requests);

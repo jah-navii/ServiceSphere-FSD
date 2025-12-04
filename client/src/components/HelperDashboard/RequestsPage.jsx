@@ -10,7 +10,7 @@ function RequestsPage() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 1. Get Helper ID safely
+  // Safely extract ID
   const helperId = userData?.helper?._id || userData?.helper?.id || userData?._id;
 
   useEffect(() => {
@@ -18,11 +18,14 @@ function RequestsPage() {
       if (!helperId) return;
 
       try {
-        // Match the Route: GET /api/helper/requests/:helperId
-        const res = await fetch(`http://localhost:5000/api/helper/requests/${helperId}`);
+        console.log("Fetching requests for Helper ID:", helperId); // Debug log
+
+        // FIX A: Updated URL to match root router (removed /api/helper)
+        const res = await fetch(`http://localhost:5000/requests/${helperId}`);
         const data = await res.json();
 
         if (res.ok) {
+          console.log("Requests received:", data); // Debug log
           setRequests(data);
         } else {
           console.error("Failed to fetch requests");
@@ -39,8 +42,8 @@ function RequestsPage() {
 
   const handleStatusUpdate = async (requestId, newStatus) => {
     try {
-      // Match the Route: PATCH /api/helper/requests/update
-      const res = await fetch(`http://localhost:5000/api/helper/requests/update`, {
+      // FIX B: Updated URL to match root router
+      const res = await fetch(`http://localhost:5000/requests/update`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ requestId, status: newStatus }),
@@ -49,7 +52,6 @@ function RequestsPage() {
       const data = await res.json();
 
       if (data.success) {
-        // Update UI locally
         setRequests(prev => 
           prev.map(req => 
             req._id === requestId ? { ...req, status: newStatus } : req
@@ -74,8 +76,7 @@ function RequestsPage() {
       ) : (
         requests.map(request => (
           <div className={styles.card} key={request._id}>
-            {/* Note: Check your Booking model fields. Is it 'servicetype' or 'serviceType'? */}
-            <h3>{request.servicetype || request.serviceName} Service</h3>
+            <h3>{request.service_type || request.serviceName} Service</h3>
             
             <p className={styles.infoRow}>
               <span className={styles.label}>Customer:</span> {request.customerName}
@@ -89,19 +90,19 @@ function RequestsPage() {
             <p className={styles.infoRow}>
               <span className={styles.label}>Price:</span> ₹{request.price}
             </p>
-            
-            {/* Status Display */}
             <p className={styles.infoRow}>
               <span className={styles.label}>Status:</span> 
-              <span className={styles.status} style={{
+              <span 
+                className={styles.status} 
+                style={{
                   color: request.status === 'Accepted' ? '#388e3c' : 
                          request.status === 'Rejected' ? '#d32f2f' : '#ffa000'
-              }}>
+                }}
+              >
                 {request.status}
               </span>
             </p>
             
-            {/* Action Buttons (Only for Pending) */}
             {request.status === 'Pending' && (
               <div className={styles.actions}>
                 <button 
