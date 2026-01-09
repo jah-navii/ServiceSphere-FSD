@@ -85,8 +85,7 @@ function App() {
         <Route path="/TermsAndConditions" element={<TermsAndConditions />} />
       </Routes>
     </Router>
-    
-);
+  );
 }
 
 export default App;
