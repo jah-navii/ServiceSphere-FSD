@@ -134,7 +134,7 @@ export const getHelperRequests = async (req, res) => {
     const { helperId } = req.params;
 
     // FIX: Changed 'helperID' to 'helper' to match your Mongoose Schema
-    const requests = await Booking.find({ helper: helperId })
+    const requests = await Booking.find({ helper: helperId, status: 'Pending' })
                                   .sort({ date: -1 });
 
     res.status(200).json(requests);

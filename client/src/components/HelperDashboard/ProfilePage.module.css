@@ -4,9 +4,10 @@
 }
 
 .form {
-  background: var(--white);
-  /* The padding is handled by the main dashboard container, 
-     but we add a bit here for the form structure */
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -16,7 +17,7 @@
 .label {
   display: block;
   font-weight: 700;
-  color: var(--cerulean);
+  color: #2c3e50;
   margin-bottom: 8px;
   font-size: 1rem;
 }
@@ -34,7 +35,7 @@
 }
 
 .input:focus {
-  border-color: var(--cerulean);
+  border-color: #007ea7;
   outline: none;
   box-shadow: 0 0 0 3px rgba(0, 126, 167, 0.1);
 }
@@ -68,7 +69,7 @@
   align-items: center;
   gap: 10px;
   font-size: 16px;
-  color: var(--black);
+  color: #2c3e50;
   cursor: pointer;
   font-weight: 500;
 }
@@ -76,7 +77,7 @@
 .checkbox {
   width: 18px;
   height: 18px;
-  accent-color: var(--cerulean);
+  accent-color: #007ea7;
   cursor: pointer;
 }
 
@@ -128,19 +129,19 @@
 
 /* Button */
 .submitBtn {
-  background-color: var(--cerulean);
-  color: var(--white);
+  background-color: #007ea7;
+  color: white;
   padding: 14px 20px;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
   margin-top: 10px;
   transition: background-color 0.3s ease;
-  width: 100%; /* Full width button */
+  width: 100%;
 }
 
 .submitBtn:hover {
-  background-color: #005f73;
+  background-color: #005f7a;
 }

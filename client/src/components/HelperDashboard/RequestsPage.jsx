@@ -10,22 +10,18 @@ function RequestsPage() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Safely extract ID
   const helperId = userData?.helper?._id || userData?.helper?.id || userData?._id;
 
+  // To fetch pending requests from the backend
   useEffect(() => {
     const fetchRequests = async () => {
       if (!helperId) return;
 
       try {
-        console.log("Fetching requests for Helper ID:", helperId); // Debug log
-
-        // FIX A: Updated URL to match root router (removed /api/helper)
         const res = await fetch(`http://localhost:5000/requests/${helperId}`);
         const data = await res.json();
 
         if (res.ok) {
-          console.log("Requests received:", data); // Debug log
           setRequests(data);
         } else {
           console.error("Failed to fetch requests");
@@ -40,9 +36,9 @@ function RequestsPage() {
     fetchRequests();
   }, [helperId]);
 
+  // Handling Accept and Reject Buttons
   const handleStatusUpdate = async (requestId, newStatus) => {
     try {
-      // FIX B: Updated URL to match root router
       const res = await fetch(`http://localhost:5000/requests/update`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },

@@ -24,8 +24,10 @@ function SchedulePage() {
         const data = await res.json();
 
         if (res.ok) {
+          console.log('Schedule received: ' + data)
           setEvents(data); // Data is already formatted for FullCalendar by backend
         } else {
+          console.log("No data")
           console.error("Failed to load schedule");
         }
       } catch (err) {

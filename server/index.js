@@ -40,7 +40,7 @@ app.use(express.urlencoded({extended: true}));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(session({
-  secret: 'your-secret-key', // Change this to a secure random string
+  secret: process.env.SESSION_SECRET || 'fallback-secret-key-for-development',
   resave: false,
   saveUninitialized: true
 }));

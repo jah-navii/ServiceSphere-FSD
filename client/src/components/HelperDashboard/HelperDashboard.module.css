@@ -2,35 +2,26 @@
 .dashboardContainer {
   display: flex;
   min-height: 100vh;
-  background-color: var(--beige);
-  font-family: 'Sequel Sans', sans-serif;
+  background-color: #f4f6f8;
 }
 
 /* Main Content Area */
 .mainContent {
   flex: 1;
   padding: 30px;
-  background-color: var(--white);
-  /* The sidebar is fixed width (250px) + some margin */
-  margin-left: 250px; 
-  min-height: 100vh;
+  margin-left: 250px;
   box-sizing: border-box;
 }
 
 /* Header inside Main Content */
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
 }
 
 .header h1 {
-  font-size: 28px;
-  font-weight: bold;
-  color: var(--cerulean);
+  color: #2c3e50;
   margin: 0;
 }
 
