@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import styles from './FeedbackPage.module.css';
 
@@ -6,6 +6,7 @@ function FeedbackPage() {
   const { userData } = useOutletContext();
   const [feedbackList, setFeedbackList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filterRating, setFilterRating] = useState('all');
 
   // Get Helper ID safely
   const helperId = userData?.helper?._id || userData?.helper?.id || userData?._id;
@@ -34,6 +35,26 @@ function FeedbackPage() {
     fetchFeedback();
   }, [helperId]);
 
+  // Calculate statistics
+  const stats = useMemo(() => {
+    if (!feedbackList.length) return null;
+    
+    const totalReviews = feedbackList.length;
+    const avgRating = (feedbackList.reduce((sum, item) => sum + item.rating, 0) / totalReviews).toFixed(1);
+    const ratingDistribution = [5, 4, 3, 2, 1].map(star => ({
+      star,
+      count: feedbackList.filter(item => item.rating === star).length
+    }));
+    
+    return { totalReviews, avgRating, ratingDistribution };
+  }, [feedbackList]);
+
+  // Filter feedback by rating
+  const filteredFeedback = useMemo(() => {
+    if (filterRating === 'all') return feedbackList;
+    return feedbackList.filter(item => item.rating === parseInt(filterRating));
+  }, [feedbackList, filterRating]);
+
   // Helper to render stars
   const renderRatingStars = (rating) => {
     const fullStars = '⭐️'.repeat(rating);
@@ -51,14 +72,65 @@ function FeedbackPage() {
 
   return (
     <section className={styles.section}>
-      <h2 className={styles.heading}>Customer Feedback</h2>
+      {/* Statistics Dashboard */}
+      {stats && (
+        <div className={styles.statsContainer}>
+          <div className={styles.statCard}>
+            <div className={styles.statValue}>{stats.avgRating}</div>
+            <div className={styles.statLabel}>Average Rating</div>
+            <div className={styles.stars}>
+              {renderRatingStars(Math.round(parseFloat(stats.avgRating)))}
+            </div>
+          </div>
+          
+          <div className={styles.statCard}>
+            <div className={styles.statValue}>{stats.totalReviews}</div>
+            <div className={styles.statLabel}>Total Reviews</div>
+          </div>
+          
+          <div className={styles.ratingBreakdown}>
+            <div className={styles.breakdownTitle}>Rating Distribution</div>
+            {stats.ratingDistribution.map(({ star, count }) => (
+              <div key={star} className={styles.breakdownRow}>
+                <span className={styles.breakdownStar}>{star} ⭐️</span>
+                <div className={styles.progressBar}>
+                  <div 
+                    className={styles.progressFill} 
+                    style={{ width: `${(count / stats.totalReviews) * 100}%` }}
+                  />
+                </div>
+                <span className={styles.breakdownCount}>{count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Filter */}
+      {feedbackList.length > 0 && (
+        <div className={styles.filterContainer}>
+          <label className={styles.filterLabel}>Filter by rating:</label>
+          <select 
+            className={styles.filterSelect} 
+            value={filterRating} 
+            onChange={(e) => setFilterRating(e.target.value)}
+          >
+            <option value="all">All Ratings</option>
+            <option value="5">5 Stars</option>
+            <option value="4">4 Stars</option>
+            <option value="3">3 Stars</option>
+            <option value="2">2 Stars</option>
+            <option value="1">1 Star</option>
+          </select>
+        </div>
+      )}
       
+      {/* Feedback List */}
       <div className={styles.list}>
-        {feedbackList && feedbackList.length > 0 ? (
-          feedbackList.map(item => (
+        {filteredFeedback && filteredFeedback.length > 0 ? (
+          filteredFeedback.map(item => (
             <div className={styles.card} key={item._id}>
               <div className={styles.header}>
-                {/* Check if seeker exists (might be deleted user) */}
                 <span className={styles.seekerName}>
                     {item.seeker?.name || "Unknown User"}
                 </span>
@@ -72,12 +144,14 @@ function FeedbackPage() {
               </div>
               
               <div className={styles.date}>
-                Date: {formatDate(item.createdAt || item.date)}
+                {formatDate(item.createdAt || item.date)}
               </div>
             </div>
           ))
+        ) : feedbackList.length > 0 ? (
+          <p className={styles.empty}>No feedback matches the selected filter.</p>
         ) : (
-          <p className={styles.empty}>No feedback available yet.</p>
+          <p className={styles.empty}>No feedback received yet. Keep up the great work!</p>
         )}
       </div>
     </section>

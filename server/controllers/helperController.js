@@ -179,9 +179,9 @@ export const getHelperSchedule = async (req, res) => {
 
     // Fetch only Accepted bookings
     const bookings = await Booking.find({
-      helperID: helperId,
+      helper: helperId,
       status: 'Accepted'
-    });
+    }).populate('seeker', 'name');
 
     // Transform into FullCalendar Event Format
     const events = bookings.map(booking => {
@@ -194,15 +194,22 @@ export const getHelperSchedule = async (req, res) => {
           dateStr = booking.date.toISOString().split('T')[0];
       }
 
+      const customerName = booking.seeker?.name || 'Customer';
+      const serviceName = booking.service_type || 'Service';
+      
       return {
         id: booking._id,
-        title: `Booked: ${booking.customerName}`, // Shows "Booked: John Doe" on calendar
-        start: `${dateStr}T${booking.time}`, // ISO format: 2025-12-10T10:00
-        allDay: false, // Set to false so it shows at specific time in TimeGrid view
-        color: '#28a745', // Green color for accepted jobs
+        title: `${serviceName} - ${customerName}`,
+        start: `${dateStr}T${booking.time}`,
+        allDay: false,
+        color: '#28a745',
         extendedProps: {
             address: booking.address,
-            price: booking.price
+            price: booking.price,
+            customerName: customerName,
+            serviceType: serviceName,
+            date: dateStr,
+            time: booking.time
         }
       };
     });
@@ -224,7 +231,7 @@ export const getHelperEarnings = async (req, res) => {
     // Note: In a real app, you might check 'paid: true' here. 
     // For now, we assume Accepted = Earnings.
     const bookings = await Booking.find({
-      helperID: helperId, // Matches the field in Booking Model
+      helper: helperId,
       status: 'Accepted'
     });
 
@@ -276,5 +283,80 @@ export const getHelperFeedback = async (req, res) => {
   } catch (err) {
     console.error("Error fetching feedback:", err);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// POST /api/helper/seed-demo-bookings - For testing/demo purposes only
+export const seedDemoBookings = async (req, res) => {
+  try {
+    const { helperId, seekerId } = req.body;
+
+    if (!helperId || !seekerId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Helper ID and Seeker ID are required' 
+      });
+    }
+
+    // Verify helper and seeker exist
+    const helper = await Helper.findById(helperId);
+    const seeker = await Seeker.findById(seekerId);
+
+    if (!helper || !seeker) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Helper or Seeker not found' 
+      });
+    }
+
+    const serviceTypes = ['Plumber', 'Electrician', 'Carpenter', 'Cleaner', 'Painter'];
+    const addresses = [
+      '123 Main St, Mumbai',
+      '456 Park Ave, Delhi',
+      '789 Lake View, Bangalore',
+      '321 Green Road, Pune',
+      '654 Hill Street, Chennai'
+    ];
+    const times = ['09:00', '10:30', '14:00', '15:30', '11:00', '16:00'];
+
+    const demoBookings = [];
+    const now = new Date();
+
+    // Create 15 bookings spread over the past 60 days
+    for (let i = 0; i < 15; i++) {
+      const daysAgo = Math.floor(Math.random() * 60) + 1; // 1 to 60 days ago
+      const bookingDate = new Date(now);
+      bookingDate.setDate(bookingDate.getDate() - daysAgo);
+      
+      const dateString = bookingDate.toISOString().split('T')[0]; // YYYY-MM-DD
+
+      const booking = new Booking({
+        helper: helperId,
+        seeker: seekerId,
+        service_type: serviceTypes[Math.floor(Math.random() * serviceTypes.length)],
+        date: dateString,
+        time: times[Math.floor(Math.random() * times.length)],
+        address: addresses[Math.floor(Math.random() * addresses.length)],
+        status: 'Accepted',
+        price: Math.floor(Math.random() * 1000) + 300, // 300 to 1300
+        paid: Math.random() > 0.3 // 70% paid
+      });
+
+      await booking.save();
+      demoBookings.push(booking);
+    }
+
+    res.status(201).json({
+      success: true,
+      message: `Successfully created ${demoBookings.length} demo bookings`,
+      bookings: demoBookings
+    });
+
+  } catch (error) {
+    console.error('Error seeding demo bookings:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to create demo bookings' 
+    });
   }
 };
