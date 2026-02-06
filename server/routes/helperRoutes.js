@@ -8,14 +8,13 @@ import {
   updateRequestStatus,
   getHelperSchedule,
   getHelperEarnings,
-  getHelperFeedback
+  getHelperFeedback,
+  seedDemoBookings
 } from '../controllers/helperController.js';
-
-// dealt with
 
 const router = express.Router();
 
-// --- Multer Config ---
+// Multer Config 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/'); // Ensure this folder exists in your root
@@ -37,11 +36,14 @@ router.put('/profile', upload.single('certifications'), updateHelperProfile);
 router.get('/requests/:helperId', getHelperRequests);
 router.patch('/requests/update', updateRequestStatus);
 
-router.get('/schedule/:helperId', getHelperSchedule);
+router.get('/api/helper/schedule/:helperId', getHelperSchedule);
 
-router.get('/earnings/:helperId', getHelperEarnings);
+router.get('/api/helper/earnings/:helperId', getHelperEarnings);
 
-router.get('/feedback/:helperId', getHelperFeedback);
+router.get('/api/helper/feedback/:helperId', getHelperFeedback);
+
+// Demo/Testing endpoint - Creates historical bookings for testing
+router.post('/api/helper/seed-demo-bookings', seedDemoBookings);
 
 export default router;
 

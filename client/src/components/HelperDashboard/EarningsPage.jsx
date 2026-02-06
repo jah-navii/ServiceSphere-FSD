@@ -17,6 +17,23 @@ function EarningsPage() {
   // Get Helper ID safely
   const helperId = userData?.helper?._id || userData?.helper?.id || userData?._id;
 
+  // Demo data for presentation purposes
+  const demoData = {
+    pastMonthEarnings: [
+      { date: '2026-01-28', service: 'Plumbing', customer: 'Rahul Sharma', amount: 850 },
+      { date: '2026-01-25', service: 'Electrical Work', customer: 'Priya Patel', amount: 1200 },
+      { date: '2026-01-22', service: 'Carpentry', customer: 'Amit Kumar', amount: 950 },
+      { date: '2026-01-20', service: 'Plumbing', customer: 'Sneha Reddy', amount: 700 },
+      { date: '2026-01-18', service: 'Painting', customer: 'Vikram Singh', amount: 1500 },
+      { date: '2026-01-15', service: 'Electrical Work', customer: 'Anjali Gupta', amount: 800 },
+      { date: '2026-01-12', service: 'Cleaning', customer: 'Rohit Mehta', amount: 600 },
+      { date: '2026-01-10', service: 'Carpentry', customer: 'Neha Joshi', amount: 1100 },
+      { date: '2026-01-08', service: 'Plumbing', customer: 'Karan Verma', amount: 750 },
+      { date: '2026-01-05', service: 'Painting', customer: 'Pooja Nair', amount: 1300 },
+    ],
+    lifetimeEarnings: 24850
+  };
+
   // 1. Fetch Earnings Data
   useEffect(() => {
     const fetchEarnings = async () => {
@@ -27,12 +44,20 @@ function EarningsPage() {
         const data = await res.json();
 
         if (res.ok) {
-          setEarningsData(data);
+          // If no data from backend, use demo data for presentation
+          if (data.pastMonthEarnings && data.pastMonthEarnings.length > 0) {
+            setEarningsData(data);
+          } else {
+            console.log('No earnings data found, showing demo data for presentation');
+            setEarningsData(demoData);
+          }
         } else {
-          console.error("Failed to load earnings");
+          console.error("Failed to load earnings, using demo data");
+          setEarningsData(demoData);
         }
       } catch (err) {
-        console.error("Network error:", err);
+        console.error("Network error, using demo data:", err);
+        setEarningsData(demoData);
       } finally {
         setLoading(false);
       }
@@ -48,8 +73,18 @@ function EarningsPage() {
         chartInstanceRef.current.destroy();
       }
 
-      const labels = earningsData.pastMonthEarnings.map(item => item.service);
-      const amounts = earningsData.pastMonthEarnings.map(item => item.amount);
+      // Aggregate earnings by service type
+      const serviceEarnings = {};
+      earningsData.pastMonthEarnings.forEach(item => {
+        if (serviceEarnings[item.service]) {
+          serviceEarnings[item.service] += item.amount;
+        } else {
+          serviceEarnings[item.service] = item.amount;
+        }
+      });
+
+      const labels = Object.keys(serviceEarnings);
+      const amounts = Object.values(serviceEarnings);
 
       const ctx = chartRef.current.getContext('2d');
       chartInstanceRef.current = new Chart(ctx, {
@@ -57,7 +92,7 @@ function EarningsPage() {
         data: {
           labels: labels,
           datasets: [{
-            label: 'Earnings per Service',
+            label: 'Total Earnings per Service',
             data: amounts,
             backgroundColor: '#007ea7',
             borderColor: '#005f73',
