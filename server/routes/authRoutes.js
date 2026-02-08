@@ -28,4 +28,15 @@ router.get('/login/seeker', (req, res) => {
 
 router.post('/login/seeker', loginSeeker);
 
+// Logout route (works for all user types)
+router.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to logout' });
+    }
+    res.clearCookie('connect.sid'); // Clear session cookie
+    res.status(200).json({ success: true, message: 'Logged out successfully' });
+  });
+});
+
 export default router;

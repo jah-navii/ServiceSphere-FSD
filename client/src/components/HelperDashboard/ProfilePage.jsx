@@ -130,6 +130,7 @@ function ProfilePage() {
       // UPDATED URL based on your request
       const response = await fetch("http://localhost:5000/profile", { 
         method: "PUT",
+        credentials: "include",
         body: submitData,
       });
 

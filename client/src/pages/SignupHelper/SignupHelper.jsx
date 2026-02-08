@@ -83,6 +83,7 @@ const SignupHelper = () => {
       const response = await fetch("http://localhost:5000/signup/helper", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(finalPayload),
       });
 

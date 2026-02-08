@@ -38,6 +38,7 @@ const LoginForm = ({ title, apiEndpoint, signupPath, redirectPath }) => {
       const response = await fetch(`http://localhost:5000${apiEndpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(formData),
       });
 

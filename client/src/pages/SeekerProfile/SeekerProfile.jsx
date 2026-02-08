@@ -71,6 +71,7 @@ const SeekerProfile = () => {
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({
             id: currentUser.id,
             name,

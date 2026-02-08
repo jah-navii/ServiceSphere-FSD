@@ -21,7 +21,9 @@ const CartPage = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:5000/api/bookings?userId=${currentUser.id}`);
+        const response = await fetch(`http://localhost:5000/api/bookings?userId=${currentUser.id}`, {
+          credentials: "include"
+        });
         const data = await response.json();
         
         if (data.success) {

@@ -102,6 +102,7 @@ app.use('/', helperRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/', feedbackRoutes);
 app.use('/', adminRoutes);
+app.use('/api/seeker', seekerRoutes);
 app.use('/', seekerRoutes);
 app.use('/', serviceRoutes);
 app.use('/', messageRoutes);

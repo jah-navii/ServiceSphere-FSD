@@ -70,6 +70,9 @@ export const loginAdmin = async (req, res) => {
       role: 'admin' // Important for redirect logic
     };
 
+    // Set Session for Server-Side Authentication
+    req.session.user = userData;
+
     console.log('Admin logged in ✅');
     return res.status(200).json({ success: true, user: userData });
 

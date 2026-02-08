@@ -159,6 +159,9 @@ export const loginHelper = async (req, res) => {
       role: "helper", // Useful for React to know which dashboard to show
     };
 
+    // Set Session for Server-Side Authentication
+    req.session.user = userData;
+
     console.log("Helper logged in ✅");
     // Return 200 OK with JSON
     return res.status(200).json({ success: true, user: userData });
@@ -197,11 +200,12 @@ export const loginSeeker = async (req, res) => {
       role: "seeker" // Crucial for Frontend logic
     };
 
+    // 4. Set Session for Server-Side Authentication
+    req.session.user = userData;
+
     console.log('Seeker logged in ✅');
 
-    // 4. Success Response (Return 200 JSON)
-    // REMOVED: req.session (unless you configured CORS for cookies)
-    // REMOVED: res.redirect (React will handle navigation)
+    // 5. Success Response (Return 200 JSON)
     return res.status(200).json({ success: true, user: userData });
 
   } catch (err) {

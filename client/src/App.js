@@ -22,7 +22,6 @@ import FeedbackPage from "./components/HelperDashboard/FeedbackPage";
 import BookingForm from "./pages/BookingForm/BookingForm";
 import CartPage from "./pages/CartPage/CartPage";
 import PaymentPage from "./pages/PaymentPage/PaymentPage";
-import ReviewForm from "./pages/ReviewForm";
 import SeekerProfile from "./pages/SeekerProfile/SeekerProfile";
 
 import AboutUs from "./pages/AboutUs/AboutUs";
@@ -36,24 +35,67 @@ import ManageLocations from "./components/AdminDashboard/ManageLocations";
 
 import AdminContact from "./pages/AdminContact/AdminContact";
 import TermsAndConditions from "./pages/TermsAndConditions/TermsAndConditions";
+import NotFound from "./pages/NotFound";
+import Unauthorized from "./pages/Unauthorized";
+import ProtectedRoute from "./components/ProtectedRoute";
+
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup/seeker" element={<SignupSeeker />} />
         <Route path="/signup/helper" element={<SignupHelper />} />
+        <Route path="/signup/admin" element={<SignupAdmin />} />
         <Route path="/login/seeker" element={<LoginSeeker />} />
         <Route path="/login/helper" element={<LoginHelper />} />
         <Route path="/login/admin" element={<LoginAdmin />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/search" element={<SearchPage />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/AdminContact" element={<AdminContact />} />
+        <Route path="/TermsAndConditions" element={<TermsAndConditions />} />
+        
+        {/* Seeker Protected Routes */}
+        <Route path="/home" element={
+          <ProtectedRoute redirectTo="/login/seeker" allowedRoles={['seeker']}>
+            <Home />
+          </ProtectedRoute>
+        } />
+        <Route path="/search" element={
+          <ProtectedRoute redirectTo="/login/seeker" allowedRoles={['seeker']}>
+            <SearchPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/booking" element={
+          <ProtectedRoute redirectTo="/login/seeker" allowedRoles={['seeker']}>
+            <BookingForm />
+          </ProtectedRoute>
+        } />
+        <Route path="/cart" element={
+          <ProtectedRoute redirectTo="/login/seeker" allowedRoles={['seeker']}>
+            <CartPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/payment" element={
+          <ProtectedRoute redirectTo="/login/seeker" allowedRoles={['seeker']}>
+            <PaymentPage />
+          </ProtectedRoute>
+        } />
+        <Route path='/seeker-profile' element={
+          <ProtectedRoute redirectTo="/login/seeker" allowedRoles={['seeker']}>
+            <SeekerProfile />
+          </ProtectedRoute>
+        } />
 
-        <Route path="/helper" element={<HelperDashboard />}>
+        {/* Helper Protected Routes */}
+        <Route path="/helper" element={
+          <ProtectedRoute redirectTo="/login/helper" allowedRoles={['helper']}>
+            <HelperDashboard />
+          </ProtectedRoute>
+        }>
           <Route index element={<RequestsPage />} />
-
           <Route path="dashboard" element={<RequestsPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="requests" element={<RequestsPage />} />
@@ -62,17 +104,12 @@ function App() {
           <Route path="feedback" element={<FeedbackPage />} />
         </Route>
 
-        <Route path="/booking" element={<BookingForm />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/payment" element={<PaymentPage />} />
-        <Route path='/seeker-profile' element={<SeekerProfile />} />
-
-        <Route path="/login/admin" element={<LoginAdmin />} />
-        <Route path="/signup/admin" element={<SignupAdmin />} />
-        <Route path="/about" element={<AboutUs />} />
-
-        {/* ADMIN ROUTES */}
-        <Route path="/admin" element={<AdminLayout />}>
+        {/* Admin Protected Routes */}
+        <Route path="/admin" element={
+          <ProtectedRoute redirectTo="/login/admin" allowedRoles={['admin']}>
+            <AdminLayout />
+          </ProtectedRoute>
+        }>
           <Route path="dashboard" element={<DashboardHome />} />
           <Route path="users" element={<ManageUsers />} />
           <Route path="services" element={<ManageServices />} />
@@ -80,9 +117,9 @@ function App() {
           <Route path="locations" element={<ManageLocations />} />
         </Route>
 
-
-        <Route path="/AdminContact" element={<AdminContact />} />
-        <Route path="/TermsAndConditions" element={<TermsAndConditions />} />
+        {/* Error Pages */}
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
