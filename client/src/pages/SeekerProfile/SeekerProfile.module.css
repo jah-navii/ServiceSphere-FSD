@@ -177,3 +177,15 @@
 .seekerHomeIconSymbol {
   font-size: 1.5rem;
 }
+
+/* Logout button styling */
+.seekerLogoutBtn {
+  background-color: #dc3545;
+  margin-top: 10px;
+}
+
+.seekerLogoutBtn:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(220, 53, 69, 0.4);
+}

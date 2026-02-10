@@ -28,10 +28,6 @@ export const ToastProvider = ({ children }) => {
       {/* Render the Toast UI globally here */}
       {toast && (
         <div className={`${styles.toast} ${styles[toast.type]}`}>
-          {/* Icon based on type */}
-          <span className={styles.icon}>
-            {toast.type === "success" ? "✅" : "❌"}
-          </span>
           <span className={styles.message}>{toast.message}</span>
         </div>
       )}

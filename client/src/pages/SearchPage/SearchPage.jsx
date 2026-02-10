@@ -211,7 +211,7 @@ const SearchPage = () => {
                         <strong>{helper.gender}</strong>
                       </div>
 
-                      <div className={styles.rating}>⭐ {helper.rating}</div>
+                      <div className={styles.rating}>Rating: {helper.rating}/5</div>
                     </div>
                   </div>
                   

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { loginSuccess } from "../../redux/userSlice";
+import { useNavigate } from "react-router-dom";
+import { loginSuccess, logout } from "../../redux/userSlice";
 import { useToast } from "../../context/ToastContext";
 import styles from "./SeekerProfile.module.css";
 
@@ -9,6 +10,7 @@ import profilePic from "../../assets/profile-picture.png";
 
 const SeekerProfile = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { showToast } = useToast();
 
   const { currentUser } = useSelector((state) => state.user);
@@ -56,6 +58,12 @@ const SeekerProfile = () => {
   };
 
   const handleAddressChange = (e) => setAddress(e.target.value);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    showToast("Logged out successfully!", "success");
+    navigate("/login");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -209,9 +217,23 @@ const SeekerProfile = () => {
 
         <a href="/cart">
           <button type="button" className={styles.seekerBtn}>
+            My Active Bookings
+          </button>
+        </a>
+
+        <a href="/previous-bookings">
+          <button type="button" className={styles.seekerBtn}>
             View Previous Bookings
           </button>
         </a>
+
+        <button
+          type="button"
+          className={`${styles.seekerBtn} ${styles.seekerLogoutBtn}`}
+          onClick={handleLogout}
+        >
+          <i className="fas fa-sign-out-alt"></i> Logout
+        </button>
       </div>
     </div>
   );

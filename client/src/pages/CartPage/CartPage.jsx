@@ -27,7 +27,19 @@ const CartPage = () => {
         const data = await response.json();
         
         if (data.success) {
-            setBookings(data.bookings);
+            // Filter for future/active bookings only
+            // Exclude completed bookings from the past
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const activeBookings = data.bookings.filter((booking) => {
+              const bookingDate = new Date(booking.date);
+              // Show future bookings or today's bookings regardless of status
+              // Hide past completed bookings
+              return bookingDate >= today || !(booking.status === "Accepted" && booking.paid === true);
+            });
+            
+            setBookings(activeBookings);
         } else {
             setBookings([]);
         }
@@ -70,10 +82,10 @@ const CartPage = () => {
           <div className={styles.headerContent}>
             <div className={styles.pageTitle}>
               <h1>My Bookings</h1>
-              <p>Manage your confirmed service bookings</p>
+              <p>Manage your active service bookings</p>
             </div>
             
-            <div style={{display: 'flex', gap: '10px'}}>
+            <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
                 <button 
                     onClick={handleRefresh} 
                     className={styles.homeButton} 
@@ -81,6 +93,9 @@ const CartPage = () => {
                 >
                     ↻ Refresh
                 </button>
+                <Link to="/previous-bookings" className={styles.homeButton} style={{backgroundColor: '#9c27b0'}}>
+                    Previous Bookings
+                </Link>
                 <Link to="/home" className={styles.homeButton}>
                     Home
                 </Link>

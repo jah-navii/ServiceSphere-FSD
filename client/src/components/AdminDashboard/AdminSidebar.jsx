@@ -7,11 +7,11 @@ const AdminSidebar = () => {
   const location = useLocation();
 
   const navItems = [
-    { to: "/admin/dashboard", label: "Dashboard", icon: "📊" }, // You can use FontAwesome class names too
-    { to: "/admin/users", label: "User Management", icon: "👥" },
-    { to: "/admin/services", label: "Service Overview", icon: "🛠️" },
-    { to: "/admin/earnings", label: "Earnings Overview", icon: "💰" },
-    { to: "/admin/locations", label: "Locations Overview", icon: " "}
+    { to: "/admin/dashboard", label: "Dashboard", icon: "" },
+    { to: "/admin/users", label: "User Management", icon: "" },
+    { to: "/admin/services", label: "Service Overview", icon: "" },
+    { to: "/admin/earnings", label: "Earnings Overview", icon: "" },
+    { to: "/admin/locations", label: "Locations Overview", icon: ""}
   ];
 
   return (
