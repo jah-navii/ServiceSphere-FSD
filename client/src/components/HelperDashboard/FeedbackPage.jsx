@@ -57,7 +57,7 @@ function FeedbackPage() {
 
   // Helper to render stars
   const renderRatingStars = (rating) => {
-    const fullStars = '⭐️'.repeat(rating);
+    const fullStars = '★'.repeat(rating);
     const emptyStars = '☆'.repeat(5 - rating);
     return `${fullStars}${emptyStars} (${rating}/5)`;
   };
@@ -92,7 +92,7 @@ function FeedbackPage() {
             <div className={styles.breakdownTitle}>Rating Distribution</div>
             {stats.ratingDistribution.map(({ star, count }) => (
               <div key={star} className={styles.breakdownRow}>
-                <span className={styles.breakdownStar}>{star} ⭐️</span>
+                <span className={styles.breakdownStar}>{star} ★</span>
                 <div className={styles.progressBar}>
                   <div 
                     className={styles.progressFill} 

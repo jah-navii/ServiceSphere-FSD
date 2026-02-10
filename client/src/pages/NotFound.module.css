@@ -3,87 +3,162 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: var(--beige);
   padding: 20px;
+  font-family: 'Sequel Sans', sans-serif;
 }
 
 .content {
   text-align: center;
-  color: white;
-  max-width: 600px;
+  max-width: 650px;
+  background-color: var(--white);
+  padding: 3rem 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 126, 167, 0.15);
+}
+
+.logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 2rem;
+  animation: fadeInDown 0.6s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .errorCode {
-  font-size: 150px;
+  font-size: 120px;
   font-weight: bold;
   margin: 0;
   line-height: 1;
-  text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+  color: var(--cerulean);
+  text-shadow: 2px 2px 4px rgba(0, 126, 167, 0.2);
+  animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .title {
-  font-size: 36px;
-  margin: 20px 0;
-  font-weight: 600;
+  font-size: 32px;
+  margin: 1.5rem 0 1rem 0;
+  font-weight: 700;
+  color: var(--black);
+  animation: fadeIn 0.8s ease-out 0.4s both;
 }
 
 .message {
-  font-size: 18px;
-  margin-bottom: 40px;
-  opacity: 0.9;
+  font-size: 16px;
+  margin-bottom: 2.5rem;
+  color: #555;
+  line-height: 1.6;
+  animation: fadeIn 0.8s ease-out 0.6s both;
 }
 
 .actions {
   display: flex;
-  gap: 20px;
+  gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
+  animation: fadeIn 0.8s ease-out 0.8s both;
 }
 
 .backButton,
 .homeButton {
-  padding: 12px 30px;
+  padding: 0.75rem 1.75rem;
   font-size: 16px;
-  border-radius: 8px;
+  border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
-  display: inline-block;
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-family: 'Sequel Sans', sans-serif;
+}
+
+.icon {
+  font-size: 18px;
 }
 
 .backButton {
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid white;
-  color: white;
+  background-color: transparent;
+  border: 2px solid var(--cerulean);
+  color: var(--cerulean);
 }
 
 .backButton:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background-color: var(--cerulean);
+  color: var(--white);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 126, 167, 0.3);
 }
 
 .homeButton {
-  background: white;
-  border: 2px solid white;
-  color: #667eea;
+  background-color: var(--cerulean);
+  border: 2px solid var(--cerulean);
+  color: var(--white);
 }
 
 .homeButton:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background-color: #005f7a;
+  border-color: #005f7a;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 126, 167, 0.4);
 }
 
 @media (max-width: 768px) {
+  .content {
+    padding: 2rem 1.5rem;
+  }
+
+  .logo {
+    width: 100px;
+  }
+
   .errorCode {
-    font-size: 100px;
+    font-size: 80px;
   }
 
   .title {
-    font-size: 28px;
+    font-size: 24px;
   }
 
   .message {
-    font-size: 16px;
+    font-size: 14px;
+    margin-bottom: 2rem;
+  }
+
+  .backButton,
+  .homeButton {
+    padding: 0.65rem 1.5rem;
+    font-size: 14px;
+  }
+
+  .actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .backButton,
+  .homeButton {
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -11,8 +11,10 @@ function EarningsPage() {
   });
   const [loading, setLoading] = useState(true);
 
-  const chartRef = useRef(null);
-  const chartInstanceRef = useRef(null);
+  const lineChartRef = useRef(null);
+  const doughnutChartRef = useRef(null);
+  const lineChartInstanceRef = useRef(null);
+  const doughnutChartInstanceRef = useRef(null);
 
   // Get Helper ID safely
   const helperId = userData?.helper?._id || userData?.helper?.id || userData?._id;
@@ -34,17 +36,18 @@ function EarningsPage() {
     lifetimeEarnings: 24850
   };
 
-  // 1. Fetch Earnings Data
+  // Fetch Earnings Data
   useEffect(() => {
     const fetchEarnings = async () => {
       if (!helperId) return;
 
       try {
-        const res = await fetch(`http://localhost:5000/api/helper/earnings/${helperId}`);
+        const res = await fetch(`http://localhost:5000/api/helper/earnings/${helperId}`, {
+          credentials: 'include'
+        });
         const data = await res.json();
 
         if (res.ok) {
-          // If no data from backend, use demo data for presentation
           if (data.pastMonthEarnings && data.pastMonthEarnings.length > 0) {
             setEarningsData(data);
           } else {
@@ -66,46 +69,117 @@ function EarningsPage() {
     fetchEarnings();
   }, [helperId]);
 
-  // 2. Render Chart
+  // Calculate analytics
+  const calculateAnalytics = () => {
+    const earnings = earningsData.pastMonthEarnings;
+    const currentMonthTotal = earnings.reduce((sum, item) => sum + item.amount, 0);
+    const totalJobs = earnings.length;
+    const avgPerJob = totalJobs > 0 ? currentMonthTotal / totalJobs : 0;
+
+    // Group by service for analysis
+    const serviceStats = {};
+    earnings.forEach(item => {
+      if (!serviceStats[item.service]) {
+        serviceStats[item.service] = { total: 0, count: 0 };
+      }
+      serviceStats[item.service].total += item.amount;
+      serviceStats[item.service].count += 1;
+    });
+
+    // Find most profitable service
+    let topService = { name: 'N/A', amount: 0 };
+    Object.entries(serviceStats).forEach(([service, stats]) => {
+      if (stats.total > topService.amount) {
+        topService = { name: service, amount: stats.total };
+      }
+    });
+
+    // Sort earnings by date for trend
+    const sortedEarnings = [...earnings].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    return {
+      currentMonthTotal,
+      totalJobs,
+      avgPerJob,
+      topService,
+      serviceStats,
+      sortedEarnings
+    };
+  };
+
+  const analytics = calculateAnalytics();
+
+  // Render Line Chart (Earnings Trend)
   useEffect(() => {
-    if (chartRef.current && earningsData.pastMonthEarnings.length > 0) {
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.destroy();
+    if (lineChartRef.current && analytics.sortedEarnings.length > 0) {
+      if (lineChartInstanceRef.current) {
+        lineChartInstanceRef.current.destroy();
       }
 
-      // Aggregate earnings by service type
-      const serviceEarnings = {};
-      earningsData.pastMonthEarnings.forEach(item => {
-        if (serviceEarnings[item.service]) {
-          serviceEarnings[item.service] += item.amount;
+      // Aggregate by date
+      const dateMap = {};
+      analytics.sortedEarnings.forEach(item => {
+        if (dateMap[item.date]) {
+          dateMap[item.date] += item.amount;
         } else {
-          serviceEarnings[item.service] = item.amount;
+          dateMap[item.date] = item.amount;
         }
       });
 
-      const labels = Object.keys(serviceEarnings);
-      const amounts = Object.values(serviceEarnings);
+      const dates = Object.keys(dateMap);
+      const amounts = Object.values(dateMap);
 
-      const ctx = chartRef.current.getContext('2d');
-      chartInstanceRef.current = new Chart(ctx, {
-        type: 'bar',
+      const ctx = lineChartRef.current.getContext('2d');
+      lineChartInstanceRef.current = new Chart(ctx, {
+        type: 'line',
         data: {
-          labels: labels,
+          labels: dates.map(d => new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })),
           datasets: [{
-            label: 'Total Earnings per Service',
+            label: 'Daily Earnings',
             data: amounts,
-            backgroundColor: '#007ea7',
-            borderColor: '#005f73',
-            borderWidth: 1
+            borderColor: '#4A90E2',
+            backgroundColor: 'rgba(74, 144, 226, 0.1)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#4A90E2',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: '#fff',
+              titleColor: '#333',
+              bodyColor: '#666',
+              borderColor: '#ddd',
+              borderWidth: 1,
+              padding: 12,
+              displayColors: false
+            }
+          },
           scales: {
             y: {
               beginAtZero: true,
-              title: { display: true, text: 'Earnings (₹)' }
+              ticks: {
+                callback: function(value) {
+                  return '₹' + value;
+                }
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.05)'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
             }
           }
         }
@@ -113,80 +187,233 @@ function EarningsPage() {
     }
 
     return () => {
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.destroy();
+      if (lineChartInstanceRef.current) {
+        lineChartInstanceRef.current.destroy();
       }
     };
-  }, [earningsData]);
+  }, [analytics.sortedEarnings]);
 
-  // Calculate Past Month Total
-  const pastMonthTotal = earningsData.pastMonthEarnings.reduce(
-    (sum, item) => sum + item.amount, 0
-  );
+  // Render Doughnut Chart (Service Breakdown)
+  useEffect(() => {
+    if (doughnutChartRef.current && Object.keys(analytics.serviceStats).length > 0) {
+      if (doughnutChartInstanceRef.current) {
+        doughnutChartInstanceRef.current.destroy();
+      }
+
+      const services = Object.keys(analytics.serviceStats);
+      const amounts = Object.values(analytics.serviceStats).map(s => s.total);
+      
+      const colors = ['#4A90E2', '#50C878', '#FFB347', '#E67E22', '#9B59B6', '#1ABC9C'];
+
+      const ctx = doughnutChartRef.current.getContext('2d');
+      doughnutChartInstanceRef.current = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: services,
+          datasets: [{
+            data: amounts,
+            backgroundColor: colors.slice(0, services.length),
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 15,
+                font: {
+                  size: 12
+                }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.parsed || 0;
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = ((value / total) * 100).toFixed(1);
+                  return `${label}: ₹${value.toLocaleString()} (${percentage}%)`;
+                }
+              },
+              backgroundColor: '#fff',
+              titleColor: '#333',
+              bodyColor: '#666',
+              borderColor: '#ddd',
+              borderWidth: 1,
+              padding: 12
+            }
+          }
+        }
+      });
+    }
+
+    return () => {
+      if (doughnutChartInstanceRef.current) {
+        doughnutChartInstanceRef.current.destroy();
+      }
+    };
+  }, [analytics.serviceStats]);
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      minimumFractionDigits: 2,
-    }).format(amount).replace('₹', 'Rs ');
+    return '₹' + amount.toLocaleString('en-IN', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
   };
 
-  if (loading) return <p style={{padding:'20px'}}>Loading earnings...</p>;
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.spinner}></div>
+        <p>Loading earnings data...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className={styles.content}>
-      <h2 className={styles.heading}>Past Month Earnings</h2>
-      
-      {/* Table */}
-      <table className={styles.earningsTable}>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Service</th>
-            <th>Customer</th>
-            <th>Earnings</th>
-          </tr>
-        </thead>
-        <tbody>
-          {earningsData.pastMonthEarnings.length === 0 ? (
-            <tr><td colspan="4" style={{textAlign:'center'}}>No earnings this month</td></tr>
-          ) : (
-            earningsData.pastMonthEarnings.map((item, index) => (
-              <tr key={index}>
-                <td>{item.date}</td>
-                <td>{item.service}</td>
-                <td>{item.customer}</td>
-                <td>{formatCurrency(item.amount)}</td>
-              </tr>
-            ))
-          )}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colSpan="3" className={styles.totalLabel}>Total (Past Month)</td>
-            <td className={styles.totalAmount}>
-              {formatCurrency(pastMonthTotal)}
-            </td>
-          </tr>
-        </tfoot>
-      </table>
+    <div className={styles.container}>
+      {/* Stats Cards */}
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <div className={styles.statIcon} style={{ backgroundColor: '#E3F2FD' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4A90E2" strokeWidth="2">
+              <path d="M3 3v18h18"/>
+              <path d="M18 17V9"/>
+              <path d="M13 17V5"/>
+              <path d="M8 17v-3"/>
+            </svg>
+          </div>
+          <div className={styles.statContent}>
+            <p className={styles.statLabel}>This Month</p>
+            <h3 className={styles.statValue}>{formatCurrency(analytics.currentMonthTotal)}</h3>
+          </div>
+        </div>
 
-      {/* Graph */}
-      <div className={styles.graphContainer}>
-        {earningsData.pastMonthEarnings.length > 0 ? (
-            <canvas ref={chartRef}></canvas>
-        ) : (
-            <p style={{textAlign:'center', marginTop:'50px', color:'#999'}}>No data to display graph</p>
-        )}
+        <div className={styles.statCard}>
+          <div className={styles.statIcon} style={{ backgroundColor: '#E8F5E9' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#50C878" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+          </div>
+          <div className={styles.statContent}>
+            <p className={styles.statLabel}>Lifetime Total</p>
+            <h3 className={styles.statValue}>{formatCurrency(earningsData.lifetimeEarnings)}</h3>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <div className={styles.statIcon} style={{ backgroundColor: '#FFF3E0' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFB347" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 16v-4"/>
+              <path d="M12 8h.01"/>
+            </svg>
+          </div>
+          <div className={styles.statContent}>
+            <p className={styles.statLabel}>Avg per Job</p>
+            <h3 className={styles.statValue}>{formatCurrency(analytics.avgPerJob)}</h3>
+          </div>
+        </div>
+
+        <div className={styles.statCard}>
+          <div className={styles.statIcon} style={{ backgroundColor: '#F3E5F5' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9B59B6" strokeWidth="2">
+              <path d="M20 7h-9"/>
+              <path d="M14 17H5"/>
+              <circle cx="17" cy="17" r="3"/>
+              <circle cx="7" cy="7" r="3"/>
+            </svg>
+          </div>
+          <div className={styles.statContent}>
+            <p className={styles.statLabel}>Total Jobs</p>
+            <h3 className={styles.statValue}>{analytics.totalJobs}</h3>
+          </div>
+        </div>
       </div>
 
-      {/* Lifetime */}
-      <div className={styles.lifetimeEarnings}>
-        <h2>Lifetime Earnings</h2>
-        <p className={styles.lifetimeTotal}>
-          <span className={styles.amountHighlight}>{formatCurrency(earningsData.lifetimeEarnings)}</span>
-        </p>
+      {/* Charts Row */}
+      <div className={styles.chartsGrid}>
+        <div className={styles.chartCard}>
+          <h3 className={styles.chartTitle}>Earnings Trend</h3>
+          <div className={styles.chartContainer}>
+            {analytics.sortedEarnings.length > 0 ? (
+              <canvas ref={lineChartRef}></canvas>
+            ) : (
+              <p className={styles.noData}>No data available</p>
+            )}
+          </div>
+        </div>
+
+        <div className={styles.chartCard}>
+          <h3 className={styles.chartTitle}>Service Breakdown</h3>
+          <div className={styles.chartContainer}>
+            {Object.keys(analytics.serviceStats).length > 0 ? (
+              <canvas ref={doughnutChartRef}></canvas>
+            ) : (
+              <p className={styles.noData}>No data available</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Top Service Card */}
+      {analytics.topService.name !== 'N/A' && (
+        <div className={styles.insightCard}>
+          <div className={styles.insightIcon}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+              <circle cx="12" cy="8" r="7"/>
+              <path d="M12 15v6"/>
+              <path d="M8 21h8"/>
+            </svg>
+          </div>
+          <div className={styles.insightContent}>
+            <h4>Top Performing Service</h4>
+            <p><strong>{analytics.topService.name}</strong> generated <strong>{formatCurrency(analytics.topService.amount)}</strong> this month</p>
+          </div>
+        </div>
+      )}
+
+      {/* Recent Transactions Table */}
+      <div className={styles.tableCard}>
+        <h3 className={styles.tableTitle}>Recent Transactions</h3>
+        <div className={styles.tableWrapper}>
+          <table className={styles.earningsTable}>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Service</th>
+                <th>Customer</th>
+                <th className={styles.alignRight}>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {earningsData.pastMonthEarnings.length === 0 ? (
+                <tr>
+                  <td colSpan="4" className={styles.noDataRow}>No transactions found</td>
+                </tr>
+              ) : (
+                earningsData.pastMonthEarnings.map((item, index) => (
+                  <tr key={index}>
+                    <td>{new Date(item.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+                    <td>
+                      <span className={styles.serviceBadge}>{item.service}</span>
+                    </td>
+                    <td>{item.customer}</td>
+                    <td className={styles.alignRight}>
+                      <span className={styles.amountValue}>{formatCurrency(item.amount)}</span>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

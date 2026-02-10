@@ -23,6 +23,7 @@ import BookingForm from "./pages/BookingForm/BookingForm";
 import CartPage from "./pages/CartPage/CartPage";
 import PaymentPage from "./pages/PaymentPage/PaymentPage";
 import SeekerProfile from "./pages/SeekerProfile/SeekerProfile";
+import PreviousBookings from "./pages/PreviousBookings/PreviousBookings";
 
 import AboutUs from "./pages/AboutUs/AboutUs";
 
@@ -76,6 +77,11 @@ function App() {
         <Route path="/cart" element={
           <ProtectedRoute redirectTo="/login/seeker" allowedRoles={['seeker']}>
             <CartPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/previous-bookings" element={
+          <ProtectedRoute redirectTo="/login/seeker" allowedRoles={['seeker']}>
+            <PreviousBookings />
           </ProtectedRoute>
         } />
         <Route path="/payment" element={

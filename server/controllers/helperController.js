@@ -227,13 +227,11 @@ export const getHelperEarnings = async (req, res) => {
   try {
     const { helperId } = req.params;
 
-    // 1. Fetch all 'Accepted' bookings for this helper
-    // Note: In a real app, you might check 'paid: true' here. 
-    // For now, we assume Accepted = Earnings.
+    // 1. Fetch all 'Accepted' bookings for this helper and populate seeker for customer name
     const bookings = await Booking.find({
       helper: helperId,
       status: 'Accepted'
-    });
+    }).populate('seeker', 'name');
 
     // 2. Calculate Dates
     const now = new Date();
@@ -246,11 +244,11 @@ export const getHelperEarnings = async (req, res) => {
       return bookingDate >= oneMonthAgo && bookingDate <= now;
     });
 
-    // 4. Format Data for Frontend
+    // 4. Format Data for Frontend (using correct field names)
     const pastMonthEarnings = pastMonthBookings.map(b => ({
-      date: new Date(b.date).toLocaleDateString(), // Format "YYYY-MM-DD" -> "MM/DD/YYYY"
-      service: b.servicetype || b.serviceName,     // Handle different naming conventions
-      customer: b.customerName,                    // Saved directly in booking
+      date: b.date,                                 // Use date as-is from booking
+      service: b.service_type,                      // Correct field name with underscore
+      customer: b.seeker?.name || 'Unknown',        // Get name from populated seeker
       amount: b.price
     }));
 

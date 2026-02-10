@@ -240,7 +240,6 @@ const PaymentPage = () => {
             )}
 
             <div className={styles.helperDetails}>
-              <div className={styles.helperAvatar}>👤</div>
               <div>
                 <div style={{fontWeight:'700'}}>{helperName}</div>
                 <div style={{fontSize:'0.85rem', color:'#666'}}>Provider</div>

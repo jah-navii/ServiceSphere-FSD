@@ -1,0 +1,256 @@
+/* src/pages/PreviousBookings/ReviewModal.module.css */
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modalContent {
+  background-color: var(--white);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 550px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: var(--cerulean);
+  color: var(--white);
+  border-radius: 16px 16px 0 0;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--white);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.closeBtn:hover {
+  transform: scale(1.2);
+}
+
+.bookingInfo {
+  padding: 1.5rem 2rem;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.bookingInfo h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--cerulean);
+  font-size: 1.2rem;
+}
+
+.bookingInfo p {
+  margin: 0.3rem 0;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.ratingSection {
+  padding: 2rem 2rem 1rem 2rem;
+  text-align: center;
+}
+
+.ratingSection label {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: var(--black);
+  font-size: 1.1rem;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.star {
+  background: none;
+  border: none;
+  font-size: 3rem;
+  color: #ddd;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.star:hover,
+.star.filled {
+  color: #ffa726;
+  transform: scale(1.1);
+}
+
+.ratingText {
+  margin: 0.5rem 0 0 0;
+  font-size: 1rem;
+  color: #666;
+  font-weight: 600;
+  min-height: 1.5rem;
+}
+
+.reviewSection {
+  padding: 1rem 2rem 1.5rem 2rem;
+}
+
+.reviewSection label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--black);
+  font-size: 1rem;
+}
+
+.reviewSection textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: 'Sequel Sans', sans-serif;
+  font-size: 0.95rem;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.reviewSection textarea:focus {
+  outline: none;
+  border-color: var(--cerulean);
+}
+
+.charCount {
+  text-align: right;
+  font-size: 0.85rem;
+  color: #888;
+  margin: 0.3rem 0 0 0;
+}
+
+.modalActions {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #e0e0e0;
+  background-color: #f9f9f9;
+  border-radius: 0 0 16px 16px;
+}
+
+.cancelBtn,
+.submitBtn {
+  flex: 1;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Sequel Sans', sans-serif;
+}
+
+.cancelBtn {
+  background-color: #e0e0e0;
+  color: var(--black);
+}
+
+.cancelBtn:hover:not(:disabled) {
+  background-color: #d0d0d0;
+}
+
+.submitBtn {
+  background-color: var(--cerulean);
+  color: var(--white);
+  box-shadow: 0 2px 4px rgba(0, 126, 167, 0.3);
+}
+
+.submitBtn:hover:not(:disabled) {
+  background-color: #005f7a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 126, 167, 0.4);
+}
+
+.submitBtn:disabled,
+.cancelBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modalContent {
+    max-width: 95%;
+  }
+
+  .modalHeader,
+  .bookingInfo,
+  .ratingSection,
+  .reviewSection,
+  .modalActions {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .star {
+    font-size: 2.5rem;
+  }
+
+  .modalActions {
+    flex-direction: column;
+  }
+}
