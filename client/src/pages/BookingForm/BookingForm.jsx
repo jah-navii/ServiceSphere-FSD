@@ -95,7 +95,11 @@ const BookingForm = () => {
 
       const data = await response.json();
 
-      if (!response.ok) throw new Error(data.error || "Booking failed");
+      if (!response.ok) {
+        // Use the message from backend (e.g., rate limit error)
+        const errorMessage = data.message || data.error || "Booking failed";
+        throw new Error(errorMessage);
+      }
 
       showToast("Booking Confirmed Successfully!", "success");
       dispatch(clearForm());
@@ -103,7 +107,8 @@ const BookingForm = () => {
 
     } catch (err) {
       console.error(err);
-      showToast("Failed to book service. Try again.", "error");
+      // Display the actual error message from the backend
+      showToast(err.message || "Failed to book service. Try again.", "error");
     } finally {
       setIsSubmitting(false);
     }

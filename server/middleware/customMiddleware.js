@@ -3,6 +3,18 @@
  * User-defined middleware for various application needs
  */
 
+import rateLimit from 'express-rate-limit';
+
+// Helper to properly handle IPv6 addresses in rate limiting
+const getClientIdentifier = (req) => {
+  // If user is authenticated and is a seeker, use their ID
+  if (req.session?.user?.role === 'seeker' && req.session?.user?.id) {
+    return `seeker_${req.session.user.id}`;
+  }
+  // Fallback to IP address - return undefined to use default IP handler
+  return undefined;
+};
+
 /**
  * Request Logger - Logs incoming requests with timestamp
  * Custom middleware that logs method, URL, IP, and timestamp
@@ -46,3 +58,36 @@ export const notFoundHandler = (req, res, next) => {
   error.statusCode = 404;
   next(error);
 };
+
+/**
+ * Booking Rate Limiter
+ * Limits the number of bookings a seeker can make within a time window
+ * Protects against booking spam and ensures fair resource usage
+ */
+export const bookingRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 2, // Limit each seeker to 2 bookings per window
+  message: {
+    success: false,
+    message: 'Booking failed. You have made too many bookings. Please try again after 15 minutes.',
+    retryAfter: '15 minutes'
+  },
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  // Use seeker ID as the key for rate limiting (user-specific)
+  keyGenerator: getClientIdentifier,
+  // Only apply to seekers
+  skip: (req) => {
+    // Skip rate limiting if not a seeker (e.g., admin or helper)
+    return req.session?.user?.role !== 'seeker';
+  },
+  handler: (req, res) => {
+    console.log(`[RATE LIMIT] Booking limit exceeded for user: ${req.session?.user?.id || req.ip}`);
+    res.status(429).json({
+      success: false,
+      message: 'Booking failed. You have made too many bookings. Please try again after 15 minutes.',
+      limit: 2,
+      windowMs: '15 minutes'
+    });
+  }
+});

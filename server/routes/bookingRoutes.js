@@ -1,13 +1,13 @@
 import express from 'express';
 import { renderPreviouslyBookedServices, payForBooking, getPaymentDetails, submitPayment, getReviewDetails } from '../controllers/bookingController.js';
-
+import { bookingRateLimiter } from '../middleware/customMiddleware.js';
 
 import { createBooking, getUserBookings } from '../controllers/bookingController.js';
 
 const router = express.Router();
 
-// Route to submit a new booking
-router.post('/', createBooking);
+// Route to submit a new booking (with rate limiting)
+router.post('/', bookingRateLimiter, createBooking);
 
 // Route to get all bookings for the Cart/Dashboard page
 router.get('/', getUserBookings);
