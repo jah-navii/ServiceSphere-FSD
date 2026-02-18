@@ -163,7 +163,33 @@ function ProfilePage() {
     if (typeof cert === 'string') {
       const url = `http://localhost:5000/uploads/${cert}`;
       if (cert.endsWith('.pdf')) {
-        return <iframe src={url} width="100%" height="300px" title="Certification" className={styles.certPreview}></iframe>;
+        return (
+          <div style={{textAlign: 'center', marginTop: '10px'}}>
+            <iframe 
+              src={url} 
+              width="100%" 
+              height="400px" 
+              title="Certification" 
+              className={styles.certPreview}
+              style={{border: '1px solid #ddd', borderRadius: '4px'}}
+            ></iframe>
+            <div style={{marginTop: '10px'}}>
+              <a 
+                href={url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{
+                  color: '#007bff',
+                  textDecoration: 'none',
+                  fontSize: '0.9rem',
+                  fontWeight: '500'
+                }}
+              >
+                📄 Open PDF in new tab
+              </a>
+            </div>
+          </div>
+        );
       } else {
         return <img src={url} alt="Certification" className={styles.certPreview} style={{maxWidth: '100%', maxHeight: '300px', objectFit:'contain'}} />;
       }

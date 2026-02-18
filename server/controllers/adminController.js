@@ -276,8 +276,20 @@ export const getEarningsData = async (req, res) => {
     // 5. Top Earning Helpers
     const topHelpers = await Booking.aggregate([
       {
+        $lookup: {
+          from: "helpers", // MongoDB collection name (lowercase, pluralized)
+          localField: "helper",
+          foreignField: "_id",
+          as: "helperData"
+        }
+      },
+      {
+        $unwind: "$helperData"
+      },
+      {
         $group: {
-          _id: "$helperName", // Group by name directly if available
+          _id: "$helper",
+          name: { $first: "$helperData.name" },
           total: { $sum: "$price" }
         }
       },
@@ -295,7 +307,7 @@ export const getEarningsData = async (req, res) => {
         else acc.pending = curr.total; // paid: false
         return acc;
       }, { received: 0, pending: 0 }),
-      topHelpers: topHelpers.map(h => ({ name: h._id, amount: h.total }))
+      topHelpers: topHelpers.map(h => ({ name: h.name, amount: h.total }))
     };
 
     res.status(200).json(earningsData);

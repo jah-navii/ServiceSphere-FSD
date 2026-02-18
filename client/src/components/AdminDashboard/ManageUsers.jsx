@@ -49,7 +49,10 @@ const ManageUsers = () => {
 
   return (
     <div className={styles.container}>
-      <h2>User Management</h2>
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>User Management</h1>
+        <p className={styles.pageSubtitle}>Manage helper accounts and approvals</p>
+      </div>
       
       {loading ? (
         <p>Loading users...</p>
