@@ -8,9 +8,6 @@ const AdminLayout = () => {
     <div className={styles.container}>
       <AdminSidebar />
       <main className={styles.mainContent}>
-        <div className={styles.header}>
-          <h1>Admin Panel</h1>
-        </div>
         <Outlet /> {/* Renders the child pages */}
       </main>
     </div>

@@ -50,7 +50,10 @@ const ManageLocations = () => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>Manage Locations</h2>
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>Manage Locations</h1>
+        <p className={styles.pageSubtitle}>Add and manage service locations</p>
+      </div>
       
       <form onSubmit={handleAdd} className={styles.form}>
         <input 

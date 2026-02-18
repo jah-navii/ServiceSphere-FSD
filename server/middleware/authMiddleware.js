@@ -1,12 +1,8 @@
-/**
- * AUTHENTICATION MIDDLEWARE
- * Protects routes by checking user login status and role
- * Redirects to appropriate login page if not authenticated
- */
+//Auth middleware
+//checks if user is logged in and what role they have
+//redirects to the appropirate login page if not logged in
 
-/**
- * Check if any user is logged in (any role)
- */
+// checks if anyone is logged in (any role)
 export const isAuthenticated = (req, res, next) => {
   if (req.session && req.session.user) {
     return next();
@@ -19,11 +15,9 @@ export const isAuthenticated = (req, res, next) => {
   });
 };
 
-/**
- * Check if user is logged in as Admin
- */
+// Admin login check
 export const isAdmin = (req, res, next) => {
-  console.log('🔒 isAdmin check:', {
+  console.log('isAdmin check:', {
     hasSession: !!req.session,
     hasUser: !!req.session?.user,
     role: req.session?.user?.role,
@@ -52,7 +46,7 @@ export const isAdmin = (req, res, next) => {
  * Check if user is logged in as Helper
  */
 export const isHelper = (req, res, next) => {
-  console.log('🔒 isHelper check:', {
+  console.log('isHelper check:', {
     hasSession: !!req.session,
     hasUser: !!req.session?.user,
     role: req.session?.user?.role,
@@ -81,7 +75,7 @@ export const isHelper = (req, res, next) => {
  * Check if user is logged in as Seeker
  */
 export const isSeeker = (req, res, next) => {
-  console.log('🔒 isSeeker check:', {
+  console.log('isSeeker check:', {
     hasSession: !!req.session,
     hasUser: !!req.session?.user,
     role: req.session?.user?.role,

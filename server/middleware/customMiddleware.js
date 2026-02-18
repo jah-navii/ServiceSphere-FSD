@@ -1,7 +1,5 @@
-/**
- * CUSTOM MIDDLEWARE COLLECTION
- * User-defined middleware for various application needs
- */
+// CUSTOM MIDDLEWARE
+
 
 import rateLimit from 'express-rate-limit';
 
@@ -15,10 +13,10 @@ const getClientIdentifier = (req) => {
   return undefined;
 };
 
-/**
- * Request Logger - Logs incoming requests with timestamp
- * Custom middleware that logs method, URL, IP, and timestamp
- */
+
+// Request Logger - Logs incoming requests with timestamp
+// Custom middleware that logs method, URL, IP, and timestamp
+
 export const requestLogger = (req, res, next) => {
   const timestamp = new Date().toISOString();
   const ip = req.ip || req.connection.remoteAddress;

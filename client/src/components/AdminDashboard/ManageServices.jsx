@@ -107,11 +107,16 @@ const ManageServices = () => {
   if (loading) return <p>Loading data...</p>;
 
   return (
-    <div className={styles.container}>
-      
-      {/* LEFT: Manage Categories */}
-      <div className={styles.column}>
-        <h2 className={styles.heading}>Categories</h2>
+    <div className={styles.wrapper}>
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>Services & Categories</h1>
+        <p className={styles.pageSubtitle}>Manage service categories and offerings</p>
+      </div>
+
+      <div className={styles.container}>
+        {/* LEFT: Manage Categories */}
+        <div className={styles.column}>
+          <h2 className={styles.heading}>Categories</h2>
         
         <form onSubmit={handleAddCategory} className={styles.form}>
           <input 
@@ -182,7 +187,7 @@ const ManageServices = () => {
           ))}
         </ul>
       </div>
-
+      </div>
     </div>
   );
 };

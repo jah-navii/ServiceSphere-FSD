@@ -48,7 +48,10 @@ const DashboardHome = () => {
 
   return (
     <div className={styles.tableContainer}>
-      <h2>Contact Messages</h2>
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>Contact Messages</h1>
+        <p className={styles.pageSubtitle}>Manage and respond to user inquiries</p>
+      </div>
       {loading ? (
         <p>Loading messages...</p>
       ) : messages.length === 0 ? (
