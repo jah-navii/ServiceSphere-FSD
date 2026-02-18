@@ -5,7 +5,7 @@ const ManageLocations = () => {
   const [locations, setLocations] = useState([]);
   const [newLocation, setNewLocation] = useState("");
 
-  // Fetch
+  // Fetch Locations
   useEffect(() => {
     fetch("http://localhost:5000/api/admin/locations")
       .then(res => res.json())
@@ -55,27 +55,39 @@ const ManageLocations = () => {
         <p className={styles.pageSubtitle}>Add and manage service locations</p>
       </div>
       
-      <form onSubmit={handleAdd} className={styles.form}>
-        <input 
-          type="text" 
-          className={styles.input} 
-          placeholder="Enter City/Area Name (e.g. Hyderabad)" 
-          value={newLocation}
-          onChange={(e) => setNewLocation(e.target.value)}
-        />
-        <button type="submit" className={styles.addBtn}>Add</button>
-      </form>
+      {/* Add Location Form */}
+      <div className={styles.formSection}>
+        <h2 className={styles.sectionTitle}>Add New Location</h2>
+        <form onSubmit={handleAdd} className={styles.form}>
+          <input 
+            type="text" 
+            className={styles.input} 
+            placeholder="Enter City/Area Name (e.g. Hyderabad)" 
+            value={newLocation}
+            onChange={(e) => setNewLocation(e.target.value)}
+          />
+          <button type="submit" className={styles.addBtn}>Add Location</button>
+        </form>
+      </div>
 
-      <ul className={styles.list}>
-        {locations.map(loc => (
-          <li key={loc._id} className={styles.item}>
-            <span>{loc.name}</span>
-            <button className={styles.deleteBtn} onClick={() => handleDelete(loc._id)}>
-              Remove
-            </button>
-          </li>
-        ))}
-      </ul>
+      {/* Locations List */}
+      <div className={styles.listSection}>
+        <h2 className={styles.sectionTitle}>All Locations ({locations.length})</h2>
+        {locations.length === 0 ? (
+          <div className={styles.noData}>No locations added yet. Add your first location above.</div>
+        ) : (
+          <ul className={styles.list}>
+            {locations.map(loc => (
+              <li key={loc._id} className={styles.item}>
+                <span className={styles.locationName}>{loc.name}</span>
+                <button className={styles.deleteBtn} onClick={() => handleDelete(loc._id)}>
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import Admin from '../models/Admin.js';
 import Helper from '../models/Helper.js';
+import Seeker from '../models/Seeker.js';
 import ContactMessage from '../models/ContactMessage.js';
 import Service from '../models/Service.js';
 import Category from '../models/Category.js';
@@ -147,6 +148,49 @@ export const rejectUser = async (req, res) => {
   } catch (error) {
     console.error('Error rejecting user:', error);
     res.status(500).json({ error: 'Failed to reject user' });
+  }
+};
+
+// GET /api/admin/seekers
+export const getSeekers = async (req, res) => {
+  try {
+    const seekers = await Seeker.find().select('-password'); // Don't send passwords
+    res.status(200).json(seekers);
+  } catch (error) {
+    console.error('Error fetching seekers:', error);
+    res.status(500).json({ error: 'Error fetching seekers' });
+  }
+};
+
+// DELETE /api/admin/users/helper/:id
+export const deleteHelper = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const helper = await Helper.findByIdAndDelete(id);
+    if (helper) {
+      res.status(200).json({ message: 'Helper deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'Helper not found' });
+    }
+  } catch (error) {
+    console.error('Error deleting helper:', error);
+    res.status(500).json({ error: 'Failed to delete helper' });
+  }
+};
+
+// DELETE /api/admin/users/seeker/:id
+export const deleteSeeker = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const seeker = await Seeker.findByIdAndDelete(id);
+    if (seeker) {
+      res.status(200).json({ message: 'Seeker deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'Seeker not found' });
+    }
+  } catch (error) {
+    console.error('Error deleting seeker:', error);
+    res.status(500).json({ error: 'Failed to delete seeker' });
   }
 };
 
@@ -354,6 +398,62 @@ export const deleteLocation = async (req, res) => {
     res.status(200).json({ message: "Location removed" });
   } catch (err) {
     res.status(500).json({ error: "Failed to delete" });
+  }
+};
+
+// GET /api/admin/location-analytics
+export const getLocationAnalytics = async (req, res) => {
+  try {
+    // 1. Get all locations for reference
+    const allLocations = await Location.find().select('name');
+
+    // 2. Get all bookings and helpers
+    const bookings = await Booking.find().select('address price');
+    const helpers = await Helper.find().select('address');
+
+    // 3. Initialize location map
+    const locationMap = {};
+    allLocations.forEach(loc => {
+      locationMap[loc.name] = {
+        name: loc.name,
+        bookings: 0,
+        revenue: 0,
+        helpers: 0
+      };
+    });
+
+    // 4. Match bookings to locations (check if location name is in address)
+    bookings.forEach(booking => {
+      if (booking.address) {
+        // Check each location to see if it's mentioned in the address
+        allLocations.forEach(loc => {
+          if (booking.address.toLowerCase().includes(loc.name.toLowerCase())) {
+            locationMap[loc.name].bookings += 1;
+            locationMap[loc.name].revenue += booking.price || 0;
+          }
+        });
+      }
+    });
+
+    // 5. Match helpers to locations (check if location name is in address)
+    helpers.forEach(helper => {
+      if (helper.address) {
+        // Check each location to see if it's mentioned in the address
+        allLocations.forEach(loc => {
+          if (helper.address.toLowerCase().includes(loc.name.toLowerCase())) {
+            locationMap[loc.name].helpers += 1;
+          }
+        });
+      }
+    });
+
+    // 6. Convert to array and sort by bookings
+    const analytics = Object.values(locationMap).sort((a, b) => b.bookings - a.bookings);
+
+    res.status(200).json(analytics);
+  } catch (err) {
+    console.error("Error fetching location analytics:", err);
+    res.status(500).json({ error: "Failed to fetch analytics" });
   }
 };
 
