@@ -15,7 +15,7 @@ const loadUserFromStorage = () => {
 
 const initialState = {
   currentUser: loadUserFromStorage(), // Load from storage on boot
-  isAuthenticated: !!localStorage.getItem("user"),
+  isAuthenticated: !!localStorage.getItem("user") && !!localStorage.getItem("token"),
   loading: false,
   error: null,
 };
@@ -45,8 +45,9 @@ const userSlice = createSlice({
       state.isAuthenticated = false;
       state.loading = false;
       state.error = null;
-      // Persistence: Clear storage
+      // Persistence: Clear storage (including JWT token)
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
     },
   },
 });

@@ -1,138 +1,358 @@
-//Auth middleware
+//Auth middleware - JWT-based authentication
 //checks if user is logged in and what role they have
 //redirects to the appropirate login page if not logged in
 
+import { verifyToken, extractToken } from '../utils/jwtUtils.js';
+
 // checks if anyone is logged in (any role)
 export const isAuthenticated = (req, res, next) => {
-  if (req.session && req.session.user) {
-    return next();
-  }
-  // Redirect to general login page
-  return res.status(401).json({ 
-    success: false, 
-    message: 'Authentication required. Please login.',
-    redirectTo: '/login'
-  });
-};
+  try {
+    const token = extractToken(req);
+    
+    if (!token) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Authentication required. Please login.',
+        redirectTo: '/login'
+      });
+    }
 
-// Admin login check
-export const isAdmin = (req, res, next) => {
-  console.log('isAdmin check:', {
-    hasSession: !!req.session,
-    hasUser: !!req.session?.user,
-    role: req.session?.user?.role,
-    sessionID: req.sessionID
-  });
-
-  if (req.session && req.session.user && req.session.user.role === 'admin') {
+    const decoded = verifyToken(token);
+    req.user = decoded; // Attach user data to request object
     return next();
-  }
-  
-  // If making API call, return JSON
-  if (req.originalUrl.startsWith('/api/')) {
-    return res.status(403).json({ 
+  } catch (error) {
+    return res.status(401).json({ 
       success: false, 
-      message: 'Admin access required',
-      redirectTo: '/login/admin',
-      debug: { hasSession: !!req.session, hasUser: !!req.session?.user, role: req.session?.user?.role }
+      message: 'Invalid or expired token. Please login again.',
+      redirectTo: '/login'
     });
   }
-  
-  // Otherwise redirect
-  return res.redirect('/login/admin');
+};
+
+// Admin login check (Updated: now checks for administrator role)
+export const isAdmin = (req, res, next) => {
+  try {
+    const token = extractToken(req);
+    
+    if (!token) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Authentication required',
+        redirectTo: '/login/admin'
+      });
+    }
+
+    const decoded = verifyToken(token);
+    
+    console.log('isAdmin check:', {
+      hasToken: !!token,
+      role: decoded.role,
+      userId: decoded.id
+    });
+
+    if (decoded.role === 'administrator') {
+      req.user = decoded;
+      return next();
+    }
+    
+    return res.status(403).json({ 
+      success: false, 
+      message: 'Administrator access required',
+      redirectTo: '/login/admin'
+    });
+  } catch (error) {
+    return res.status(401).json({ 
+      success: false, 
+      message: 'Invalid or expired token',
+      redirectTo: '/login/admin'
+    });
+  }
+};
+
+/**
+ * Check if user is logged in as Administrator (super admin)
+ */
+export const isAdministrator = (req, res, next) => {
+  try {
+    const token = extractToken(req);
+    
+    if (!token) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Authentication required',
+        redirectTo: '/login/admin'
+      });
+    }
+
+    const decoded = verifyToken(token);
+    
+    console.log('isAdministrator check:', {
+      hasToken: !!token,
+      role: decoded.role,
+      userId: decoded.id
+    });
+
+    if (decoded.role === 'administrator') {
+      req.user = decoded;
+      return next();
+    }
+    
+    return res.status(403).json({ 
+      success: false, 
+      message: 'Administrator access required',
+      redirectTo: '/login/admin'
+    });
+  } catch (error) {
+    return res.status(401).json({ 
+      success: false, 
+      message: 'Invalid or expired token',
+      redirectTo: '/login/admin'
+    });
+  }
+};
+
+/**
+ * Check if user is either Admin or Administrator
+ * (Updated: Now only checks for administrator since we consolidated)
+ */
+export const isAdminOrAdministrator = (req, res, next) => {
+  try {
+    const token = extractToken(req);
+    
+    if (!token) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Authentication required',
+        redirectTo: '/login/admin'
+      });
+    }
+
+    const decoded = verifyToken(token);
+    
+    if (decoded.role === 'administrator') {
+      req.user = decoded;
+      return next();
+    }
+    
+    return res.status(403).json({ 
+      success: false, 
+      message: 'Administrator access required',
+      redirectTo: '/login/admin'
+    });
+  } catch (error) {
+    return res.status(401).json({ 
+      success: false, 
+      message: 'Invalid or expired token',
+      redirectTo: '/login/admin'
+    });
+  }
+};
+
+/**
+ * Check if user is logged in as Moderator
+ */
+export const isModerator = (req, res, next) => {
+  try {
+    const token = extractToken(req);
+    
+    if (!token) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Authentication required',
+        redirectTo: '/login/moderator'
+      });
+    }
+
+    const decoded = verifyToken(token);
+    
+    console.log('isModerator check:', {
+      hasToken: !!token,
+      role: decoded.role,
+      userId: decoded.id,
+      locationId: decoded.locationId
+    });
+
+    if (decoded.role === 'moderator') {
+      req.user = decoded;
+      return next();
+    }
+    
+    return res.status(403).json({ 
+      success: false, 
+      message: 'Moderator access required',
+      redirectTo: '/login/moderator'
+    });
+  } catch (error) {
+    return res.status(401).json({ 
+      success: false, 
+      message: 'Invalid or expired token',
+      redirectTo: '/login/moderator'
+    });
+  }
 };
 
 /**
  * Check if user is logged in as Helper
  */
 export const isHelper = (req, res, next) => {
-  console.log('isHelper check:', {
-    hasSession: !!req.session,
-    hasUser: !!req.session?.user,
-    role: req.session?.user?.role,
-    sessionID: req.sessionID
-  });
+  try {
+    const token = extractToken(req);
+    
+    if (!token) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Authentication required',
+        redirectTo: '/login/helper'
+      });
+    }
 
-  if (req.session && req.session.user && req.session.user.role === 'helper') {
-    return next();
-  }
-  
-  // If making API call, return JSON
-  if (req.originalUrl.startsWith('/api/')) {
+    const decoded = verifyToken(token);
+    
+    console.log('isHelper check:', {
+      hasToken: !!token,
+      role: decoded.role,
+      userId: decoded.id
+    });
+
+    if (decoded.role === 'helper') {
+      req.user = decoded;
+      return next();
+    }
+    
     return res.status(403).json({ 
       success: false, 
       message: 'Helper access required',
-      redirectTo: '/login/helper',
-      debug: { hasSession: !!req.session, hasUser: !!req.session?.user, role: req.session?.user?.role }
+      redirectTo: '/login/helper'
+    });
+  } catch (error) {
+    return res.status(401).json({ 
+      success: false, 
+      message: 'Invalid or expired token',
+      redirectTo: '/login/helper'
     });
   }
-  
-  // Otherwise redirect
-  return res.redirect('/login/helper');
 };
 
 /**
  * Check if user is logged in as Seeker
  */
 export const isSeeker = (req, res, next) => {
-  console.log('isSeeker check:', {
-    hasSession: !!req.session,
-    hasUser: !!req.session?.user,
-    role: req.session?.user?.role,
-    sessionID: req.sessionID
-  });
+  try {
+    const token = extractToken(req);
+    
+    if (!token) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Authentication required',
+        redirectTo: '/login/seeker'
+      });
+    }
 
-  if (req.session && req.session.user && req.session.user.role === 'seeker') {
-    return next();
-  }
-  
-  // If making API call, return JSON
-  if (req.originalUrl.startsWith('/api/')) {
+    const decoded = verifyToken(token);
+    
+    console.log('isSeeker check:', {
+      hasToken: !!token,
+      role: decoded.role,
+      userId: decoded.id
+    });
+
+    if (decoded.role === 'seeker') {
+      req.user = decoded;
+      return next();
+    }
+    
     return res.status(403).json({ 
       success: false, 
       message: 'Seeker access required',
-      redirectTo: '/login/seeker',
-      debug: { hasSession: !!req.session, hasUser: !!req.session?.user, role: req.session?.user?.role }
+      redirectTo: '/login/seeker'
+    });
+  } catch (error) {
+    return res.status(401).json({ 
+      success: false, 
+      message: 'Invalid or expired token',
+      redirectTo: '/login/seeker'
     });
   }
-  
-  // Otherwise redirect
-  return res.redirect('/login/seeker');
 };
 
 /**
  * Check if user is either Helper or Admin (for helper management routes)
  */
 export const isHelperOrAdmin = (req, res, next) => {
-  if (req.session && req.session.user) {
-    const role = req.session.user.role;
-    if (role === 'helper' || role === 'admin') {
+  try {
+    const token = extractToken(req);
+    
+    if (!token) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Authentication required',
+        redirectTo: '/login'
+      });
+    }
+
+    const decoded = verifyToken(token);
+    
+    if (decoded.role === 'helper' || decoded.role === 'admin') {
+      req.user = decoded;
       return next();
     }
+    
+    return res.status(403).json({ 
+      success: false, 
+      message: 'Helper or Admin access required',
+      redirectTo: '/login'
+    });
+  } catch (error) {
+    return res.status(401).json({ 
+      success: false, 
+      message: 'Invalid or expired token',
+      redirectTo: '/login'
+    });
   }
-  
-  return res.status(403).json({ 
-    success: false, 
-    message: 'Helper or Admin access required',
-    redirectTo: '/login'
-  });
 };
 
 /**
  * Redirect if already logged in (for login/signup pages)
  */
 export const redirectIfAuthenticated = (req, res, next) => {
-  if (req.session && req.session.user) {
-    const role = req.session.user.role;
+  try {
+    const token = extractToken(req);
     
-    // Redirect to appropriate dashboard based on role
-    if (role === 'admin') {
-      return res.redirect('/admin/dashboard');
-    } else if (role === 'helper') {
-      return res.redirect(`/profile/${req.session.user.id}`);
-    } else if (role === 'seeker') {
-      return res.redirect('/home');
+    if (token) {
+      const decoded = verifyToken(token);
+      const role = decoded.role;
+      const adminRole = decoded.adminRole;
+      
+      // Return appropriate redirect info based on role
+      if (role === 'admin') {
+        if (adminRole === 'administrator') {
+          return res.json({ 
+            success: false, 
+            message: 'Already logged in',
+            redirectTo: '/administrator/dashboard' 
+          });
+        }
+        return res.json({ 
+          success: false, 
+          message: 'Already logged in',
+          redirectTo: '/admin/dashboard' 
+        });
+      } else if (role === 'helper') {
+        return res.json({ 
+          success: false, 
+          message: 'Already logged in',
+          redirectTo: `/profile/${decoded.id}` 
+        });
+      } else if (role === 'seeker') {
+        return res.json({ 
+          success: false, 
+          message: 'Already logged in',
+          redirectTo: '/home' 
+        });
+      }
     }
+  } catch (error) {
+    // Token is invalid/expired, allow access to login/signup pages
   }
   
   next();

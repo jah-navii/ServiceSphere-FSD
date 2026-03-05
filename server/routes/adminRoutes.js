@@ -6,6 +6,9 @@ import {signupAdmin,
   getUsers,
   approveUser,
   rejectUser,
+  getSeekers,
+  deleteHelper,
+  deleteSeeker,
   getServiceManagementData,
   addCategory,
   deleteCategory,
@@ -14,41 +17,43 @@ import {signupAdmin,
   getEarningsData,
   getLocations,
   addLocation,
-  deleteLocation
+  deleteLocation,
+  getLocationAnalytics
 } from '../controllers/adminController.js';
+import { isAdmin, isAdminOrAdministrator } from '../middleware/authMiddleware.js';
 import Helper from '../models/Helper.js';
 
 // dealt with
 
 const router = express.Router();
 
-// Middleware to protect admin routes
-function isAdmin(req, res, next) {
-  if (req.session.user && req.session.user.role === 'admin') return next();
-  res.redirect('/login/admin');
-}
-
+// Public routes (no auth required)
 router.post("/signup/admin", signupAdmin);
 router.post("/login/admin", loginAdmin);
 
-router.get('/api/admin/messages', getContactMessages);
-router.delete('/api/admin/messages/:id', deleteContactMessage);
+// Protected routes - Admin or Administrator can access
+router.get('/api/admin/messages', isAdminOrAdministrator, getContactMessages);
+router.delete('/api/admin/messages/:id', isAdminOrAdministrator, deleteContactMessage);
 
-router.get('/api/admin/users', getUsers);
-router.patch('/api/admin/users/approve', approveUser);
-router.patch('/api/admin/users/reject', rejectUser);
+router.get('/api/admin/users', isAdminOrAdministrator, getUsers);
+router.patch('/api/admin/users/approve', isAdminOrAdministrator, approveUser);
+router.patch('/api/admin/users/reject', isAdminOrAdministrator, rejectUser);
+router.get('/api/admin/seekers', isAdminOrAdministrator, getSeekers);
+router.delete('/api/admin/users/helper/:id', isAdminOrAdministrator, deleteHelper);
+router.delete('/api/admin/users/seeker/:id', isAdminOrAdministrator, deleteSeeker);
 
-router.get('/api/admin/services-data', getServiceManagementData);
-router.post('/api/admin/categories/add', addCategory);
-router.delete('/api/admin/categories/:id', deleteCategory);
-router.post('/api/admin/services/add', addService);
-router.delete('/api/admin/services/:id', deleteService);
+router.get('/api/admin/services-data', isAdminOrAdministrator, getServiceManagementData);
+router.post('/api/admin/categories/add', isAdminOrAdministrator, addCategory);
+router.delete('/api/admin/categories/:id', isAdminOrAdministrator, deleteCategory);
+router.post('/api/admin/services/add', isAdminOrAdministrator, addService);
+router.delete('/api/admin/services/:id', isAdminOrAdministrator, deleteService);
 
-router.get('/api/admin/earnings-data', getEarningsData);
+router.get('/api/admin/earnings-data', isAdminOrAdministrator, getEarningsData);
 
 // Location Management
-router.get('/api/admin/locations', getLocations);
-router.post('/api/admin/locations/add', addLocation);
-router.delete('/api/admin/locations/:id', deleteLocation);
+router.get('/api/admin/locations', isAdminOrAdministrator, getLocations);
+router.post('/api/admin/locations/add', isAdminOrAdministrator, addLocation);
+router.delete('/api/admin/locations/:id', isAdminOrAdministrator, deleteLocation);
+router.get('/api/admin/location-analytics', isAdminOrAdministrator, getLocationAnalytics);
 
 export default router;

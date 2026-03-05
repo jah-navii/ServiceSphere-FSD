@@ -7,7 +7,11 @@ const helperSchema = new mongoose.Schema({
   mobilenumber: { type: String, required: true },
   aadharnumber: { type: String, required: true },
   gender: { type: String, required: true },
-  address: { type: String }, // Good to have for location-based search later
+  address: { type: String }, // String name of location for display
+  location: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Location'
+  },
 
   // NEW: The Single Category Constraint
   category: { 

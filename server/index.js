@@ -9,6 +9,8 @@ import helperRoutes from './routes/helperRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import feedbackRoutes from './routes/feedbackRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import administratorRoutes from './routes/administratorRoutes.js';
+import moderatorRoutes from './routes/moderatorRoutes.js';
 import seekerRoutes from './routes/seekerRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
@@ -105,10 +107,12 @@ connectDB();
 // ROUTER-LEVEL MIDDLEWARE (Route Handlers)
 // ============================================
 app.use('/', authRoutes);
-app.use('/', helperRoutes);
+app.use('/api/helper', helperRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/', feedbackRoutes);
 app.use('/', adminRoutes);
+app.use('/api/administrator', administratorRoutes);
+app.use('/', moderatorRoutes);
 app.use('/api/seeker', seekerRoutes);
 app.use('/', seekerRoutes);
 app.use('/', serviceRoutes);

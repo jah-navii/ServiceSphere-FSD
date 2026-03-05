@@ -58,7 +58,7 @@ function Sidebar({ userData }) {
         </button>
         <p className={styles.footerText}>&copy; 2025 ServiceSphere</p>
         <div className={styles.footerLinks}>
-          <Link to="/about">About</Link> | <Link to="/contact">Contact</Link> | <Link to="/terms">Terms</Link>
+          <Link to="/about">About</Link> | <Link to="/Admincontact">Contact</Link> | <Link to="/terms">Terms</Link>
         </div>
       </div>
     </aside>

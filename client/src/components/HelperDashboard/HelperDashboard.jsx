@@ -47,7 +47,7 @@ function HelperDashboard() {
       }
 
       try {
-        const url = `http://localhost:5000/profile/${userId}`;
+        const url = `http://localhost:5000/api/helper/profile/${userId}`;
         const res = await fetch(url, {
           credentials: "include"
         });

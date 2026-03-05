@@ -137,12 +137,12 @@ export const payForBooking = async (req, res) => {
 // Previous bookings page
 export const renderPreviouslyBookedServices = async (req, res) => {
 
-  if (!req.session.user || req.session.user.role !== "seeker") {
-    return res.redirect('/login/seeker');
+  if (!req.user || req.user.role !== "seeker") {
+    return res.status(403).json({ error: 'Seeker access required' });
   }
 
   try {
-      const userId = req.session.user.id;
+      const userId = req.user.id;
       console.log(userId);
       
       // Get current date in the same format as the stored booking dates (DD-MM-YYYY)

@@ -6,8 +6,8 @@ import rateLimit from 'express-rate-limit';
 // Helper to properly handle IPv6 addresses in rate limiting
 const getClientIdentifier = (req) => {
   // If user is authenticated and is a seeker, use their ID
-  if (req.session?.user?.role === 'seeker' && req.session?.user?.id) {
-    return `seeker_${req.session.user.id}`;
+  if (req.user?.role === 'seeker' && req.user?.id) {
+    return `seeker_${req.user.id}`;
   }
   // Fallback to IP address - return undefined to use default IP handler
   return undefined;

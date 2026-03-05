@@ -1,18 +1,21 @@
 import Admin from '../models/Admin.js';
 import Helper from '../models/Helper.js';
+import Seeker from '../models/Seeker.js';
 import ContactMessage from '../models/ContactMessage.js';
 import Service from '../models/Service.js';
 import Category from '../models/Category.js';
 import Booking from '../models/Booking.js';
 import Location from "../models/Location.js";
+import bcrypt from 'bcryptjs';
+import { generateToken } from '../utils/jwtUtils.js';
 
 //Dealt with
 
 
-// Admin Signup - converted to API
+// Admin Signup - converted to API with JWT
 export const signupAdmin = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword } = req.body;
+    const { name, email, password, confirmPassword, role } = req.body;
 
     // 1. Validation
     if (!name || !email || !password || !confirmPassword) {
@@ -29,17 +32,23 @@ export const signupAdmin = async (req, res) => {
       return res.status(409).json({ error: "Admin already exists." });
     }
 
-    // 3. Create Admin
+    // 3. Hash Password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 4. Create Admin with role (default to 'admin' if not specified)
     const newAdmin = new Admin({
       name,
       email,
-      password, // Note: In production, please hash this!
+      password: hashedPassword,
+      role: role && (role === 'administrator' || role === 'admin') ? role : 'admin'
     });
 
     await newAdmin.save();
 
-    // 4. Success Response
-    return res.status(201).json({ message: "Admin registered successfully" });
+    // 5. Success Response
+    return res.status(201).json({ 
+      message: `${newAdmin.role === 'administrator' ? 'Administrator' : 'Admin'} registered successfully` 
+    });
 
   } catch (err) {
     console.error(err);
@@ -47,34 +56,73 @@ export const signupAdmin = async (req, res) => {
   }
 };
 
-// ADMIN LOGIN - Converted to API 
+// ADMIN LOGIN - JWT Authentication 
 export const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
+
+  console.log('Login attempt:', { email, passwordLength: password?.length });
 
   if (!email || !password) {
     return res.status(400).json({ error: "Please fill in all fields" });
   }
 
   try {
-    const admin = await Admin.findOne({ email, password });
+    const admin = await Admin.findOne({ email });
+    
+    console.log('Admin found:', admin ? `Yes (role: ${admin.role})` : 'No');
     
     if (!admin) {
       return res.status(401).json({ error: "Invalid email or password!" });
     }
 
-    // Construct User Data for Redux
+    // Check if password is hashed (starts with $2a$ or $2b$ for bcrypt)
+    let isPasswordValid = false;
+    
+    if (admin.password.startsWith('$2a$') || admin.password.startsWith('$2b$')) {
+      // Password is hashed, use bcrypt compare
+      isPasswordValid = await bcrypt.compare(password, admin.password);
+      console.log('Password comparison result:', isPasswordValid);
+    } else {
+      // Legacy plain-text password, direct comparison
+      isPasswordValid = (password === admin.password);
+      
+      // Optionally, update to hashed password for security
+      if (isPasswordValid) {
+        admin.password = await bcrypt.hash(password, 10);
+        await admin.save();
+        console.log('Updated admin password to hashed version');
+      }
+    }
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid email or password!" });
+    }
+
+    // Only administrators can login here (moderators use /login/moderator)
+    if (admin.role !== 'administrator') {
+      return res.status(403).json({ 
+        error: "Access denied. Moderators should use /login/moderator" 
+      });
+    }
+
+    // Construct User Data
     const userData = {
       id: admin._id,
       name: admin.name,
       email: admin.email,
-      role: 'admin' // Important for redirect logic
+      role: 'administrator' // Direct role, no dual system
     };
 
-    // Set Session for Server-Side Authentication
-    req.session.user = userData;
+    // Generate JWT token
+    const token = generateToken(userData);
 
-    console.log('Admin logged in ✅');
-    return res.status(200).json({ success: true, user: userData });
+    console.log('Administrator logged in ✅');
+    
+    return res.status(200).json({ 
+      success: true, 
+      token,
+      user: userData 
+    });
 
   } catch (err) {
     console.error("Admin Login Error:", err);
@@ -147,6 +195,49 @@ export const rejectUser = async (req, res) => {
   } catch (error) {
     console.error('Error rejecting user:', error);
     res.status(500).json({ error: 'Failed to reject user' });
+  }
+};
+
+// GET /api/admin/seekers
+export const getSeekers = async (req, res) => {
+  try {
+    const seekers = await Seeker.find().select('-password'); // Don't send passwords
+    res.status(200).json(seekers);
+  } catch (error) {
+    console.error('Error fetching seekers:', error);
+    res.status(500).json({ error: 'Error fetching seekers' });
+  }
+};
+
+// DELETE /api/admin/users/helper/:id
+export const deleteHelper = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const helper = await Helper.findByIdAndDelete(id);
+    if (helper) {
+      res.status(200).json({ message: 'Helper deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'Helper not found' });
+    }
+  } catch (error) {
+    console.error('Error deleting helper:', error);
+    res.status(500).json({ error: 'Failed to delete helper' });
+  }
+};
+
+// DELETE /api/admin/users/seeker/:id
+export const deleteSeeker = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const seeker = await Seeker.findByIdAndDelete(id);
+    if (seeker) {
+      res.status(200).json({ message: 'Seeker deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'Seeker not found' });
+    }
+  } catch (error) {
+    console.error('Error deleting seeker:', error);
+    res.status(500).json({ error: 'Failed to delete seeker' });
   }
 };
 
@@ -354,6 +445,62 @@ export const deleteLocation = async (req, res) => {
     res.status(200).json({ message: "Location removed" });
   } catch (err) {
     res.status(500).json({ error: "Failed to delete" });
+  }
+};
+
+// GET /api/admin/location-analytics
+export const getLocationAnalytics = async (req, res) => {
+  try {
+    // 1. Get all locations for reference
+    const allLocations = await Location.find().select('name');
+
+    // 2. Get all bookings and helpers
+    const bookings = await Booking.find().select('address price');
+    const helpers = await Helper.find().select('address');
+
+    // 3. Initialize location map
+    const locationMap = {};
+    allLocations.forEach(loc => {
+      locationMap[loc.name] = {
+        name: loc.name,
+        bookings: 0,
+        revenue: 0,
+        helpers: 0
+      };
+    });
+
+    // 4. Match bookings to locations (check if location name is in address)
+    bookings.forEach(booking => {
+      if (booking.address) {
+        // Check each location to see if it's mentioned in the address
+        allLocations.forEach(loc => {
+          if (booking.address.toLowerCase().includes(loc.name.toLowerCase())) {
+            locationMap[loc.name].bookings += 1;
+            locationMap[loc.name].revenue += booking.price || 0;
+          }
+        });
+      }
+    });
+
+    // 5. Match helpers to locations (check if location name is in address)
+    helpers.forEach(helper => {
+      if (helper.address) {
+        // Check each location to see if it's mentioned in the address
+        allLocations.forEach(loc => {
+          if (helper.address.toLowerCase().includes(loc.name.toLowerCase())) {
+            locationMap[loc.name].helpers += 1;
+          }
+        });
+      }
+    });
+
+    // 6. Convert to array and sort by bookings
+    const analytics = Object.values(locationMap).sort((a, b) => b.bookings - a.bookings);
+
+    res.status(200).json(analytics);
+  } catch (err) {
+    console.error("Error fetching location analytics:", err);
+    res.status(500).json({ error: "Failed to fetch analytics" });
   }
 };
 
