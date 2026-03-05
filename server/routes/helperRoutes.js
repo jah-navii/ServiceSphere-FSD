@@ -36,14 +36,14 @@ router.put('/profile', upload.single('certifications'), updateHelperProfile);
 router.get('/requests/:helperId', getHelperRequests);
 router.patch('/requests/update', updateRequestStatus);
 
-router.get('/api/helper/schedule/:helperId', getHelperSchedule);
+router.get('/schedule/:helperId', getHelperSchedule);
 
-router.get('/api/helper/earnings/:helperId', getHelperEarnings);
+router.get('/earnings/:helperId', getHelperEarnings);
 
-router.get('/api/helper/feedback/:helperId', getHelperFeedback);
+router.get('/feedback/:helperId', getHelperFeedback);
 
 // Demo/Testing endpoint - Creates historical bookings for testing
-router.post('/api/helper/seed-demo-bookings', seedDemoBookings);
+router.post('/seed-demo-bookings', seedDemoBookings);
 
 export default router;
 

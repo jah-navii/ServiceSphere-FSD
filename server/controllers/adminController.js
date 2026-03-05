@@ -6,14 +6,16 @@ import Service from '../models/Service.js';
 import Category from '../models/Category.js';
 import Booking from '../models/Booking.js';
 import Location from "../models/Location.js";
+import bcrypt from 'bcryptjs';
+import { generateToken } from '../utils/jwtUtils.js';
 
 //Dealt with
 
 
-// Admin Signup - converted to API
+// Admin Signup - converted to API with JWT
 export const signupAdmin = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword } = req.body;
+    const { name, email, password, confirmPassword, role } = req.body;
 
     // 1. Validation
     if (!name || !email || !password || !confirmPassword) {
@@ -30,17 +32,23 @@ export const signupAdmin = async (req, res) => {
       return res.status(409).json({ error: "Admin already exists." });
     }
 
-    // 3. Create Admin
+    // 3. Hash Password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 4. Create Admin with role (default to 'admin' if not specified)
     const newAdmin = new Admin({
       name,
       email,
-      password, // Note: In production, please hash this!
+      password: hashedPassword,
+      role: role && (role === 'administrator' || role === 'admin') ? role : 'admin'
     });
 
     await newAdmin.save();
 
-    // 4. Success Response
-    return res.status(201).json({ message: "Admin registered successfully" });
+    // 5. Success Response
+    return res.status(201).json({ 
+      message: `${newAdmin.role === 'administrator' ? 'Administrator' : 'Admin'} registered successfully` 
+    });
 
   } catch (err) {
     console.error(err);
@@ -48,34 +56,73 @@ export const signupAdmin = async (req, res) => {
   }
 };
 
-// ADMIN LOGIN - Converted to API 
+// ADMIN LOGIN - JWT Authentication 
 export const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
+
+  console.log('Login attempt:', { email, passwordLength: password?.length });
 
   if (!email || !password) {
     return res.status(400).json({ error: "Please fill in all fields" });
   }
 
   try {
-    const admin = await Admin.findOne({ email, password });
+    const admin = await Admin.findOne({ email });
+    
+    console.log('Admin found:', admin ? `Yes (role: ${admin.role})` : 'No');
     
     if (!admin) {
       return res.status(401).json({ error: "Invalid email or password!" });
     }
 
-    // Construct User Data for Redux
+    // Check if password is hashed (starts with $2a$ or $2b$ for bcrypt)
+    let isPasswordValid = false;
+    
+    if (admin.password.startsWith('$2a$') || admin.password.startsWith('$2b$')) {
+      // Password is hashed, use bcrypt compare
+      isPasswordValid = await bcrypt.compare(password, admin.password);
+      console.log('Password comparison result:', isPasswordValid);
+    } else {
+      // Legacy plain-text password, direct comparison
+      isPasswordValid = (password === admin.password);
+      
+      // Optionally, update to hashed password for security
+      if (isPasswordValid) {
+        admin.password = await bcrypt.hash(password, 10);
+        await admin.save();
+        console.log('Updated admin password to hashed version');
+      }
+    }
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid email or password!" });
+    }
+
+    // Only administrators can login here (moderators use /login/moderator)
+    if (admin.role !== 'administrator') {
+      return res.status(403).json({ 
+        error: "Access denied. Moderators should use /login/moderator" 
+      });
+    }
+
+    // Construct User Data
     const userData = {
       id: admin._id,
       name: admin.name,
       email: admin.email,
-      role: 'admin' // Important for redirect logic
+      role: 'administrator' // Direct role, no dual system
     };
 
-    // Set Session for Server-Side Authentication
-    req.session.user = userData;
+    // Generate JWT token
+    const token = generateToken(userData);
 
-    console.log('Admin logged in ✅');
-    return res.status(200).json({ success: true, user: userData });
+    console.log('Administrator logged in ✅');
+    
+    return res.status(200).json({ 
+      success: true, 
+      token,
+      user: userData 
+    });
 
   } catch (err) {
     console.error("Admin Login Error:", err);

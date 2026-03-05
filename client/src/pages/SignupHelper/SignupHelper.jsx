@@ -21,6 +21,7 @@ const SignupHelper = () => {
     password: "",
     confirmPassword: "",
     address: "", 
+    location: "",
     category: "", 
   });
 
@@ -64,7 +65,7 @@ const SignupHelper = () => {
       return;
     }
     
-    if (!formData.address) {
+    if (!formData.location) {
         setError("Please select your city/location.");
         return;
     }
@@ -152,11 +153,24 @@ const SignupHelper = () => {
 
           <div className={styles.formGroup}>
             <label className={styles.label}>Location / City</label>
-            <select className={styles.selectInput} name="address" value={formData.address} onChange={handleChange} required>
+            <select 
+              className={styles.selectInput} 
+              name="location" 
+              value={formData.location} 
+              onChange={(e) => {
+                const selectedLocation = locations.find(loc => loc._id === e.target.value);
+                setFormData({
+                  ...formData,
+                  location: e.target.value,
+                  address: selectedLocation ? selectedLocation.name : ''
+                });
+              }} 
+              required
+            >
                 <option value="">-- Select Your City --</option>
                 {locations.length > 0 ? (
                     locations.map(loc => (
-                        <option key={loc._id} value={loc.name}>{loc.name}</option>
+                        <option key={loc._id} value={loc._id}>{loc.name}</option>
                     ))
                 ) : (
                     <option disabled>Loading locations...</option>

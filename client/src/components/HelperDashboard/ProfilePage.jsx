@@ -128,7 +128,7 @@ function ProfilePage() {
 
     try {
       // UPDATED URL based on your request
-      const response = await fetch("http://localhost:5000/profile", { 
+      const response = await fetch("http://localhost:5000/api/helper/profile", { 
         method: "PUT",
         credentials: "include",
         body: submitData,

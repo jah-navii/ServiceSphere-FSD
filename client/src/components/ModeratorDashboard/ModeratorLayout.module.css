@@ -1,0 +1,36 @@
+.layoutContainer {
+  display: flex;
+  min-height: 100vh;
+  background: #f7fafc;
+}
+
+.mainContent {
+  flex: 1;
+  margin-left: 280px;
+  display: flex;
+  flex-direction: column;
+  max-width: calc(100% - 280px);
+}
+
+.contentArea {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .mainContent {
+    margin-left: 70px;
+    max-width: calc(100% - 70px);
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .contentArea {
+    padding: 1rem;
+  }
+}

@@ -18,7 +18,7 @@ function RequestsPage() {
       if (!helperId) return;
 
       try {
-        const res = await fetch(`http://localhost:5000/requests/${helperId}`);
+        const res = await fetch(`http://localhost:5000/api/helper/requests/${helperId}`);
         const data = await res.json();
 
         if (res.ok) {
@@ -39,7 +39,7 @@ function RequestsPage() {
   // Handling Accept and Reject Buttons
   const handleStatusUpdate = async (requestId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:5000/requests/update`, {
+      const res = await fetch(`http://localhost:5000/api/helper/requests/update`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ requestId, status: newStatus }),

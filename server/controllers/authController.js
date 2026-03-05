@@ -1,12 +1,14 @@
 import Helper from '../models/Helper.js';
 import Seeker from '../models/Seeker.js';
+import bcrypt from 'bcryptjs';
+import { generateToken } from '../utils/jwtUtils.js';
 
 //Dealt with
 
 // Helper Signup - API
 export const signupHelper = async (req, res) => {
   try {
-    // 1. EXTRACT DATA - Added 'category' and 'address' here
+    // 1. EXTRACT DATA - Added 'category', 'address', and 'location' here
     const { 
         name, 
         email, 
@@ -16,7 +18,8 @@ export const signupHelper = async (req, res) => {
         aadharnumber, 
         gender, 
         category, // <--- CRITICAL FIX
-        address,  // <--- Added address too since we added it to the form
+        address,  // <--- String name of location
+        location, // <--- ObjectId reference to Location
         services 
     } = req.body;
 
@@ -40,15 +43,19 @@ export const signupHelper = async (req, res) => {
       return res.status(409).json({ error: "Mobile number already registered!" });
     }
 
+    // --- Hash Password ---
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // --- Create Helper ---
     const newHelper = await Helper.create({ 
         name, 
         email, 
-        password, // Ideally hash this
+        password: hashedPassword,
         mobilenumber, 
         aadharnumber,
         gender,
         address,
+        location, // <--- PASSING THE LOCATION ID HERE
         category, // <--- PASSING THE CATEGORY ID HERE
         services: services || [], // Defaults to empty array if not sent
         approved: false 
@@ -115,11 +122,14 @@ export const signupSeeker = async (req, res) => {
       return res.status(409).json({ error: "Mobile number already registered!" });
     }
 
+    // --- Hash Password ---
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // --- 3. Create User ---
     await Seeker.create({ 
         name, 
         email, 
-        password, 
+        password: hashedPassword, 
         mobilenumber, 
         address 
     });
@@ -134,7 +144,7 @@ export const signupSeeker = async (req, res) => {
   }
 };
 
-// HELPER LOGIN - modified for react
+// HELPER LOGIN - modified for JWT authentication
 export const loginHelper = async (req, res) => {
   const { email, password } = req.body;
 
@@ -143,9 +153,31 @@ export const loginHelper = async (req, res) => {
   }
 
   try {
-    const helper = await Helper.findOne({ email, password });
+    const helper = await Helper.findOne({ email });
 
     if (!helper) {
+      return res.status(401).json({ error: "Invalid email or password!" });
+    }
+
+    // Check if password is hashed (starts with $2a$ or $2b$ for bcrypt)
+    let isPasswordValid = false;
+    
+    if (helper.password.startsWith('$2a$') || helper.password.startsWith('$2b$')) {
+      // Password is hashed, use bcrypt compare
+      isPasswordValid = await bcrypt.compare(password, helper.password);
+    } else {
+      // Legacy plain-text password, direct comparison
+      isPasswordValid = (password === helper.password);
+      
+      // Optionally, update to hashed password for security
+      if (isPasswordValid) {
+        helper.password = await bcrypt.hash(password, 10);
+        await helper.save();
+        console.log('Updated helper password to hashed version');
+      }
+    }
+
+    if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid email or password!" });
     }
 
@@ -156,15 +188,20 @@ export const loginHelper = async (req, res) => {
       mobilenumber: helper.mobilenumber,
       aadharnumber: helper.aadharnumber,
       gender: helper.gender,
-      role: "helper", // Useful for React to know which dashboard to show
+      role: "helper",
     };
 
-    // Set Session for Server-Side Authentication
-    req.session.user = userData;
+    // Generate JWT token
+    const token = generateToken(userData);
 
     console.log("Helper logged in ✅");
-    // Return 200 OK with JSON
-    return res.status(200).json({ success: true, user: userData });
+    
+    // Return token and user data
+    return res.status(200).json({ 
+      success: true, 
+      token,
+      user: userData 
+    });
 
   } catch (err) {
     console.error("Helper Login Error:", err);
@@ -172,7 +209,7 @@ export const loginHelper = async (req, res) => {
   }
 };
 
-// --- SEEKER LOGIN (Converted from EJS to React-JSON) ---
+// --- SEEKER LOGIN (JWT Authentication) ---
 export const loginSeeker = async (req, res) => {
   const { email, password } = req.body;
 
@@ -182,11 +219,32 @@ export const loginSeeker = async (req, res) => {
   }
 
   try {
-    // ⚠️ SECURITY NOTE: Ideally use bcrypt.compare here too
-    const seeker = await Seeker.findOne({ email, password });
+    const seeker = await Seeker.findOne({ email });
 
     // 2. Auth Check (Return 401 JSON)
     if (!seeker) {
+      return res.status(401).json({ error: "Invalid email or password!" });
+    }
+
+    // Check if password is hashed (starts with $2a$ or $2b$ for bcrypt)
+    let isPasswordValid = false;
+    
+    if (seeker.password.startsWith('$2a$') || seeker.password.startsWith('$2b$')) {
+      // Password is hashed, use bcrypt compare
+      isPasswordValid = await bcrypt.compare(password, seeker.password);
+    } else {
+      // Legacy plain-text password, direct comparison
+      isPasswordValid = (password === seeker.password);
+      
+      // Optionally, update to hashed password for security
+      if (isPasswordValid) {
+        seeker.password = await bcrypt.hash(password, 10);
+        await seeker.save();
+        console.log('Updated seeker password to hashed version');
+      }
+    }
+
+    if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid email or password!" });
     }
 
@@ -197,16 +255,20 @@ export const loginSeeker = async (req, res) => {
       email: seeker.email,
       mobilenumber: seeker.mobilenumber,
       address: seeker.address,
-      role: "seeker" // Crucial for Frontend logic
+      role: "seeker"
     };
 
-    // 4. Set Session for Server-Side Authentication
-    req.session.user = userData;
+    // Generate JWT token
+    const token = generateToken(userData);
 
     console.log('Seeker logged in ✅');
 
-    // 5. Success Response (Return 200 JSON)
-    return res.status(200).json({ success: true, user: userData });
+    // 5. Success Response with token
+    return res.status(200).json({ 
+      success: true, 
+      token,
+      user: userData 
+    });
 
   } catch (err) {
     console.error("Seeker Login Error:", err);

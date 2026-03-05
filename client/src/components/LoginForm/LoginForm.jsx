@@ -38,7 +38,6 @@ const LoginForm = ({ title, apiEndpoint, signupPath, redirectPath }) => {
       const response = await fetch(`http://localhost:5000${apiEndpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify(formData),
       });
 
@@ -49,10 +48,13 @@ const LoginForm = ({ title, apiEndpoint, signupPath, redirectPath }) => {
         return;
       }
 
-      // Success!
+      // Success! Store JWT token in localStorage
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      }
+      
       dispatch(loginSuccess(data.user));
-      // You might want to store the token here: localStorage.setItem('token', data.token);
-    //   alert('welcome back ${data.user.name}!');
       navigate(redirectPath || "/home"); // Default to home if no path given
       
     } catch (err) {

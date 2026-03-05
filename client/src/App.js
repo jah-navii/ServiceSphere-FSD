@@ -27,12 +27,24 @@ import PreviousBookings from "./pages/PreviousBookings/PreviousBookings";
 
 import AboutUs from "./pages/AboutUs/AboutUs";
 
-import AdminLayout from "./components/AdminDashboard/AdminLayout";
-import DashboardHome from "./components/AdminDashboard/DashboardHome";
-import ManageUsers from "./components/AdminDashboard/ManageUsers";
-import ManageServices from "./components/AdminDashboard/ManageServices";
-import AdminEarnings from "./components/AdminDashboard/AdminEarnings";
-import ManageLocations from "./components/AdminDashboard/ManageLocations";
+import AdministratorLayout from "./components/AdministratorDashboard/AdministratorLayout";
+import AdministratorHome from "./components/AdministratorDashboard/AdministratorHome";
+import AdministratorUsers from "./components/AdministratorDashboard/AdministratorUsers";
+import AdministratorBookings from "./components/AdministratorDashboard/AdministratorBookings";
+import AdministratorServices from "./components/AdministratorDashboard/AdministratorServices";
+import AdministratorLocations from "./components/AdministratorDashboard/AdministratorLocations";
+import AdministratorFeedbacks from "./components/AdministratorDashboard/AdministratorFeedbacks";
+
+import ModeratorLayout from "./components/ModeratorDashboard/ModeratorLayout";
+import ModeratorHome from "./components/ModeratorDashboard/ModeratorHome";
+import ModeratorHelpers from "./components/ModeratorDashboard/ModeratorHelpers";
+import ModeratorBookings from "./components/ModeratorDashboard/ModeratorBookings";
+import ModeratorServices from "./components/ModeratorDashboard/ModeratorServices";
+import ModeratorProfile from "./components/ModeratorDashboard/ModeratorProfile";
+import ModeratorEarnings from "./components/ModeratorDashboard/ModeratorEarnings";
+
+import ApplyModerator from "./pages/ApplyModerator/ApplyModerator";
+import LoginModerator from "./pages/LoginModerator/LoginModerator";
 
 import AdminContact from "./pages/AdminContact/AdminContact";
 import TermsAndConditions from "./pages/TermsAndConditions/TermsAndConditions";
@@ -54,6 +66,8 @@ function App() {
         <Route path="/login/seeker" element={<LoginSeeker />} />
         <Route path="/login/helper" element={<LoginHelper />} />
         <Route path="/login/admin" element={<LoginAdmin />} />
+        <Route path="/login/moderator" element={<LoginModerator />} />
+        <Route path="/apply/moderator" element={<ApplyModerator />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/AdminContact" element={<AdminContact />} />
         <Route path="/TermsAndConditions" element={<TermsAndConditions />} />
@@ -110,17 +124,32 @@ function App() {
           <Route path="feedback" element={<FeedbackPage />} />
         </Route>
 
-        {/* Admin Protected Routes */}
-        <Route path="/admin" element={
-          <ProtectedRoute redirectTo="/login/admin" allowedRoles={['admin']}>
-            <AdminLayout />
+        {/* Administrator Protected Routes */}
+        <Route path="/administrator" element={
+          <ProtectedRoute redirectTo="/login/admin" requireAdministrator={true}>
+            <AdministratorLayout />
           </ProtectedRoute>
         }>
-          <Route path="dashboard" element={<DashboardHome />} />
-          <Route path="users" element={<ManageUsers />} />
-          <Route path="services" element={<ManageServices />} />
-          <Route path="earnings" element={<AdminEarnings />} />
-          <Route path="locations" element={<ManageLocations />} />
+          <Route path="dashboard" element={<AdministratorHome />} />
+          <Route path="users" element={<AdministratorUsers />} />
+          <Route path="bookings" element={<AdministratorBookings />} />
+          <Route path="services" element={<AdministratorServices />} />
+          <Route path="locations" element={<AdministratorLocations />} />
+          <Route path="feedbacks" element={<AdministratorFeedbacks />} />
+        </Route>
+
+        {/* Moderator Protected Routes */}
+        <Route path="/moderator" element={
+          <ProtectedRoute redirectTo="/login/moderator" requireModerator={true}>
+            <ModeratorLayout />
+          </ProtectedRoute>
+        }>
+          <Route path="dashboard" element={<ModeratorHome />} />
+          <Route path="helpers" element={<ModeratorHelpers />} />
+          <Route path="bookings" element={<ModeratorBookings />} />
+          <Route path="services" element={<ModeratorServices />} />
+          <Route path="earnings" element={<ModeratorEarnings />} />
+          <Route path="profile" element={<ModeratorProfile />} />
         </Route>
 
         {/* Error Pages */}

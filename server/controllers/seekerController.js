@@ -4,26 +4,26 @@ import Helper from '../models/Helper.js';
 
 // GET /home — Seeker Home
 export const renderHome = (req, res) => {
-  if (!req.session.user || req.session.user.role !== 'seeker') {
+  if (!req.user || req.user.role !== 'seeker') {
     if (req.headers.accept?.includes('application/json')) {
       return res.status(401).json({
         success: false,
         message: 'Unauthorized - Seeker login required'
       });
     }
-    return res.redirect('/login/seeker');
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   // Return JSON for React frontend
   res.status(200).json({
     success: true,
-    user: req.session.user
+    user: req.user
   });
 };
 
 // GET /profile — Seeker Profile Page
 export const getSeekerProfile = async (req, res) => {
-  if (!req.session.user || req.session.user.role !== 'seeker') {
+  if (!req.user || req.user.role !== 'seeker') {
     // For API calls, return 401 instead of redirect
     if (req.originalUrl.includes('/api/') || req.headers.accept?.includes('application/json')) {
       return res.status(401).json({
@@ -31,16 +31,16 @@ export const getSeekerProfile = async (req, res) => {
         message: 'Unauthorized - Seeker login required'
       });
     }
-    return res.redirect('/login/seeker');
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   // If it's an API call, fetch full seeker data and return JSON
   if (req.originalUrl.includes('/api/') || req.headers.accept?.includes('application/json')) {
     try {
-      const seeker = await Seeker.findById(req.session.user.id).select('-password');
+      const seeker = await Seeker.findById(req.user.id).select('-password');
       return res.status(200).json({
         success: true,
-        seeker: seeker || req.session.user
+        seeker: seeker || req.user
       });
     } catch (err) {
       console.error("Get profile error:", err);
@@ -53,7 +53,10 @@ export const getSeekerProfile = async (req, res) => {
   }
 
   // Otherwise, render the view (for legacy server-rendered pages if any)
-  res.render('seeker_profile', { seeker: req.session.user });
+  res.status(200).json({
+    success: true,
+    seeker: req.user
+  });
 };
 
 
@@ -62,7 +65,7 @@ export const getSeekerProfile = async (req, res) => {
 // POST /update-seeker-profile — Seeker Profile Update
 export const updateSeekerProfile = async (req, res) => {
   const { name, mobilenumber, address } = req.body;
-  const seekerId = req.session.user.id;
+  const seekerId = req.user.id;
 
   try {
     const seeker = await Seeker.findByIdAndUpdate(
@@ -71,12 +74,7 @@ export const updateSeekerProfile = async (req, res) => {
       { new: true }
     );
 
-    // Update session info
-    req.session.user.name = seeker.name;
-    req.session.user.mobilenumber = seeker.mobilenumber;
-    req.session.user.address = seeker.address;
-
-    // If it's an API call (from React), return JSON
+    // Return JSON response
     if (req.originalUrl.includes('/api/') || req.headers.accept?.includes('application/json')) {
       return res.status(200).json({
         success: true,
@@ -91,8 +89,18 @@ export const updateSeekerProfile = async (req, res) => {
       });
     }
 
-    // Otherwise, redirect (for traditional form submission)
-    res.redirect('/profile');
+    // Default response
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      seeker: {
+        id: seeker._id,
+        name: seeker.name,
+        email: seeker.email,
+        mobilenumber: seeker.mobilenumber,
+        address: seeker.address
+      }
+    });
   } catch (err) {
     console.error("Profile update error:", err);
     
@@ -110,21 +118,21 @@ export const updateSeekerProfile = async (req, res) => {
 };
 
 export const showCart = async (req, res) => {
-  if (!req.session.user || req.session.user.role !== 'seeker') {
+  if (!req.user || req.user.role !== 'seeker') {
     if (req.headers.accept?.includes('application/json')) {
       return res.status(401).json({
         success: false,
         message: 'Unauthorized - Seeker login required'
       });
     }
-    return res.redirect('/login/seeker');
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   try {
     const today = new Date().toISOString().split("T")[0];
 
     const bookings = await Booking.find({
-      seeker: req.session.user.id,
+      seeker: req.user.id,
       date: { $gte: today }
     })
     .populate('helper', 'name') // Only get helper's name
