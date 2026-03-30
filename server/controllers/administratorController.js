@@ -509,28 +509,27 @@ export const approveModerator = async (req, res) => {
     const administratorId = req.user.id;
 
     const moderator = await Admin.findById(id);
-    
+
     if (!moderator || moderator.role !== 'moderator') {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Moderator application not found' 
+      return res.status(404).json({
+        success: false,
+        error: 'Moderator application not found'
       });
     }
 
     if (moderator.status !== 'pending') {
-      return res.status(400).json({ 
-        success: false, 
-        error: `This application has already been ${moderator.status}` 
+      return res.status(400).json({
+        success: false,
+        error: `This application has already been ${moderator.status}`
       });
     }
 
-    // Update moderator status
     moderator.status = 'active';
     moderator.approvedBy = administratorId;
     moderator.approvedDate = new Date();
     await moderator.save();
 
-    // Update location status if assigned
+    // Use the location they chose during signup
     if (moderator.assignedLocation) {
       await Location.findByIdAndUpdate(moderator.assignedLocation, {
         moderator: moderator._id,
@@ -545,9 +544,9 @@ export const approveModerator = async (req, res) => {
     });
   } catch (error) {
     console.error('Approve Moderator Error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Failed to approve moderator' 
+    res.status(500).json({
+      success: false,
+      error: 'Failed to approve moderator'
     });
   }
 };

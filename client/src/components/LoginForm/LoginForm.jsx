@@ -44,7 +44,7 @@ const LoginForm = ({ title, apiEndpoint, signupPath, redirectPath }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        dispatch(loginFailure(data.error || "Login failed"));
+        dispatch(loginFailure(data.message || data.error || "Login failed"));
         return;
       }
 
@@ -58,6 +58,7 @@ const LoginForm = ({ title, apiEndpoint, signupPath, redirectPath }) => {
       navigate(redirectPath || "/home"); // Default to home if no path given
       
     } catch (err) {
+      console.error(err);
       dispatch(loginFailure("Network error. Please try again later"));
     }
   };
@@ -78,7 +79,7 @@ const LoginForm = ({ title, apiEndpoint, signupPath, redirectPath }) => {
       <div className={styles.formCard}>
         <h1 className={styles.title}>{title}</h1>
 
-        {error && <div className={styles.errorText}>{error}</div>}
+        {error && <div className={styles.errorText}>{typeof error === 'string' ? error : error.message || 'Login failed'}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>

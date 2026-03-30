@@ -5,7 +5,7 @@ const LoginSeeker = () => {
   return (
     <LoginForm 
       title="Login as a Seeker" 
-      apiEndpoint="/login/seeker" 
+      apiEndpoint="/api/auth/login/seeker"
       signupPath="/signup/seeker"
       redirectPath="/home" /* Change this to where seekers go */
     />

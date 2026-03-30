@@ -32,7 +32,7 @@ const LoginModerator = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/login/moderator', {
+      const response = await fetch('http://localhost:5000/api/auth/login/moderator', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

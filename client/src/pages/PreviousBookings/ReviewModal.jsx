@@ -25,7 +25,7 @@ const ReviewModal = ({ booking, onClose }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:5000/feedback", {
+      const response = await fetch("http://localhost:5000/api/feedback", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

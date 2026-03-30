@@ -6,7 +6,7 @@ const LoginAdmin = () => {
   return (
     <LoginForm
       title="Welcome Back, Administrator!"
-      apiEndpoint="/login/admin"
+      apiEndpoint="/api/auth/login/admin"
       signupPath="/signup/admin"
       redirectPath="/administrator/dashboard"
     />

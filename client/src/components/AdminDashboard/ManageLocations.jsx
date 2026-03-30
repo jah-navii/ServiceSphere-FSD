@@ -7,7 +7,7 @@ const ManageLocations = () => {
 
   // Fetch Locations
   useEffect(() => {
-    fetch("http://localhost:5000/api/admin/locations")
+    fetch("http://localhost:5000/api/locations")
       .then(res => res.json())
       .then(data => setLocations(data))
       .catch(err => console.error(err));
@@ -19,7 +19,7 @@ const ManageLocations = () => {
     if (!newLocation.trim()) return;
 
     try {
-      const res = await fetch("http://localhost:5000/api/admin/locations/add", {
+      const res = await fetch("http://localhost:5000/api/locations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: newLocation })
@@ -41,7 +41,7 @@ const ManageLocations = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Remove this location?")) return;
     try {
-      await fetch(`http://localhost:5000/api/admin/locations/${id}`, { method: "DELETE" });
+      await fetch(`http://localhost:5000/api/locations/${id}`, { method: "DELETE" });
       setLocations(locations.filter(l => l._id !== id));
     } catch (err) {
       console.error(err);

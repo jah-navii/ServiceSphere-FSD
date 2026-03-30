@@ -41,7 +41,7 @@ const ManageServices = () => {
     if (!newCatName.trim()) return;
 
     try {
-      const res = await fetch("http://localhost:5000/api/admin/categories/add", {
+      const res = await fetch("http://localhost:5000/api/admin/categories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: newCatName }),
@@ -66,7 +66,7 @@ const ManageServices = () => {
     if (!newServiceName.trim() || !selectedCatId) return;
 
     try {
-      const res = await fetch("http://localhost:5000/api/admin/services/add", {
+      const res = await fetch("http://localhost:5000/api/admin/services", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: newServiceName, categoryId: selectedCatId }),

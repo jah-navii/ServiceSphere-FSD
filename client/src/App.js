@@ -9,6 +9,9 @@ import SignupAdmin from "./pages/SignupAdmin/SignupAdmin";
 import LoginSeeker from "./pages/LoginSeeker";
 import LoginHelper from "./pages/LoginHelper";
 import LoginAdmin from "./pages/LoginAdmin";
+import ApplyModerator from "./pages/ApplyModerator/ApplyModerator";
+import LoginModerator from "./pages/LoginModerator/LoginModerator";
+
 import Home from "./pages/Home/Home";
 import SearchPage from "./pages/SearchPage/SearchPage";
 
@@ -42,9 +45,6 @@ import ModeratorBookings from "./components/ModeratorDashboard/ModeratorBookings
 import ModeratorServices from "./components/ModeratorDashboard/ModeratorServices";
 import ModeratorProfile from "./components/ModeratorDashboard/ModeratorProfile";
 import ModeratorEarnings from "./components/ModeratorDashboard/ModeratorEarnings";
-
-import ApplyModerator from "./pages/ApplyModerator/ApplyModerator";
-import LoginModerator from "./pages/LoginModerator/LoginModerator";
 
 import AdminContact from "./pages/AdminContact/AdminContact";
 import TermsAndConditions from "./pages/TermsAndConditions/TermsAndConditions";

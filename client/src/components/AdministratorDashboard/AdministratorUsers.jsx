@@ -42,9 +42,8 @@ const AdministratorUsers = () => {
     }
   };
 
-  const handleApproveModerator = async (moderatorId, desiredLocationId) => {
-    const locationId = window.prompt('Enter location ID to assign (or press OK to use desired location):') || desiredLocationId;
-    if (!locationId) return;
+  const handleApproveModerator = async (moderatorId) => {
+    if (!window.confirm('Are you sure you want to approve this moderator?')) return;
 
     try {
       const token = localStorage.getItem('token');
@@ -53,8 +52,7 @@ const AdministratorUsers = () => {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ locationId })
+        }
       });
 
       if (response.ok) {
@@ -276,7 +274,7 @@ const AdministratorUsers = () => {
                       user.status === "pending" ? (
                         <button
                           className={styles.approveBtn}
-                          onClick={() => handleApproveModerator(user._id, user.desiredLocation)}
+                          onClick={() => handleApproveModerator(user._id)}
                         >
                           Approve
                         </button>

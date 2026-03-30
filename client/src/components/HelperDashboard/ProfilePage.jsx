@@ -31,7 +31,7 @@ function ProfilePage() {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/admin/locations");
+        const res = await fetch("http://localhost:5000/api/locations");
         const data = await res.json();
         setLocations(data || []);
       } catch (err) {

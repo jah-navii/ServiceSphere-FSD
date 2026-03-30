@@ -18,7 +18,7 @@ const Home = () => {
     const fetchCategories = async () => {
       try {
         // We reuse the admin endpoint that returns { categories: [...] }
-        const res = await fetch("http://localhost:5000/api/admin/services-data");
+        const res = await fetch("http://localhost:5000/api/services/categories");
         const data = await res.json();
         if (data.categories) {
           setCategories(data.categories);

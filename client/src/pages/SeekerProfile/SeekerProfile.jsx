@@ -78,8 +78,10 @@ const SeekerProfile = () => {
         `http://localhost:5000/api/seeker/profile`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem('token')}`
+          },
           body: JSON.stringify({
             id: currentUser.id,
             name,

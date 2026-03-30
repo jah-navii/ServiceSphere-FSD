@@ -3,12 +3,9 @@ import Seeker from '../models/Seeker.js';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../utils/jwtUtils.js';
 
-//Dealt with
-
-// Helper Signup - API
+// Helper Signup 
 export const signupHelper = async (req, res) => {
   try {
-    // 1. EXTRACT DATA - Added 'category', 'address', and 'location' here
     const { 
         name, 
         email, 
@@ -17,13 +14,13 @@ export const signupHelper = async (req, res) => {
         mobilenumber, 
         aadharnumber, 
         gender, 
-        category, // <--- CRITICAL FIX
-        address,  // <--- String name of location
-        location, // <--- ObjectId reference to Location
+        category, 
+        address,  
+        location, 
         services 
     } = req.body;
 
-    // --- Validations ---
+    // Validations
     if (!name || !email || !password || !mobilenumber || !aadharnumber || !category) {
        return res.status(400).json({ error: "All required fields (including Category) must be filled!" });
     }
@@ -32,7 +29,7 @@ export const signupHelper = async (req, res) => {
       return res.status(400).json({ error: "Passwords do not match!" });
     }
 
-    // --- Database Checks ---
+    // Database Checks
     const existingEmail = await Helper.findOne({ email }) || await Seeker.findOne({ email });
     if (existingEmail) {
       return res.status(409).json({ error: "Email already exists!" });
@@ -43,10 +40,10 @@ export const signupHelper = async (req, res) => {
       return res.status(409).json({ error: "Mobile number already registered!" });
     }
 
-    // --- Hash Password ---
+    // Hash Password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // --- Create Helper ---
+    // Create Helper
     const newHelper = await Helper.create({ 
         name, 
         email, 
@@ -55,9 +52,9 @@ export const signupHelper = async (req, res) => {
         aadharnumber,
         gender,
         address,
-        location, // <--- PASSING THE LOCATION ID HERE
-        category, // <--- PASSING THE CATEGORY ID HERE
-        services: services || [], // Defaults to empty array if not sent
+        location, 
+        category, 
+        services: services || [], 
         approved: false 
     });
 
@@ -79,12 +76,12 @@ export const signupHelper = async (req, res) => {
   }
 };
 
-// Seeker Signup - modified for react
+// Seeker Signup
 export const signupSeeker = async (req, res) => {
   try {
     const { name, email, password, confirmPassword, mobilenumber, address } = req.body;
 
-    // 1. Validations
+    // Validations
 
     if (!name || !email || !password || !mobilenumber) {
        return res.status(400).json({ error: "All required fields must be filled!" });
@@ -110,7 +107,7 @@ export const signupSeeker = async (req, res) => {
       return res.status(400).json({ error: "Invalid email format!" });
     }
 
-    //2. Database Checks 
+    // Database Checks 
 
     const existingEmail = await Helper.findOne({ email }) || await Seeker.findOne({ email });
     if (existingEmail) {
@@ -122,10 +119,10 @@ export const signupSeeker = async (req, res) => {
       return res.status(409).json({ error: "Mobile number already registered!" });
     }
 
-    // --- Hash Password ---
+    // Hash Password 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // --- 3. Create User ---
+    // Create Seeker
     await Seeker.create({ 
         name, 
         email, 
@@ -144,7 +141,7 @@ export const signupSeeker = async (req, res) => {
   }
 };
 
-// HELPER LOGIN - modified for JWT authentication
+// Helper Login
 export const loginHelper = async (req, res) => {
   const { email, password } = req.body;
 
@@ -159,17 +156,14 @@ export const loginHelper = async (req, res) => {
       return res.status(401).json({ error: "Invalid email or password!" });
     }
 
-    // Check if password is hashed (starts with $2a$ or $2b$ for bcrypt)
+    // Check if password is hashed
     let isPasswordValid = false;
     
     if (helper.password.startsWith('$2a$') || helper.password.startsWith('$2b$')) {
-      // Password is hashed, use bcrypt compare
       isPasswordValid = await bcrypt.compare(password, helper.password);
     } else {
-      // Legacy plain-text password, direct comparison
       isPasswordValid = (password === helper.password);
       
-      // Optionally, update to hashed password for security
       if (isPasswordValid) {
         helper.password = await bcrypt.hash(password, 10);
         await helper.save();
@@ -209,11 +203,11 @@ export const loginHelper = async (req, res) => {
   }
 };
 
-// --- SEEKER LOGIN (JWT Authentication) ---
+// Seeker Login
 export const loginSeeker = async (req, res) => {
   const { email, password } = req.body;
 
-  // 1. Validation (Return 400 JSON)
+  // Validation 
   if (!email || !password) {
     return res.status(400).json({ error: "Please fill in all fields" });
   }

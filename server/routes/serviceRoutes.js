@@ -1,13 +1,27 @@
 import express from 'express';
-import { getServicesAPI } from '../controllers/serviceController.js';
+import { getServicesAPI, getCategoriesAPI  } from '../controllers/serviceController.js';
 
 const router = express.Router();
 
-// router.get('/search', showAllServices);
-// router.get('/search/filter', filterServices);
-// router.get('/search/search', searchByName);
-// router.post('/search', postSearch);
+/**
+ * @swagger
+ * tags:
+ *   - name: Services
+ *     description: Public service listing endpoints
+ */
 
-router.get('/api/services', getServicesAPI);
+/**
+ * @swagger
+ * /api/services:
+ *   get:
+ *     summary: Get all available services
+ *     tags: [Services]
+ *     responses:
+ *       200:
+ *         description: List of services
+ */
+router.get('/', getServicesAPI);
+
+router.get('/categories', getCategoriesAPI);
 
 export default router;

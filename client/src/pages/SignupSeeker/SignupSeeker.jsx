@@ -36,7 +36,7 @@ const SignupSeeker = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/signup/seeker", {
+      const response = await fetch("http://localhost:5000/api/auth/signup/seeker", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -51,7 +51,7 @@ const SignupSeeker = () => {
       }
       
       alert("Seeker registered successfully!");
-      // Ideally navigate to login here: navigate('/login/seeker');
+      // Ideally navigate to login here: navigate('/login/seeker'); TODO
       
       setFormData({
         name: "",
@@ -70,7 +70,6 @@ const SignupSeeker = () => {
 
   return (
     <div className={styles.pageContainer}>
-      {/* Lottie Background Animation Container */}
       <div className={styles.animationWrapper}>
         <dotlottie-player
           src="https://lottie.host/97ea0de2-8839-4b2e-92ce-455e8731f33c/WSoZpRrAis.lottie"
