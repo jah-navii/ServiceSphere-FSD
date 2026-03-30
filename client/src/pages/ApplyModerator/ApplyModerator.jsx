@@ -58,7 +58,7 @@ const ApplyModerator = () => {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/apply/moderator", {
+      const response = await fetch("http://localhost:5000/api/auth/apply/moderator", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

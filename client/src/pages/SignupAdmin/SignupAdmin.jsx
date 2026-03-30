@@ -36,7 +36,7 @@ const SignupAdmin = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/signup/admin", {
+      const response = await fetch("http://localhost:5000/api/auth/signup/admin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

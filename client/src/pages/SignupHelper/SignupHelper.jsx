@@ -37,11 +37,11 @@ const SignupHelper = () => {
 
     const fetchData = async () => {
       try {
-        const catRes = await fetch("http://localhost:5000/api/admin/services-data");
+        const catRes =await fetch("http://localhost:5000/api/services/categories");
         const catData = await catRes.json();
         setCategories(catData.categories || []);
 
-        const locRes = await fetch("http://localhost:5000/api/admin/locations");
+        const locRes = await fetch("http://localhost:5000/api/locations");
         const locData = await locRes.json();
         setLocations(locData || []);
       } catch (err) {
@@ -81,7 +81,7 @@ const SignupHelper = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/signup/helper", {
+      const response = await fetch("http://localhost:5000/api/auth/signup/helper", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

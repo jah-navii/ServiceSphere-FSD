@@ -30,8 +30,8 @@ const SearchPage = () => {
     const fetchOptions = async () => {
       try {
         const [locRes, catRes] = await Promise.all([
-          fetch("http://localhost:5000/api/admin/locations"),
-          fetch("http://localhost:5000/api/admin/services-data")
+          fetch("http://localhost:5000/api/locations"),
+          fetch("http://localhost:5000/api/services/categories")
         ]);
         
         const locData = await locRes.json();

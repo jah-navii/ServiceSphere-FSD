@@ -1,6 +1,7 @@
 import Helper from '../models/Helper.js';
 import Service from '../models/Service.js';
 import Feedback from '../models/Feedback.js';
+import Category from '../models/Category.js';
 
 // GET /api/services
 export const getServicesAPI = async (req, res) => {
@@ -79,4 +80,14 @@ export const getServicesAPI = async (req, res) => {
         console.error("API Error:", err);
         res.status(500).json({ error: "Server Error" });
     }
+};
+
+
+export const getCategoriesAPI = async (req, res) => {
+  try {
+    const categories = await Category.find();
+    res.status(200).json({ success: true, categories });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Failed to fetch categories' });
+  }
 };

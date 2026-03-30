@@ -5,7 +5,7 @@ const LoginHelper = () => {
   return (
     <LoginForm
       title="Welcome Back, Helper!"
-      apiEndpoint="/login/helper"
+      apiEndpoint="/api/auth/login/helper"
       signupPath="/signup/helper"
       redirectPath="/helper/dashboard" /* Change: restore redirect to dashboard alias */
     />
