@@ -17,37 +17,18 @@ const router = express.Router();
  *   get:
  *     summary: Get seeker's profile
  *     tags: [Seeker]
- *     security:
- *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Seeker's user ID
  *     responses:
  *       200:
  *         description: Seeker profile data
- *   put:
- *     summary: Update seeker's profile
- *     tags: [Seeker]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               email:
- *                 type: string
- *                 format: email
- *               phone:
- *                 type: string
- *               address:
- *                 type: string
- *     responses:
- *       200:
- *         description: Profile updated
  */
-router.get('/profile', isSeeker, getSeekerProfile);
+router.get('/profile', getSeekerProfile);
 router.put('/profile', isSeeker, updateSeekerProfile);
 
 export default router;
