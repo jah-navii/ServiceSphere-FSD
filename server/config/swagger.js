@@ -1,7 +1,7 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 
 const options = {
-  definition: {
+definition: {
     openapi: '3.0.0',
     info: {
       title: 'ServiceSphere API',
@@ -10,6 +10,9 @@ const options = {
     },
     servers: [
       { url: 'http://localhost:5000', description: 'Development' },
+    ],
+    security: [          // ← add this
+      { bearerAuth: [] } // ← applies bearerAuth to all routes by default
     ],
     components: {
       securitySchemes: {
@@ -20,6 +23,7 @@ const options = {
         },
       },
     },
+    // ... rest stays the same
     // Group tags in a logical order for the Swagger UI sidebar
     tags: [
       { name: 'Auth', description: 'Login, signup, logout for all user types' },
