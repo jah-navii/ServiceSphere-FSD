@@ -23,40 +23,21 @@ export const renderHome = (req, res) => {
 
 // GET /profile — Seeker Profile Page
 export const getSeekerProfile = async (req, res) => {
-  if (!req.user || req.user.role !== 'seeker') {
-    // For API calls, return 401 instead of redirect
-    if (req.originalUrl.includes('/api/') || req.headers.accept?.includes('application/json')) {
-      return res.status(401).json({
-        success: false,
-        message: 'Unauthorized - Seeker login required'
-      });
-    }
-    return res.status(401).json({ error: 'Unauthorized' });
+  const { userId } = req.query;
+
+  if (!userId) {
+    return res.status(400).json({ success: false, message: 'userId is required' });
   }
 
-  // If it's an API call, fetch full seeker data and return JSON
-  if (req.originalUrl.includes('/api/') || req.headers.accept?.includes('application/json')) {
-    try {
-      const seeker = await Seeker.findById(req.user.id).select('-password');
-      return res.status(200).json({
-        success: true,
-        seeker: seeker || req.user
-      });
-    } catch (err) {
-      console.error("Get profile error:", err);
-      return res.status(500).json({
-        success: false,
-        message: 'Failed to fetch profile',
-        error: err.message
-      });
+  try {
+    const seeker = await Seeker.findById(userId).select('-password');
+    if (!seeker) {
+      return res.status(404).json({ success: false, message: 'Seeker not found' });
     }
+    return res.status(200).json({ success: true, seeker });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'Failed to fetch profile' });
   }
-
-  // Otherwise, render the view (for legacy server-rendered pages if any)
-  res.status(200).json({
-    success: true,
-    seeker: req.user
-  });
 };
 
 

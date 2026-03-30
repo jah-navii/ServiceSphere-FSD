@@ -64,6 +64,24 @@ const router = express.Router();
  *         description: List of user's bookings
  */
 router.post('/', bookingRateLimiter, createBooking);
+
+/**
+ * @swagger
+ * /api/bookings:
+ *   get:
+ *     summary: Get current user's bookings
+ *     tags: [Bookings]
+ *     parameters:
+ *       - in: query
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The seeker's user ID
+ *     responses:
+ *       200:
+ *         description: List of user's bookings
+ */
 router.get('/', getUserBookings);
 
 /**
