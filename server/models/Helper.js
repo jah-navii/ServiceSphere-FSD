@@ -34,7 +34,8 @@ const helperSchema = new mongoose.Schema({
 
   availability: { type: String },
   certifications: [String], // Array of file paths/filenames
-  approved: { type: Boolean, default: false }
+  approved: { type: Boolean, default: false },
+  suspended: { type: Boolean, default: false }
 }, { timestamps: true });
 
 export default mongoose.model('Helper', helperSchema);

@@ -227,36 +227,25 @@ export const getHelperEarnings = async (req, res) => {
   try {
     const { helperId } = req.params;
 
-    // 1. Fetch all 'Accepted' bookings for this helper and populate seeker for customer name
+    // 1. Fetch all paid bookings for this helper and populate seeker for customer name
     const bookings = await Booking.find({
       helper: helperId,
-      status: 'Accepted'
-    }).populate('seeker', 'name');
+      paid: true
+    }).populate('seeker', 'name').sort({ date: -1 });
 
-    // 2. Calculate Dates
-    const now = new Date();
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(now.getMonth() - 1);
-
-    // 3. Filter for Past Month
-    const pastMonthBookings = bookings.filter(b => {
-      const bookingDate = new Date(b.date);
-      return bookingDate >= oneMonthAgo && bookingDate <= now;
-    });
-
-    // 4. Format Data for Frontend (using correct field names)
-    const pastMonthEarnings = pastMonthBookings.map(b => ({
-      date: b.date,                                 // Use date as-is from booking
-      service: b.service_type,                      // Correct field name with underscore
-      customer: b.seeker?.name || 'Unknown',        // Get name from populated seeker
+    // 2. Format all paid bookings for the frontend
+    const allEarnings = bookings.map(b => ({
+      date: b.date,
+      service: b.service_type,
+      customer: b.seeker?.name || 'Unknown',
       amount: b.price
     }));
 
-    // 5. Calculate Totals
+    // 3. Calculate Totals
     const lifetimeEarnings = bookings.reduce((total, b) => total + b.price, 0);
 
     res.status(200).json({
-      pastMonthEarnings,
+      pastMonthEarnings: allEarnings,
       lifetimeEarnings
     });
 

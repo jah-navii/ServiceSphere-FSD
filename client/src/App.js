@@ -1,14 +1,13 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import SignupSeeker from "./pages/SignupSeeker/SignupSeeker";
 import SignupHelper from "./pages/SignupHelper/SignupHelper";
-import SignupAdmin from "./pages/SignupAdmin/SignupAdmin";
 import LoginSeeker from "./pages/LoginSeeker";
 import LoginHelper from "./pages/LoginHelper";
-import LoginAdmin from "./pages/LoginAdmin";
+import LoginAdministrator from "./pages/LoginAdministrator";
 import ApplyModerator from "./pages/ApplyModerator/ApplyModerator";
 import LoginModerator from "./pages/LoginModerator/LoginModerator";
 
@@ -57,27 +56,22 @@ function App() {
     <Router>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup/seeker" element={<SignupSeeker />} />
         <Route path="/signup/helper" element={<SignupHelper />} />
-        <Route path="/signup/admin" element={<SignupAdmin />} />
         <Route path="/login/seeker" element={<LoginSeeker />} />
         <Route path="/login/helper" element={<LoginHelper />} />
-        <Route path="/login/admin" element={<LoginAdmin />} />
+        <Route path="/login/administrator" element={<LoginAdministrator />} />
         <Route path="/login/moderator" element={<LoginModerator />} />
         <Route path="/apply/moderator" element={<ApplyModerator />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/AdminContact" element={<AdminContact />} />
         <Route path="/TermsAndConditions" element={<TermsAndConditions />} />
         
-        {/* Seeker Protected Routes */}
-        <Route path="/home" element={
-          <ProtectedRoute redirectTo="/login/seeker" allowedRoles={['seeker']}>
-            <Home />
-          </ProtectedRoute>
-        } />
+        {/* Public Home Route */}
+        <Route path="/home" element={<Home />} />
         <Route path="/search" element={
           <ProtectedRoute redirectTo="/login/seeker" allowedRoles={['seeker']}>
             <SearchPage />
@@ -126,7 +120,7 @@ function App() {
 
         {/* Administrator Protected Routes */}
         <Route path="/administrator" element={
-          <ProtectedRoute redirectTo="/login/admin" requireAdministrator={true}>
+          <ProtectedRoute redirectTo="/login/administrator" requireAdministrator={true}>
             <AdministratorLayout />
           </ProtectedRoute>
         }>

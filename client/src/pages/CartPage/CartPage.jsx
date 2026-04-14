@@ -85,15 +85,14 @@ const CartPage = () => {
               <p>Manage your active service bookings</p>
             </div>
             
-            <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+            <div className={styles.headerActions}>
                 <button 
                     onClick={handleRefresh} 
-                    className={styles.homeButton} 
-                    style={{backgroundColor: '#6c757d'}}
+                    className={styles.refreshBtn}
                 >
                     ↻ Refresh
                 </button>
-                <Link to="/previous-bookings" className={styles.homeButton} style={{backgroundColor: '#9c27b0'}}>
+                <Link to="/previous-bookings" className={styles.outlineBtn}>
                     Previous Bookings
                 </Link>
                 <Link to="/home" className={styles.homeButton}>
@@ -105,14 +104,14 @@ const CartPage = () => {
 
         <main>
           {loading ? (
-             <p style={{textAlign:'center'}}>Loading bookings...</p>
+             <p className={styles.loadingText}>Loading bookings...</p>
           ) : bookings.length > 0 ? (
             <div className={styles.bookingsContainer}>
               {bookings.map((booking) => {
                 const statusClass = booking.status ? booking.status.toLowerCase() : "pending";
                 
                 return (
-                  <div className={styles.bookingCard} key={booking._id || booking.id}>
+                  <div className={`${styles.bookingCard} ${styles[statusClass]}`} key={booking._id || booking.id}>
                     
                     {/* Header */}
                     <div className={styles.bookingHeader}>

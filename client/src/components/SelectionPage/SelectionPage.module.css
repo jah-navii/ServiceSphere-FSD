@@ -1,121 +1,272 @@
-/* --- SelectionPage.module.css --- */
+﻿/* ============================================
+   SelectionPage.module.css — Clean minimal
+   ============================================ */
 
-/* Defining variables locally to ensure component works standalone.
-   If you have these in GlobalStyles, they will simply override these. */
-.pageContainer {
-  --spacing-md: 0.5rem;
-  --spacing-lg: 1rem;
-  --spacing-xl: 2rem;
-  --spacing-2xl: 4rem;
-  --font-size-lg: 1.125rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 2rem;
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  
-  /* Layout Styles */
+.page {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f7f8fa;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ── TOP BAR ── */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 60px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+}
+
+.logo {
+  height: 30px;
+  width: auto;
+}
+
+.logoName {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #007ea7;
+  letter-spacing: -0.2px;
+}
+
+.backLink {
+  font-size: 0.85rem;
+  color: #718096;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: #007ea7;
+}
+
+/* ── MAIN ── */
+.main {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
-  padding: var(--spacing-xl);
-  gap: var(--spacing-2xl);
-  font-family: 'Sequel Sans', -apple-system, sans-serif;
+  padding: 60px 24px;
+  gap: 48px;
 }
 
-.title {
-  font-size: var(--font-size-3xl);
-  font-weight: 600;
-  letter-spacing: -0.4px;
-  color: #1d1d1f;
+/* ── HEADING ── */
+.headingBlock {
   text-align: center;
-  animation: fadeInDown 0.8s ease-out;
+  animation: fadeDown 0.5s ease both;
 }
 
-.buttonGroup {
+.heading {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin: 0 0 10px;
+  letter-spacing: -0.4px;
+}
+
+.subheading {
+  font-size: 1rem;
+  color: #718096;
+  margin: 0;
+}
+
+/* ── CARDS LAYOUT ── */
+.cards {
   display: flex;
-  gap: var(--spacing-lg);
-  animation: fadeInUp 0.8s ease-out;
-  animation-delay: 0.2s;
-  animation-fill-mode: backwards;
+  align-items: stretch;
+  gap: 0;
+  animation: fadeUp 0.55s ease 0.1s both;
 }
 
-/* Base Button Style */
-.btn {
-  min-width: 200px;
-  padding: var(--spacing-lg) var(--spacing-2xl);
-  font-size: var(--font-size-lg);
-  font-weight: 500;
-  letter-spacing: -0.2px;
-  border: none;
-  border-radius: 12px;
+/* ── INDIVIDUAL CARD ── */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 300px;
+  padding: 36px 30px;
+  background-color: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-md);
 }
 
-.btn:hover {
-  box-shadow: var(--shadow-lg);
+.card:hover {
+  border-color: #007ea7;
+  box-shadow: 0 8px 28px rgba(0, 126, 167, 0.12);
   transform: translateY(-3px);
 }
 
-.btn:active {
-  transform: translateY(-1px);
+/* Slightly filled accent variant (seeker) */
+.cardAccent {
+  background-color: #f0f9fb;
 }
 
-/* Helper Variant */
-.helperBtn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #ffffff;
+.cardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  background-color: #e6f4f8;
+  margin-bottom: 20px;
+  flex-shrink: 0;
 }
 
-.helperBtn:hover {
-  background: linear-gradient(135deg, #7889f1 0%, #8757b3 100%);
+.cardTitle {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin: 0 0 4px;
+  letter-spacing: -0.3px;
 }
 
-/* Seeker Variant */
-.seekerBtn {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: #ffffff;
+.cardTagline {
+  font-size: 0.88rem;
+  color: #718096;
+  margin: 0 0 20px;
+  font-weight: 500;
 }
 
-.seekerBtn:hover {
-  background: linear-gradient(135deg, #f3a5fc 0%, #f66a7d 100%);
+.cardList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
 }
 
-/* Animations */
-@keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+.cardList li {
+  font-size: 0.88rem;
+  color: #4a5568;
+  padding-left: 18px;
+  position: relative;
+  line-height: 1.4;
 }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+.cardList li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #007ea7;
+  font-weight: 700;
+  font-size: 0.8rem;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .buttonGroup {
+.cardCta {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  padding: 11px 0;
+  background-color: #007ea7;
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: background-color 0.2s;
+}
+
+.card:hover .cardCta {
+  background-color: #005f7a;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  color: #cbd5e0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+/* ── SWITCH TEXT ── */
+.switchText {
+  font-size: 0.9rem;
+  color: #718096;
+  animation: fadeUp 0.55s ease 0.25s both;
+}
+
+.switchLink {
+  color: #007ea7;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.switchLink:hover {
+  text-decoration: underline;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 720px) {
+  .cards {
     flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .divider {
+    flex-direction: row;
+    padding: 0;
+    gap: 12px;
     width: 100%;
     max-width: 300px;
   }
-  
-  .btn {
-    width: 100%;
+
+  .divider::before,
+  .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: #e2e8f0;
   }
+
+  .card {
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .heading { font-size: 1.7rem; }
 }
 
 @media (max-width: 480px) {
-  .title {
-    font-size: var(--font-size-2xl);
-  }
-  
-  .btn {
-    min-width: auto;
-    padding: 1rem 2rem;
-  }
+  .main { padding: 40px 16px; gap: 36px; }
+  .heading { font-size: 1.5rem; }
+  .card { padding: 28px 22px; }
 }

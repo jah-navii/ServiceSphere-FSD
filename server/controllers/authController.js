@@ -1,5 +1,6 @@
 import Helper from '../models/Helper.js';
 import Seeker from '../models/Seeker.js';
+import Admin from '../models/Admin.js';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../utils/jwtUtils.js';
 
@@ -175,14 +176,15 @@ export const loginHelper = async (req, res) => {
       return res.status(401).json({ error: "Invalid email or password!" });
     }
 
+    if (helper.suspended) {
+      return res.status(403).json({ error: "Your account has been suspended. Please contact support." });
+    }
+
     const userData = {
       id: helper._id,
       name: helper.name,
       email: helper.email,
-      mobilenumber: helper.mobilenumber,
-      aadharnumber: helper.aadharnumber,
-      gender: helper.gender,
-      role: "helper",
+      role: "helper"
     };
 
     // Generate JWT token
@@ -242,6 +244,10 @@ export const loginSeeker = async (req, res) => {
       return res.status(401).json({ error: "Invalid email or password!" });
     }
 
+    if (seeker.suspended) {
+      return res.status(403).json({ error: "Your account has been suspended. Please contact support." });
+    }
+
     // 3. Construct Data
     const userData = {
       id: seeker._id,
@@ -267,5 +273,86 @@ export const loginSeeker = async (req, res) => {
   } catch (err) {
     console.error("Seeker Login Error:", err);
     return res.status(500).json({ error: "Something went wrong!" });
+  }
+};
+
+// Administrator Signup
+export const signupAdministrator = async (req, res) => {
+  try {
+    const { name, email, password, confirmPassword } = req.body;
+
+    if (!name || !email || !password || !confirmPassword) {
+      return res.status(400).json({ error: 'All fields are required.' });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ error: 'Passwords do not match.' });
+    }
+
+    const existingAdmin = await Admin.findOne({ email });
+    if (existingAdmin) {
+      return res.status(409).json({ error: 'An account with this email already exists.' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await Admin.create({ name, email, password: hashedPassword, role: 'administrator' });
+
+    return res.status(201).json({ message: 'Administrator registered successfully' });
+  } catch (err) {
+    console.error('Administrator Signup Error:', err);
+    return res.status(500).json({ error: 'Server Error' });
+  }
+};
+
+// Administrator Login
+export const loginAdministrator = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Please fill in all fields' });
+  }
+
+  try {
+    const admin = await Admin.findOne({ email });
+
+    if (!admin) {
+      return res.status(401).json({ error: 'Invalid email or password!' });
+    }
+
+    // Only administrators can login here — moderators use /api/auth/login/moderator
+    if (admin.role !== 'administrator') {
+      return res.status(403).json({ error: 'Access denied. Moderators should use the moderator login.' });
+    }
+
+    let isPasswordValid = false;
+    if (admin.password.startsWith('$2a$') || admin.password.startsWith('$2b$')) {
+      isPasswordValid = await bcrypt.compare(password, admin.password);
+    } else {
+      isPasswordValid = (password === admin.password);
+      if (isPasswordValid) {
+        admin.password = await bcrypt.hash(password, 10);
+        await admin.save();
+      }
+    }
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Invalid email or password!' });
+    }
+
+    const userData = {
+      id: admin._id,
+      name: admin.name,
+      email: admin.email,
+      role: 'administrator',
+    };
+
+    const token = generateToken(userData);
+
+    console.log('Administrator logged in ✅');
+
+    return res.status(200).json({ success: true, token, user: userData });
+  } catch (err) {
+    console.error('Administrator Login Error:', err);
+    return res.status(500).json({ error: 'Something went wrong!' });
   }
 };

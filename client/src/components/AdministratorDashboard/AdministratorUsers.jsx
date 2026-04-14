@@ -27,18 +27,19 @@ const AdministratorUsers = () => {
     }
   };
 
-  const handleDeleteUser = async (userType, userId) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) {
+  const handleSuspendUser = async (userType, userId, currentlySuspended) => {
+    const action = currentlySuspended ? 'unsuspend' : 'suspend';
+    if (!window.confirm(`Are you sure you want to ${action} this ${userType}?`)) {
       return;
     }
 
     try {
-      await api.delete(`/api/administrator/users/${userType}/${userId}`);
-      alert("User deleted successfully");
-      fetchUsers(); // Refresh the list
+      const data = await api.patch(`/api/administrator/users/${userType}/${userId}/suspend`);
+      alert(`${userType.charAt(0).toUpperCase() + userType.slice(1)} ${data.data?.suspended ? 'suspended' : 'unsuspended'} successfully`);
+      fetchUsers();
     } catch (err) {
-      alert(`Error deleting user: ${err.message}`);
-      console.error("Delete Error:", err);
+      alert(`Error updating user: ${err.message}`);
+      console.error("Suspend Error:", err);
     }
   };
 
@@ -223,6 +224,7 @@ const AdministratorUsers = () => {
                 {activeTab === "helpers" && <th>Status</th>}
                 {activeTab === "helpers" && <th>Location</th>}
                 {activeTab === "helpers" && <th>Category</th>}
+                {activeTab === "seekers" && <th>Status</th>}
                 {activeTab === "moderators" && <th>Status</th>}
                 {activeTab === "moderators" && <th>Assigned Location</th>}
                 <th>Joined</th>
@@ -239,10 +241,11 @@ const AdministratorUsers = () => {
                     <td>
                       <span
                         className={`${styles.badge} ${
+                          user.suspended ? styles.suspended :
                           user.approved ? styles.approved : styles.pending
                         }`}
                       >
-                        {user.approved ? "Approved" : "Pending"}
+                        {user.suspended ? "Suspended" : user.approved ? "Approved" : "Pending"}
                       </span>
                     </td>
                   )}
@@ -262,6 +265,15 @@ const AdministratorUsers = () => {
                         }`}
                       >
                         {user.status}
+                      </span>
+                    </td>
+                  )}
+                  {activeTab === "seekers" && (
+                    <td>
+                      <span
+                        className={`${styles.badge} ${user.suspended ? styles.suspended : styles.approved}`}
+                      >
+                        {user.suspended ? "Suspended" : "Active"}
                       </span>
                     </td>
                   )}
@@ -286,19 +298,14 @@ const AdministratorUsers = () => {
                           Suspend
                         </button>
                       ) : (
-                        <button
-                          className={styles.deleteBtn}
-                          onClick={() => handleDeleteUser(activeTab, user._id)}
-                        >
-                          Delete
-                        </button>
+                        <span style={{ color: '#999', fontSize: '0.85rem' }}>Suspended</span>
                       )
                     ) : (
                       <button
-                        className={styles.deleteBtn}
-                        onClick={() => handleDeleteUser(activeTab, user._id)}
+                        className={user.suspended ? styles.approveBtn : styles.suspendBtn}
+                        onClick={() => handleSuspendUser(activeTab, user._id, user.suspended)}
                       >
-                        Delete
+                        {user.suspended ? "Unsuspend" : "Suspend"}
                       </button>
                     )}
                   </td>

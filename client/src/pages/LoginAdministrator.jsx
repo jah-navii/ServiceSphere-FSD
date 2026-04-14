@@ -1,16 +1,15 @@
 import React from "react";
-// Note: Adjust the import path depending on where you saved the component
 import LoginForm from "../components/LoginForm/LoginForm";
 
-const LoginAdmin = () => {
+const LoginAdministrator = () => {
   return (
     <LoginForm
       title="Welcome Back, Administrator!"
-      apiEndpoint="/api/auth/login/admin"
-      signupPath="/signup/admin"
+      apiEndpoint="/api/auth/login/administrator"
+      signupPath="/signup/administrator"
       redirectPath="/administrator/dashboard"
     />
   );
 };
 
-export default LoginAdmin;
+export default LoginAdministrator;

@@ -7,6 +7,7 @@ import Category from '../models/Category.js';
 import Location from '../models/Location.js';
 import ContactMessage from '../models/ContactMessage.js';
 import Feedback from '../models/Feedback.js';
+import ServiceRequest from '../models/ServiceRequest.js';
 
 /**
  * Administrator Dashboard - Overview of entire platform
@@ -403,55 +404,48 @@ export const getSystemHealth = async (req, res) => {
 };
 
 /**
- * Delete any user (Helper, Seeker, or Admin) - Administrator only
- * DELETE /api/administrator/users/:userType/:id
+ * Toggle suspend/unsuspend a Helper or Seeker - Administrator only
+ * PATCH /api/administrator/users/:userType/:id/suspend
  */
-export const deleteUser = async (req, res) => {
+export const suspendUser = async (req, res) => {
   try {
     const { userType, id } = req.params;
 
-    let deletedUser;
+    let user;
     switch (userType) {
       case 'helper':
-        deletedUser = await Helper.findByIdAndDelete(id);
+        user = await Helper.findById(id);
         break;
       case 'seeker':
-        deletedUser = await Seeker.findByIdAndDelete(id);
-        break;
-      case 'admin':
-        // Prevent deleting administrators
-        const admin = await Admin.findById(id);
-        if (admin && admin.role === 'administrator') {
-          return res.status(403).json({ 
-            success: false, 
-            error: 'Cannot delete administrator account' 
-          });
-        }
-        deletedUser = await Admin.findByIdAndDelete(id);
+        user = await Seeker.findById(id);
         break;
       default:
         return res.status(400).json({ 
           success: false, 
-          error: 'Invalid user type' 
+          error: 'Invalid user type. Only helpers and seekers can be suspended.' 
         });
     }
 
-    if (!deletedUser) {
+    if (!user) {
       return res.status(404).json({ 
         success: false, 
         error: 'User not found' 
       });
     }
 
+    user.suspended = !user.suspended;
+    await user.save();
+
     res.status(200).json({ 
       success: true, 
-      message: `${userType} deleted successfully` 
+      message: `${userType} ${user.suspended ? 'suspended' : 'unsuspended'} successfully`,
+      suspended: user.suspended
     });
   } catch (error) {
-    console.error('Delete User Error:', error);
+    console.error('Suspend User Error:', error);
     res.status(500).json({ 
       success: false, 
-      error: 'Failed to delete user' 
+      error: 'Failed to update user status' 
     });
   }
 };
@@ -1288,5 +1282,42 @@ export const deleteFeedback = async (req, res) => {
       success: false,
       error: 'Failed to delete feedback'
     });
+  }
+};
+
+/**
+ * Cleanup orphaned records (feedbacks, bookings, service requests referencing deleted users)
+ * DELETE /api/administrator/cleanup/orphans
+ */
+export const cleanupOrphans = async (req, res) => {
+  try {
+    const helperIds = await Helper.distinct('_id');
+    const seekerIds = await Seeker.distinct('_id');
+
+    const orphanFilter = {
+      $or: [
+        { helper: { $nin: helperIds } },
+        { seeker: { $nin: seekerIds } }
+      ]
+    };
+
+    const [feedbackResult, bookingResult, serviceRequestResult] = await Promise.all([
+      Feedback.deleteMany(orphanFilter),
+      Booking.deleteMany(orphanFilter),
+      ServiceRequest.deleteMany(orphanFilter)
+    ]);
+
+    res.status(200).json({
+      success: true,
+      message: 'Orphaned records deleted',
+      deleted: {
+        feedbacks: feedbackResult.deletedCount,
+        bookings: bookingResult.deletedCount,
+        serviceRequests: serviceRequestResult.deletedCount
+      }
+    });
+  } catch (error) {
+    console.error('Cleanup Orphans Error:', error);
+    res.status(500).json({ success: false, error: 'Cleanup failed' });
   }
 };

@@ -134,7 +134,7 @@ const PaymentPage = () => {
   if (!bookingId) return null;
 
   return (
-    <div>
+    <div className={styles.pageOuter}>
       <Navbar />
       <div className={styles.paymentWrapper}>
         <h1 className={styles.pageTitle}>Complete Your Payment</h1>
@@ -241,8 +241,8 @@ const PaymentPage = () => {
 
             <div className={styles.helperDetails}>
               <div>
-                <div style={{fontWeight:'700'}}>{helperName}</div>
-                <div style={{fontSize:'0.85rem', color:'#666'}}>Provider</div>
+                <div className={styles.helperName}>{helperName}</div>
+                <div className={styles.helperLabel}>Provider</div>
               </div>
             </div>
 

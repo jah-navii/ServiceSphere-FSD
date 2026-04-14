@@ -1,154 +1,177 @@
-/* src/pages/PaymentPage/PaymentPage.module.css */
+﻿/* src/pages/PaymentPage/PaymentPage.module.css */
+
+.pageOuter {
+  background-color: #f7f8fa;
+  min-height: 100vh;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
 
 .paymentWrapper {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 48px 20px 60px;
   min-height: 80vh;
 }
 
 .pageTitle {
   text-align: center;
-  color: var(--cerulean);
-  margin-bottom: 30px;
-  font-size: 2rem;
+  color: #1a1a1a;
+  margin-bottom: 32px;
+  font-size: 1.8rem;
+  font-weight: 700;
 }
 
 .paymentContainer {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 30px;
+  gap: 28px;
 }
 
 /* LEFT SIDE: Payment Form */
 .paymentDetails {
   flex: 1 1 60%;
-  background-color: var(--white);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 14px;
+  border: 1.5px solid #e2e8f0;
+  padding: 28px;
 }
 
 /* RIGHT SIDE: Summary */
 .orderSummary {
   flex: 1 1 35%;
-  background-color: var(--white);
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 14px;
+  border: 1.5px solid #e2e8f0;
+  padding: 28px;
   position: sticky;
-  top: 100px;
+  top: 80px;
 }
 
 .sectionTitle {
-  color: var(--cerulean);
+  color: #007ea7;
   margin-bottom: 20px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 1.2rem;
+  font-weight: 700;
+  font-size: 1.05rem;
 }
 
 /* Form Groups */
 .inputGroup {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .label {
   display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #333;
+  margin-bottom: 6px;
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #1a1a1a;
 }
 
 .input {
   width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 16px;
-  transition: border-color 0.3s;
+  padding: 10px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  color: #1a1a1a;
+  transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
 }
 
 .input:focus {
-  border-color: var(--cerulean);
+  border-color: #007ea7;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 126, 167, 0.1);
+  box-shadow: 0 0 0 3px rgba(0, 126, 167, 0.12);
 }
 
 .cardRow {
   display: flex;
-  gap: 15px;
+  gap: 14px;
 }
 
 .divider {
-  border-top: 1px solid #eee;
-  margin: 25px 0;
+  border: none;
+  border-top: 1.5px solid #e2e8f0;
+  margin: 22px 0;
 }
 
-/* Payment Methods */
+/* Payment Methods tabs */
 .paymentMethods {
   display: flex;
-  gap: 15px;
-  margin-bottom: 25px;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .paymentMethod {
   flex: 1;
   text-align: center;
-  padding: 15px;
-  border: 2px solid #ddd;
+  padding: 12px;
+  border: 1.5px solid #e2e8f0;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s;
-  font-weight: 600;
-  color: #555;
+  transition: all 0.2s;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #666;
+  user-select: none;
+}
+
+.paymentMethod:hover {
+  border-color: #007ea7;
+  color: #007ea7;
 }
 
 .activeMethod {
-  border-color: var(--cerulean);
-  background-color: rgba(0, 126, 167, 0.05);
-  color: var(--cerulean);
+  border-color: #007ea7;
+  background-color: #e6f4f8;
+  color: #007ea7;
 }
 
 /* Summary Details */
 .serviceItem {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 12px;
-  font-size: 0.95rem;
+  margin-bottom: 10px;
+  font-size: 0.92rem;
   color: #555;
+}
+
+.serviceItem strong {
+  color: #1a1a1a;
+  font-weight: 700;
 }
 
 .helperDetails {
   display: flex;
   align-items: center;
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #f9f9f9;
+  margin-top: 16px;
+  padding: 14px;
+  background-color: #f0f9fb;
   border-radius: 8px;
+  border: 1.5px solid #e2e8f0;
 }
 
-.helperAvatar {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  background-color: #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 15px;
+.helperName {
+  font-weight: 700;
+  color: #1a1a1a;
+  font-size: 0.95rem;
+}
+
+.helperLabel {
+  font-size: 0.82rem;
   color: #666;
+  margin-top: 2px;
 }
 
 /* Pricing */
 .priceBreakdown {
   margin-top: 20px;
-  border-top: 1px dashed #eee;
-  padding-top: 20px;
+  border-top: 1.5px dashed #e2e8f0;
+  padding-top: 18px;
 }
 
 .priceRow {
@@ -156,60 +179,66 @@
   justify-content: space-between;
   margin-bottom: 10px;
   color: #666;
+  font-size: 0.92rem;
 }
 
 .totalRow {
   display: flex;
   justify-content: space-between;
   font-weight: 700;
-  font-size: 1.2rem;
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 2px solid #eee;
-  color: var(--black);
+  font-size: 1.15rem;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 2px solid #e2e8f0;
+  color: #007ea7;
 }
 
 /* Button */
 .submitBtn {
   width: 100%;
-  padding: 15px;
-  background-color: var(--cerulean);
-  color: var(--white);
+  padding: 14px;
+  background-color: #007ea7;
+  color: #ffffff;
   border: none;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 700;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.2s, transform 0.2s;
   margin-top: 20px;
 }
 
-.submitBtn:hover {
-  background-color: #006990;
+.submitBtn:hover:not(:disabled) {
+  background-color: #005f7a;
+  transform: translateY(-1px);
 }
 
 .submitBtn:disabled {
-  background-color: #ccc;
+  background-color: #b0c8d4;
   cursor: not-allowed;
 }
 
 /* Validations */
 .errorMsg {
-  color: #d9534f;
-  font-size: 13px;
+  color: #b91c1c;
+  font-size: 0.82rem;
   margin-top: 4px;
 }
 
-.invalid { border-color: #d9534f; }
-.valid { border-color: #28a745; }
+.invalid { border-color: #ef4444; }
+.valid   { border-color: #22c55e; }
 
 /* Responsive */
 @media (max-width: 768px) {
   .paymentContainer {
-    flex-direction: column-reverse; /* Summary on top for mobile */
+    flex-direction: column-reverse;
   }
   .cardRow {
     flex-direction: column;
     gap: 0;
+  }
+  .orderSummary {
+    position: static;
   }
 }

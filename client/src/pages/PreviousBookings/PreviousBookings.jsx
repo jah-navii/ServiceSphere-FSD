@@ -80,8 +80,8 @@ const PreviousBookings = () => {
               <p>Review your completed service bookings</p>
             </div>
 
-            <div style={{ display: "flex", gap: "10px" }}>
-              <Link to="/cart" className={styles.headerButton}>
+            <div className={styles.headerActions}>
+              <Link to="/cart" className={styles.outlineBtn}>
                 Active Bookings
               </Link>
               <Link to="/home" className={styles.headerButton}>

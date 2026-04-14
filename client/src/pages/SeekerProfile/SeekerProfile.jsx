@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { loginSuccess, logout } from "../../redux/userSlice";
 import { useToast } from "../../context/ToastContext";
+import Navbar from "../../components/Navbar/Navbar";
+import Footer from "../../components/Footer/Footer";
 import styles from "./SeekerProfile.module.css";
 
 // Use local profile picture from assets
@@ -108,135 +110,124 @@ const SeekerProfile = () => {
     }
   };
 
-  const nameInputStyle =
-    isEditing && nameError ? { borderColor: "red" } : {};
-  const mobileInputStyle =
-    isEditing && mobileError ? { borderColor: "red" } : {};
-
   if (!currentUser) return <div>Loading...</div>;
 
   return (
-    <div className={styles.seekerPageContainer}>
-      <div className={styles.seekerCard}>
-        <a
-          href="/home"
-          className={styles.seekerHomeIcon}
-          title="Go to Homepage"
-        >
-          <span className={styles.seekerHomeIconSymbol}>&#x1F3E0;</span>
-        </a>
+    <div className={styles.page}>
+      <Navbar />
 
-        <div className={styles.seekerAvatarWrapper}>
-          <img
-            className={styles.seekerProfilePic}
-            src={profilePic}
-            alt="Profile"
-          />
+      <div className={styles.pageContent}>
+        <div className={styles.profileCard}>
+
+          {/* Colored banner at top of card */}
+          <div className={styles.cardBanner}></div>
+
+          <div className={styles.avatarWrapper}>
+            <img
+              className={styles.profilePic}
+              src={profilePic}
+              alt="Profile"
+            />
+          </div>
+
+          <div className={styles.cardBody}>
+            <form onSubmit={handleSubmit}>
+              {/* Name */}
+              <div className={styles.nameSection}>
+                <input
+                  type="text"
+                  name="name"
+                  value={name}
+                  onChange={handleNameChange}
+                  readOnly={!isEditing}
+                  className={isEditing ? styles.nameInputEditing : styles.nameInput}
+                  style={isEditing && nameError ? { borderColor: "#ef4444" } : {}}
+                />
+                {nameError && (
+                  <small className={styles.errorText}>{nameError}</small>
+                )}
+              </div>
+
+              {/* Details */}
+              <div className={styles.detailsSection}>
+                <div className={styles.detailRow}>
+                  <span className={styles.detailIcon}>📞</span>
+                  <input
+                    type="text"
+                    name="mobilenumber"
+                    value={mobile}
+                    onChange={handleMobileChange}
+                    readOnly={!isEditing}
+                    className={isEditing ? styles.detailInputEditing : styles.detailInput}
+                    style={isEditing && mobileError ? { borderColor: "#ef4444" } : {}}
+                    placeholder="Mobile number"
+                  />
+                </div>
+                {mobileError && (
+                  <small className={styles.errorText}>{mobileError}</small>
+                )}
+
+                <div className={styles.detailRow}>
+                  <span className={styles.detailIcon}>✉️</span>
+                  <input
+                    type="text"
+                    name="email"
+                    value={email}
+                    readOnly
+                    disabled
+                    className={styles.detailInputDisabled}
+                  />
+                </div>
+
+                <div className={styles.detailRow}>
+                  <span className={styles.detailIcon}>📍</span>
+                  <input
+                    type="text"
+                    name="address"
+                    value={address}
+                    onChange={handleAddressChange}
+                    readOnly={!isEditing}
+                    className={isEditing ? styles.detailInputEditing : styles.detailInput}
+                    placeholder={isEditing ? "Enter your address" : "No address set"}
+                  />
+                </div>
+              </div>
+
+              {!isEditing ? (
+                <button
+                  type="button"
+                  className={styles.actionBtn}
+                  onClick={handleEditClick}
+                >
+                  Edit Profile
+                </button>
+              ) : (
+                <button type="submit" className={styles.actionBtn}>
+                  Save Changes
+                </button>
+              )}
+            </form>
+
+            <div className={styles.cardActions}>
+              <Link to="/cart" className={styles.actionBtn}>
+                My Active Bookings
+              </Link>
+              <Link to="/previous-bookings" className={styles.outlineBtn}>
+                View Previous Bookings
+              </Link>
+              <button
+                type="button"
+                className={styles.logoutBtn}
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          </div>
         </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className={styles.seekerInfo}>
-            <h2>
-              <input
-                type="text"
-                name="name"
-                value={name}
-                onChange={handleNameChange}
-                readOnly={!isEditing}
-                style={nameInputStyle}
-                className={!isEditing ? styles.seekerReadOnlyInput : ""}
-              />
-            </h2>
-            {nameError && (
-              <small className={styles.seekerErrorText}>{nameError}</small>
-            )}
-          </div>
-
-          <div className={styles.seekerDetails}>
-            <p>
-              <span className={styles.seekerIcon}>&#x260E;</span>
-              <input
-                type="text"
-                name="mobilenumber"
-                value={mobile}
-                onChange={handleMobileChange}
-                readOnly={!isEditing}
-                style={mobileInputStyle}
-              />
-            </p>
-            {mobileError && (
-              <small className={styles.seekerErrorTextIndented}>
-                {mobileError}
-              </small>
-            )}
-
-            <p>
-              <span className={styles.seekerIcon}>&#x2709;</span>
-              <input
-                type="text"
-                name="email"
-                value={email}
-                readOnly
-                disabled
-                style={{ opacity: 0.7, cursor: "not-allowed" }}
-              />
-            </p>
-
-            <p>
-              <span className={styles.seekerIcon}>&#x1F4CD;</span>
-              <input
-                type="text"
-                name="address"
-                value={address}
-                onChange={handleAddressChange}
-                readOnly={!isEditing}
-                placeholder={
-                  isEditing ? "Enter your address" : "No address set"
-                }
-              />
-            </p>
-          </div>
-
-          {!isEditing && (
-            <button
-              type="button"
-              className={`${styles.seekerBtn} ${styles.seekerEditBtn}`}
-              onClick={handleEditClick}
-            >
-              Edit Profile
-            </button>
-          )}
-
-          {isEditing && (
-            <button
-              type="submit"
-              className={`${styles.seekerBtn} ${styles.seekerEditBtn}`}
-            >
-              Save Changes
-            </button>
-          )}
-        </form>
-
-        <a href="/cart">
-          <button type="button" className={styles.seekerBtn}>
-            My Active Bookings
-          </button>
-        </a>
-
-        <a href="/previous-bookings">
-          <button type="button" className={styles.seekerBtn}>
-            View Previous Bookings
-          </button>
-        </a>
-
-        <button
-          type="button"
-          className={`${styles.seekerBtn} ${styles.seekerLogoutBtn}`}
-          onClick={handleLogout}
-        >
-          <i className="fas fa-sign-out-alt"></i> Logout
-        </button>
       </div>
+
+      <Footer />
     </div>
   );
 };

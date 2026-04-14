@@ -6,7 +6,7 @@ import {
   getPlatformActivity,
   getPlatformAnalytics,
   getSystemHealth,
-  deleteUser,
+  suspendUser,
   getModeratorApplications,
   approveModerator,
   rejectModerator,
@@ -25,11 +25,49 @@ import {
   updateLocation,
   deleteLocation,
   getAllFeedbacks,
-  deleteFeedback
+  deleteFeedback,
+  cleanupOrphans
 } from '../controllers/administratorController.js';
 import { isAdministrator } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
+
+// ---- Cleanup ----
+
+/**
+ * @swagger
+ * /api/administrator/cleanup/orphans:
+ *   delete:
+ *     summary: Delete orphaned records referencing deleted users
+ *     description: Removes feedbacks, bookings, and service requests whose helper or seeker no longer exists.
+ *     tags: [Administrator]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Orphaned records deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 deleted:
+ *                   type: object
+ *                   properties:
+ *                     feedbacks:
+ *                       type: integer
+ *                     bookings:
+ *                       type: integer
+ *                     serviceRequests:
+ *                       type: integer
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Cleanup failed
+ */
+router.delete('/cleanup/orphans', isAdministrator, cleanupOrphans);
 
 /**
  * @swagger
@@ -76,9 +114,9 @@ router.get('/users/all', isAdministrator, getAllUsers);
 
 /**
  * @swagger
- * /api/administrator/users/{userType}/{id}:
- *   delete:
- *     summary: Delete any user (except other administrators)
+ * /api/administrator/users/{userType}/{id}/suspend:
+ *   patch:
+ *     summary: Suspend or unsuspend a helper or seeker
  *     tags: [Administrator]
  *     security:
  *       - bearerAuth: []
@@ -88,8 +126,8 @@ router.get('/users/all', isAdministrator, getAllUsers);
  *         required: true
  *         schema:
  *           type: string
- *           enum: [helper, seeker, admin, moderator]
- *         description: Type of user to delete
+ *           enum: [helper, seeker]
+ *         description: Type of user to suspend
  *       - in: path
  *         name: id
  *         required: true
@@ -97,13 +135,13 @@ router.get('/users/all', isAdministrator, getAllUsers);
  *           type: string
  *     responses:
  *       200:
- *         description: User deleted
+ *         description: User suspension status toggled
  *       403:
- *         description: Cannot delete another administrator
+ *         description: Cannot suspend administrators
  *       404:
  *         description: User not found
  */
-router.delete('/users/:userType/:id', isAdministrator, deleteUser);
+router.patch('/users/:userType/:id/suspend', isAdministrator, suspendUser);
 
 // ---- Bookings ----
 

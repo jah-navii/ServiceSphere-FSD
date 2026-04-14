@@ -115,6 +115,10 @@ const LandingPage = () => {
             </button>
           </Link>
         </div>
+
+        <Link to="/home" className={styles.exploreLink}>
+          Explore the platform &rarr;
+        </Link>
       </div>
     </div>
   );

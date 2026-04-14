@@ -10,7 +10,7 @@ const AdministratorSidebar = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/login/admin");
+    navigate("/login/administrator");
   };
 
   return (

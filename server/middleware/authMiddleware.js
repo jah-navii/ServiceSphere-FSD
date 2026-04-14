@@ -29,48 +29,8 @@ export const isAuthenticated = (req, res, next) => {
   }
 };
 
-// Admin login check (Updated: now checks for administrator role)
-export const isAdmin = (req, res, next) => {
-  try {
-    const token = extractToken(req);
-    
-    if (!token) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Authentication required',
-        redirectTo: '/login/admin'
-      });
-    }
-
-    const decoded = verifyToken(token);
-    
-    console.log('isAdmin check:', {
-      hasToken: !!token,
-      role: decoded.role,
-      userId: decoded.id
-    });
-
-    if (decoded.role === 'administrator') {
-      req.user = decoded;
-      return next();
-    }
-    
-    return res.status(403).json({ 
-      success: false, 
-      message: 'Administrator access required',
-      redirectTo: '/login/admin'
-    });
-  } catch (error) {
-    return res.status(401).json({ 
-      success: false, 
-      message: 'Invalid or expired token',
-      redirectTo: '/login/admin'
-    });
-  }
-};
-
 /**
- * Check if user is logged in as Administrator (super admin)
+ * Check if user is logged in as Administrator
  */
 export const isAdministrator = (req, res, next) => {
   try {
@@ -100,50 +60,13 @@ export const isAdministrator = (req, res, next) => {
     return res.status(403).json({ 
       success: false, 
       message: 'Administrator access required',
-      redirectTo: '/login/admin'
+      redirectTo: '/login/administrator'
     });
   } catch (error) {
     return res.status(401).json({ 
       success: false, 
       message: 'Invalid or expired token',
-      redirectTo: '/login/admin'
-    });
-  }
-};
-
-/**
- * Check if user is either Admin or Administrator
- * (Updated: Now only checks for administrator since we consolidated)
- */
-export const isAdminOrAdministrator = (req, res, next) => {
-  try {
-    const token = extractToken(req);
-    
-    if (!token) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Authentication required',
-        redirectTo: '/login/admin'
-      });
-    }
-
-    const decoded = verifyToken(token);
-    
-    if (decoded.role === 'administrator') {
-      req.user = decoded;
-      return next();
-    }
-    
-    return res.status(403).json({ 
-      success: false, 
-      message: 'Administrator access required',
-      redirectTo: '/login/admin'
-    });
-  } catch (error) {
-    return res.status(401).json({ 
-      success: false, 
-      message: 'Invalid or expired token',
-      redirectTo: '/login/admin'
+      redirectTo: '/login/administrator'
     });
   }
 };
@@ -276,42 +199,6 @@ export const isSeeker = (req, res, next) => {
 };
 
 /**
- * Check if user is either Helper or Admin (for helper management routes)
- */
-export const isHelperOrAdmin = (req, res, next) => {
-  try {
-    const token = extractToken(req);
-    
-    if (!token) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Authentication required',
-        redirectTo: '/login'
-      });
-    }
-
-    const decoded = verifyToken(token);
-    
-    if (decoded.role === 'helper' || decoded.role === 'admin') {
-      req.user = decoded;
-      return next();
-    }
-    
-    return res.status(403).json({ 
-      success: false, 
-      message: 'Helper or Admin access required',
-      redirectTo: '/login'
-    });
-  } catch (error) {
-    return res.status(401).json({ 
-      success: false, 
-      message: 'Invalid or expired token',
-      redirectTo: '/login'
-    });
-  }
-};
-
-/**
  * Redirect if already logged in (for login/signup pages)
  */
 export const redirectIfAuthenticated = (req, res, next) => {
@@ -321,21 +208,18 @@ export const redirectIfAuthenticated = (req, res, next) => {
     if (token) {
       const decoded = verifyToken(token);
       const role = decoded.role;
-      const adminRole = decoded.adminRole;
-      
-      // Return appropriate redirect info based on role
-      if (role === 'admin') {
-        if (adminRole === 'administrator') {
-          return res.json({ 
-            success: false, 
-            message: 'Already logged in',
-            redirectTo: '/administrator/dashboard' 
-          });
-        }
+
+      if (role === 'administrator') {
         return res.json({ 
           success: false, 
           message: 'Already logged in',
-          redirectTo: '/admin/dashboard' 
+          redirectTo: '/administrator/dashboard' 
+        });
+      } else if (role === 'moderator') {
+        return res.json({ 
+          success: false, 
+          message: 'Already logged in',
+          redirectTo: '/moderator/dashboard' 
         });
       } else if (role === 'helper') {
         return res.json({ 

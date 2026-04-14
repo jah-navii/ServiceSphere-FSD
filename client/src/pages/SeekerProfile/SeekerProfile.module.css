@@ -1,191 +1,250 @@
-/* src/pages/SeekerProfile/SeekerProfile.module.css */
+﻿/* src/pages/SeekerProfile/SeekerProfile.module.css */
 
-.seekerPageContainer {
-  font-family: "Sequel Sans", sans-serif;
-  background-color: var(--beige);
-  color: var(--black);
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.page {
+  background-color: #f7f8fa;
   min-height: 100vh;
-  width: 100%;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
-.seekerCard {
-  background-color: var(--white);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 126, 167, 0.15);
+.pageContent {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 48px 24px 64px;
+}
+
+/* Card */
+.profileCard {
+  background-color: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
   width: 100%;
-  max-width: 480px;
-  padding: 2rem;
-  position: relative;
+  max-width: 460px;
   overflow: hidden;
+  animation: fadeUp 0.3s ease-out;
+}
+
+@keyframes fadeUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* Colored top banner */
+.cardBanner {
+  height: 80px;
+  background-color: #007ea7;
+}
+
+/* Avatar overlapping banner */
+.avatarWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: -48px;
+  position: relative;
+  z-index: 1;
+}
+
+.profilePic {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Card body content */
+.cardBody {
+  padding: 16px 28px 28px;
+}
+
+/* Name section */
+.nameSection {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.nameInput {
+  border: none;
+  background: transparent;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-align: center;
+  width: 100%;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  outline: none;
+}
+
+.nameInputEditing {
+  border: 1.5px solid #007ea7;
+  background: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-align: center;
+  width: 100%;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  border-radius: 8px;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 126, 167, 0.12);
+}
+
+/* Details panel */
+.detailsSection {
+  background-color: #f7f8fa;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+
+.detailRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+}
+
+.detailIcon {
+  font-size: 1rem;
+  min-width: 22px;
+  text-align: center;
+}
+
+.detailInput {
+  border: none;
+  background: transparent;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  flex: 1;
+  outline: none;
+}
+
+.detailInputEditing {
+  border: 1.5px solid #007ea7;
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+  flex: 1;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 126, 167, 0.1);
+  transition: border-color 0.2s;
   box-sizing: border-box;
 }
 
-.seekerCard::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 120px;
-  background-color: var(--cerulean);
-  z-index: 0;
-}
-
-.seekerAvatarWrapper {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-}
-
-.seekerProfilePic {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid var(--white);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.seekerInfo {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.seekerInfo h2 {
-  margin-bottom: 0.5rem;
-  color: var(--cerulean);
-}
-
-.seekerDetails {
-  background-color: var(--beige);
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.seekerDetails p {
-  margin: 0.8rem 0;
-  display: flex;
-  align-items: center;
-}
-
-/* Inputs (scoped under seekerCard) */
-.seekerCard input[readonly] {
+.detailInputDisabled {
   border: none;
-  background-color: transparent;
-  color: var(--black);
-  font-size: 1rem;
-  padding: 0.5rem;
-  width: calc(100% - 30px);
-  margin-left: 10px;
+  background: transparent;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.9rem;
+  color: #888;
+  flex: 1;
   outline: none;
-}
-
-.seekerCard input:not([readonly]) {
-  border: 1px solid var(--cerulean);
-  background-color: var(--white);
-  border-radius: 4px;
-  padding: 0.5rem;
-  width: calc(100% - 30px);
-  margin-left: 10px;
-  outline: none;
-}
-
-.seekerCard input:disabled {
-  opacity: 0.7;
-}
-
-/* optional extra style hook for read-only heading input */
-.seekerReadOnlyInput {
-  font-weight: 600;
-}
-
-/* Buttons */
-.seekerBtn {
-  background-color: var(--cerulean);
-  color: var(--white);
-  border: none;
-  border-radius: 50px;
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 100%;
-  margin-top: 10px;
-}
-
-.seekerBtn:hover {
-  background-color: #0099cc;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.seekerEditBtn {
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-.seekerIcon {
-  color: var(--cerulean);
-  font-size: 1.2rem;
-  min-width: 20px;
+  cursor: not-allowed;
 }
 
 /* Error text */
-.seekerErrorText {
-  color: red;
-}
-
-.seekerErrorTextIndented {
-  color: red;
+.errorText {
   display: block;
-  margin-left: 30px;
+  color: #b91c1c;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  margin-left: 32px;
 }
 
-/* Home icon styling */
-.seekerHomeIcon {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  z-index: 10;
-  background-color: var(--white);
-  color: var(--cerulean);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Action buttons */
+.actionBtn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 0.75rem 1rem;
+  background-color: #007ea7;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   text-decoration: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  box-sizing: border-box;
+  margin-bottom: 0;
 }
 
-.seekerHomeIcon:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+.actionBtn:hover {
+  background-color: #005f7a;
+  transform: translateY(-1px);
 }
 
-.seekerHomeIconSymbol {
-  font-size: 1.5rem;
+.cardActions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
 }
 
-/* Logout button styling */
-.seekerLogoutBtn {
-  background-color: #dc3545;
-  margin-top: 10px;
+.outlineBtn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 0.72rem 1rem;
+  background-color: transparent;
+  color: #007ea7;
+  border: 2px solid #007ea7;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
+  box-sizing: border-box;
 }
 
-.seekerLogoutBtn:hover {
-  background-color: #c82333;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(220, 53, 69, 0.4);
+.outlineBtn:hover {
+  background-color: #007ea7;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.logoutBtn {
+  display: block;
+  width: 100%;
+  padding: 0.72rem 1rem;
+  background-color: transparent;
+  color: #dc2626;
+  border: 2px solid #dc2626;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
+  box-sizing: border-box;
+}
+
+.logoutBtn:hover {
+  background-color: #dc2626;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 520px) {
+  .pageContent {
+    padding: 24px 12px 48px;
+  }
+  .cardBody {
+    padding: 12px 18px 22px;
+  }
 }

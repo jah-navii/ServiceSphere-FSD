@@ -11,7 +11,7 @@ const Unauthorized = () => {
   const getLoginPath = () => {
     const path = location.pathname;
     if (path.includes('/helper')) return '/login/helper';
-    if (path.includes('/admin')) return '/login/admin';
+    if (path.includes('/administrator')) return '/login/administrator';
     if (path.includes('/seeker') || path.includes('/home') || path.includes('/cart') || path.includes('/booking')) {
       return '/login/seeker';
     }

@@ -1,6 +1,5 @@
 import express from 'express';
-import { signupHelper, loginHelper, signupSeeker, loginSeeker } from '../controllers/authController.js';
-import { signupAdmin, loginAdmin } from '../controllers/adminController.js';
+import { signupHelper, loginHelper, signupSeeker, loginSeeker, signupAdministrator, loginAdministrator } from '../controllers/authController.js';
 import { applyModerator, loginModerator } from '../controllers/moderatorController.js';
 
 const router = express.Router();
@@ -140,13 +139,13 @@ router.post('/signup/seeker', signupSeeker);
  */
 router.post('/login/seeker', loginSeeker);
 
-// ---- Admin Auth ----
+// ---- Administrator Auth ----
 
 /**
  * @swagger
- * /api/auth/signup/admin:
+ * /api/auth/signup/administrator:
  *   post:
- *     summary: Register a new admin
+ *     summary: Register a new administrator
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -154,7 +153,7 @@ router.post('/login/seeker', loginSeeker);
  *         application/json:
  *           schema:
  *             type: object
- *             required: [name, email, password]
+ *             required: [name, email, password, confirmPassword]
  *             properties:
  *               name:
  *                 type: string
@@ -164,19 +163,22 @@ router.post('/login/seeker', loginSeeker);
  *               password:
  *                 type: string
  *                 format: password
+ *               confirmPassword:
+ *                 type: string
+ *                 format: password
  *     responses:
  *       201:
- *         description: Admin registered successfully
+ *         description: Administrator registered successfully
  *       400:
  *         description: Validation error
  */
-router.post('/signup/admin', signupAdmin);
+router.post('/signup/administrator', signupAdministrator);
 
 /**
  * @swagger
- * /api/auth/login/admin:
+ * /api/auth/login/administrator:
  *   post:
- *     summary: Login as admin
+ *     summary: Login as administrator
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -198,7 +200,7 @@ router.post('/signup/admin', signupAdmin);
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login/admin', loginAdmin);
+router.post('/login/administrator', loginAdministrator);
 
 // ---- Moderator Auth ----
 

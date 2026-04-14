@@ -22,7 +22,6 @@ import serviceRoutes from './routes/serviceRoutes.js';
 import feedbackRoutes from './routes/feedbackRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import locationRoutes from './routes/locationRoutes.js';
-import adminRoutes from './routes/adminRoutes.js';
 import administratorRoutes from './routes/administratorRoutes.js';
 import moderatorRoutes from './routes/moderatorRoutes.js';
 
@@ -84,7 +83,6 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/locations', locationRoutes);
-app.use('/api/admin', adminRoutes);
 app.use('/api/administrator', administratorRoutes);
 app.use('/api/moderator', moderatorRoutes);
 

@@ -1,10 +1,9 @@
-/* src/pages/BookingForm/BookingForm.module.css */
+﻿/* src/pages/BookingForm/BookingForm.module.css */
 
 .bookingContainer {
-  font-family: 'Sequel Sans', sans-serif;
-  background-color: var(--beige);
-  /* Fix 1: Use padding instead of margin to stop the "Gap" */
-  padding-top: 40px; 
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  background-color: #f7f8fa;
+  padding-top: 48px;
   padding-bottom: 60px;
   min-height: 100vh;
   width: 100%;
@@ -12,61 +11,68 @@
 
 .heading {
   text-align: center;
-  /* Fix 2: Remove large top margins that push the container down */
-  margin: 0 0 10px 0; 
-  color: var(--black);
-  font-size: 2.25rem;
+  margin: 0 0 10px 0;
+  color: #1a1a1a;
+  font-size: 2rem;
   line-height: 1.2;
+  font-weight: 700;
 }
 
 .highlight {
-  color: var(--cerulean);
+  color: #007ea7;
   font-weight: 800;
 }
 
-/* Fix 3: Proper spacing for the subtext */
 .subHeading {
   text-align: center;
   color: #555;
-  font-size: 1.1rem;
-  margin: 0 auto 30px auto; /* Bottom margin pushes the form card down */
+  font-size: 1rem;
+  margin: 0 auto 32px auto;
   max-width: 90%;
 }
 
 .formCard {
-  background-color: var(--white);
+  background-color: #ffffff;
   max-width: 500px;
-  margin: 0 auto; /* Centered horizontally */
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  margin: 0 auto;
+  padding: 32px;
+  border-radius: 14px;
+  border: 1.5px solid #e2e8f0;
+  animation: fadeUp 0.3s ease-out;
 }
 
-/* Labels & Inputs */
+@keyframes fadeUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
 .label {
   display: block;
   margin-top: 20px;
   font-weight: 700;
-  color: var(--black);
-  font-size: 0.95rem;
-  letter-spacing: 0.5px;
+  color: #1a1a1a;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .inputField {
   width: 100%;
-  padding: 12px;
-  margin-top: 8px;
-  border: 1px solid var(--cerulean);
+  padding: 11px 14px;
+  margin-top: 6px;
+  border: 1.5px solid #e2e8f0;
   border-radius: 8px;
   box-sizing: border-box;
-  font-family: inherit;
-  font-size: 1rem;
-  background-color: #fff;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.95rem;
+  background-color: #ffffff;
+  color: #1a1a1a;
+  transition: border-color 0.2s;
 }
 
 .inputField:focus {
-  border-color: #005f7a;
-  box-shadow: 0 0 0 3px rgba(0, 126, 167, 0.15);
+  border-color: #007ea7;
+  box-shadow: 0 0 0 3px rgba(0, 126, 167, 0.12);
   outline: none;
 }
 
@@ -75,19 +81,19 @@ textarea.inputField {
   min-height: 100px;
 }
 
-/* Button */
 .submitButton {
-  background-color: var(--cerulean);
-  color: var(--white);
+  background-color: #007ea7;
+  color: #ffffff;
   border: none;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   padding: 14px 16px;
   border-radius: 8px;
   width: 100%;
-  margin-top: 30px;
+  margin-top: 28px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s, transform 0.2s;
 }
 
 .submitButton:hover:not(:disabled) {
@@ -96,12 +102,12 @@ textarea.inputField {
 }
 
 .submitButton:disabled {
-  background-color: #ccc;
+  background-color: #b0c8d4;
   cursor: not-allowed;
 }
 
 .fieldError {
   color: #b91c1c;
-  font-size: 0.85rem;
-  margin-top: 6px;
+  font-size: 0.82rem;
+  margin-top: 5px;
 }
