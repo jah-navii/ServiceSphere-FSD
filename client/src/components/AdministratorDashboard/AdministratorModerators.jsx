@@ -48,9 +48,8 @@ const AdministratorModerators = () => {
     }
   };
 
-  const handleApprove = async (moderatorId, desiredLocationId) => {
-    const locationId = prompt('Enter location ID to assign (or press OK to use desired location):') || desiredLocationId;
-    if (!locationId) return;
+  const handleApprove = async (moderatorId) => {
+    if (!window.confirm('Approve this moderator application?')) return;
 
     setActionLoading(moderatorId);
     try {
@@ -61,7 +60,6 @@ const AdministratorModerators = () => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ locationId })
       });
 
       if (response.ok) {
@@ -69,7 +67,7 @@ const AdministratorModerators = () => {
         fetchModerators();
       } else {
         const data = await response.json();
-        alert(data.message || 'Failed to approve moderator');
+        alert(data.error || data.message || 'Failed to approve moderator');
       }
     } catch (err) {
       console.error('Approve error:', err);
@@ -210,6 +208,38 @@ const AdministratorModerators = () => {
                         <strong>City:</strong> {moderator.assignedLocation.city}, {moderator.assignedLocation.state}
                       </div>
                     )}
+                    {moderator.experience && (
+                      <div className={styles.info}>
+                        <strong>Experience:</strong> {moderator.experience}
+                      </div>
+                    )}
+                    {moderator.linkedinProfile && (
+                      <div className={styles.info}>
+                        <strong>LinkedIn:</strong>{' '}
+                        <a href={moderator.linkedinProfile} target="_blank" rel="noreferrer" className={styles.link}>
+                          View Profile
+                        </a>
+                      </div>
+                    )}
+                    {moderator.resume && (
+                      <div className={styles.info}>
+                        <strong>Resume:</strong>{' '}
+                        <a
+                          href={`http://localhost:5000/${moderator.resume}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className={styles.resumeLink}
+                        >
+                          📄 View Resume (PDF)
+                        </a>
+                      </div>
+                    )}
+                    {moderator.coverLetter && (
+                      <div className={styles.coverLetterBlock}>
+                        <strong className={styles.coverLetterTitle}>Cover Letter</strong>
+                        <p className={styles.coverLetterText}>{moderator.coverLetter}</p>
+                      </div>
+                    )}
                     <div className={styles.info}>
                       <strong>Applied:</strong> {new Date(moderator.createdAt).toLocaleDateString()}
                     </div>
@@ -230,7 +260,7 @@ const AdministratorModerators = () => {
                       <>
                         <button
                           className={styles.approveBtn}
-                          onClick={() => handleApprove(moderator._id, moderator.assignedLocation?._id)}
+                          onClick={() => handleApprove(moderator._id)}
                           disabled={actionLoading === moderator._id}
                         >
                           {actionLoading === moderator._id ? 'Processing...' : 'Approve'}

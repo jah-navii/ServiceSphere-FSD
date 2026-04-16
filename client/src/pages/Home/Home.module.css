@@ -471,3 +471,113 @@
   .heroBadge      { font-size: 0.7rem; }
   .statValue      { font-size: 1.5rem; }
 }
+/* ═══════════════════════════════════════════
+   OPEN MODERATOR POSITIONS SECTION
+   ═══════════════════════════════════════════ */
+.openBadge {
+  display: inline-block;
+  background: #fff3cd;
+  border: 1px solid #f0c040;
+  color: #8a6000;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 100px;
+  margin-bottom: 14px;
+}
+
+.openGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  justify-content: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.openCard {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 280px;
+  max-width: 360px;
+  flex: 1;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.openCard:hover {
+  box-shadow: 0 6px 20px rgba(0,126,167,0.12);
+  transform: translateY(-2px);
+}
+
+.openCardIcon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  background: var(--brand-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.openCardBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.openCardBody h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.openCardMeta {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0 0 7px;
+}
+
+.openBadgeSmall {
+  display: inline-block;
+  background: #e6f4f8;
+  color: var(--brand-dark);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 100px;
+}
+
+.openApplyBtn {
+  display: inline-block;
+  background: var(--brand);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.openApplyBtn:hover {
+  background: var(--brand-dark);
+}
+
+@media (max-width: 600px) {
+  .openCard { min-width: 100%; max-width: 100%; }
+}

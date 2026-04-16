@@ -26,6 +26,16 @@ export const addLocation = async (req, res) => {
   }
 };
 
+// GET /api/locations/open — locations with no assigned moderator (public)
+export const getOpenLocations = async (req, res) => {
+  try {
+    const locations = await Location.find({ moderator: null }).sort({ name: 1 }).select('_id name city state');
+    res.status(200).json(locations);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch open locations' });
+  }
+};
+
 // DELETE /api/locations/:id
 export const deleteLocation = async (req, res) => {
   try {

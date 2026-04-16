@@ -5,7 +5,7 @@
 // (Extracted from moderatorRoutes + adminRoutes)
 // ============================================
 import express from 'express';
-import { getLocations, addLocation, deleteLocation } from '../controllers/locationController.js';
+import { getLocations, addLocation, deleteLocation, getOpenLocations } from '../controllers/locationController.js';
 import { isAdministrator } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -50,6 +50,7 @@ const router = express.Router();
  *         description: Location created
  */
 router.get('/', getLocations);
+router.get('/open', getOpenLocations);
 router.post('/', isAdministrator, addLocation);
 
 /**

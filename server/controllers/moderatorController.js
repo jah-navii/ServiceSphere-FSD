@@ -2,6 +2,7 @@ import Admin from '../models/Admin.js';
 import Helper from '../models/Helper.js';
 import Seeker from '../models/Seeker.js';
 import Booking from '../models/Booking.js';
+import Feedback from '../models/Feedback.js';
 import Service from '../models/Service.js';
 import Category from '../models/Category.js';
 import Location from '../models/Location.js';
@@ -10,14 +11,18 @@ import { generateToken } from '../utils/jwtUtils.js';
 
 // ==================== MODERATOR APPLICATION ====================
 
-// Public: Apply to become moderator
+// Public: Apply to become moderator  (multipart/form-data — resume upload via multer)
 export const applyModerator = async (req, res) => {
   try {
-    const { name, email, phone, password, desiredLocation } = req.body;
+    const { name, email, phone, password, desiredLocation, coverLetter, experience, linkedinProfile } = req.body;
 
     // Validation
-    if (!name || !email || !phone || !password || !desiredLocation) {
-      return res.status(400).json({ error: 'All fields are required' });
+    if (!name || !email || !phone || !password || !desiredLocation || !coverLetter) {
+      return res.status(400).json({ error: 'All required fields must be filled (including cover letter)' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'Resume (PDF) is required' });
     }
 
     // Check if email already exists
@@ -32,7 +37,7 @@ export const applyModerator = async (req, res) => {
       return res.status(404).json({ error: 'Location not found' });
     }
 
-    // Check if location already has a moderator
+    // Check if location already has an active/pending moderator
     const locationWithModerator = await Admin.findOne({ 
       assignedLocation: desiredLocation,
       status: { $in: ['active', 'pending'] }
@@ -40,7 +45,7 @@ export const applyModerator = async (req, res) => {
     
     if (locationWithModerator) {
       return res.status(409).json({ 
-        error: 'This location already has a moderator assigned or pending' 
+        error: 'This location already has a moderator assigned or a pending application' 
       });
     }
 
@@ -56,14 +61,18 @@ export const applyModerator = async (req, res) => {
       role: 'moderator',
       assignedLocation: desiredLocation,
       status: 'pending',
-      applicationDate: new Date()
+      applicationDate: new Date(),
+      coverLetter,
+      experience: experience || null,
+      linkedinProfile: linkedinProfile || null,
+      resume: req.file.path.replace(/\\/g, '/'),  // normalise to forward-slash paths
     });
 
     await moderator.save();
 
     return res.status(201).json({ 
       success: true,
-      message: 'Moderator application submitted successfully. Please wait for administrator approval.' 
+      message: 'Application submitted successfully. We will review it and get back to you.' 
     });
 
   } catch (error) {
@@ -144,60 +153,82 @@ export const getModeratorDashboard = async (req, res) => {
 
     // Get helpers in this location
     const helpers = await Helper.find({ location: locationId });
-    console.log('Found helpers in location:', helpers.length);
-    const pendingHelpers = helpers.filter(h => !h.approved).length;
-    const approvedHelpers = helpers.filter(h => h.approved).length;
+    const pendingHelpers = helpers.filter(h => !h.approved && !h.suspended).length;
+    const activeHelpers  = helpers.filter(h =>  h.approved && !h.suspended).length;
+    const suspendedHelpers = helpers.filter(h => h.suspended).length;
+    const helperIds = helpers.map(h => h._id);
 
-    // Get bookings in this location
-    const bookings = await Booking.find()
-      .populate('helper')
-      .then(bookings => bookings.filter(b => b.helper?.location?.toString() === locationId.toString()));
+    // Get bookings for helpers in this location
+    const bookings = await Booking.find({ helper: { $in: helperIds } })
+      .populate('helper', 'name')
+      .populate('seeker', 'name');
 
-    const totalBookings = bookings.length;
-    
-    // Completed bookings = past date + paid
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const completedBookings = bookings.filter(b => {
-      const bookingDate = new Date(b.date);
-      return b.paid === true && bookingDate < today;
-    }).length;
-    
-    const pendingBookings = bookings.filter(b => b.status === 'pending').length;
+    const todayStr   = new Date().toISOString().split('T')[0];
+    const monthStr   = todayStr.substring(0, 7);
 
-    // Calculate revenue from completed bookings
-    const revenue = bookings
-      .filter(b => {
-        const bookingDate = new Date(b.date);
-        return b.paid === true && bookingDate < today;
-      })
-      .reduce((sum, b) => sum + (b.price || 0), 0);
+    const todayBookings     = bookings.filter(b => b.date === todayStr).length;
+    const completedBookings = bookings.filter(b => b.status === 'completed').length;
+    const pendingBookings   = bookings.filter(b => b.status === 'pending').length;
+    const cancelledBookings = bookings.filter(b => b.status === 'cancelled').length;
 
-    // Recent bookings
-    const recentBookings = bookings
-      .sort((a, b) => new Date(b.createdAt) - new Date(b.createdAt))
-      .slice(0, 10);
+    const totalRevenue   = bookings.filter(b => b.paid).reduce((s, b) => s + (b.price || 0), 0);
+    const monthlyRevenue = bookings
+      .filter(b => b.paid && b.date && b.date.startsWith(monthStr))
+      .reduce((s, b) => s + (b.price || 0), 0);
+
+    // Distinct seekers who have booked
+    const totalSeekers = new Set(bookings.map(b => b.seeker?._id?.toString()).filter(Boolean)).size;
+
+    // Average rating
+    const feedbacks = await Feedback.find({ helper: { $in: helperIds } });
+    const avgRating = feedbacks.length
+      ? parseFloat((feedbacks.reduce((s, f) => s + f.rating, 0) / feedbacks.length).toFixed(1))
+      : null;
+
+    // Recent bookings (last 5, sorted by date desc)
+    const recentBookings = [...bookings]
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .slice(0, 5)
+      .map(b => ({
+        _id: b._id,
+        seeker: b.seeker,
+        helper: b.helper,
+        service_type: b.service_type,
+        date: b.date,
+        time: b.time,
+        status: b.status,
+        price: b.price,
+        paid: b.paid
+      }));
+
+    // Pending helper applications (first 3 for dashboard widget)
+    const pendingHelpersList = helpers
+      .filter(h => !h.approved && !h.suspended)
+      .slice(0, 3)
+      .map(h => ({ _id: h._id, name: h.name, createdAt: h.createdAt }));
 
     return res.status(200).json({
       success: true,
       data: {
         location: await Location.findById(locationId),
+        moderator: { name: moderator.name },
         stats: {
           totalHelpers: helpers.length,
           pendingHelpers,
-          activeHelpers: approvedHelpers,
-          totalBookings,
-          todayBookings: bookings.filter(b => {
-            const today = new Date();
-            const bookingDate = new Date(b.createdAt);
-            return bookingDate.toDateString() === today.toDateString();
-          }).length,
+          activeHelpers,
+          suspendedHelpers,
+          totalSeekers,
+          totalBookings: bookings.length,
+          todayBookings,
           completedBookings,
           pendingBookings,
-          totalServices: await Service.countDocuments(),
-          revenue
+          cancelledBookings,
+          totalRevenue,
+          monthlyRevenue,
+          avgRating
         },
-        recentBookings
+        recentBookings,
+        pendingHelpersList
       }
     });
 
@@ -303,6 +334,98 @@ export const rejectHelper = async (req, res) => {
 
   } catch (error) {
     console.error('Reject Helper Error:', error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Suspend an approved helper
+export const suspendHelper = async (req, res) => {
+  try {
+    const { helperId } = req.params;
+    const moderator = await Admin.findById(req.user.id);
+    if (!moderator?.assignedLocation) return res.status(403).json({ error: 'No location assigned' });
+
+    const helper = await Helper.findById(helperId);
+    if (!helper) return res.status(404).json({ error: 'Helper not found' });
+    if (helper.location.toString() !== moderator.assignedLocation.toString())
+      return res.status(403).json({ error: 'Not in your location' });
+
+    helper.suspended = true;
+    await helper.save();
+    return res.status(200).json({ success: true, message: 'Helper suspended' });
+  } catch (error) {
+    console.error('Suspend Helper Error:', error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Reactivate a suspended helper
+export const reactivateHelper = async (req, res) => {
+  try {
+    const { helperId } = req.params;
+    const moderator = await Admin.findById(req.user.id);
+    if (!moderator?.assignedLocation) return res.status(403).json({ error: 'No location assigned' });
+
+    const helper = await Helper.findById(helperId);
+    if (!helper) return res.status(404).json({ error: 'Helper not found' });
+    if (helper.location.toString() !== moderator.assignedLocation.toString())
+      return res.status(403).json({ error: 'Not in your location' });
+
+    helper.suspended = false;
+    await helper.save();
+    return res.status(200).json({ success: true, message: 'Helper reactivated' });
+  } catch (error) {
+    console.error('Reactivate Helper Error:', error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// ==================== USER MANAGEMENT (Location-scoped seekers) ====================
+
+export const getLocationUsers = async (req, res) => {
+  try {
+    const moderator = await Admin.findById(req.user.id);
+    if (!moderator?.assignedLocation) return res.status(403).json({ error: 'No location assigned' });
+
+    const helperIds = (await Helper.find({ location: moderator.assignedLocation }).select('_id')).map(h => h._id);
+
+    const bookings = await Booking.find({ helper: { $in: helperIds } })
+      .populate('seeker', 'name email mobilenumber address suspended')
+      .sort({ date: -1 });
+
+    // Aggregate per seeker
+    const seekerMap = {};
+    bookings.forEach(b => {
+      if (!b.seeker) return;
+      const sId = b.seeker._id.toString();
+      if (!seekerMap[sId]) {
+        seekerMap[sId] = {
+          seeker: b.seeker,
+          totalBookings: 0,
+          totalSpent: 0,
+          lastBookingDate: b.date
+        };
+      }
+      seekerMap[sId].totalBookings++;
+      if (b.paid) seekerMap[sId].totalSpent += b.price || 0;
+    });
+
+    const users = Object.values(seekerMap).sort((a, b) => b.totalBookings - a.totalBookings);
+    const totalRevenue = users.reduce((s, u) => s + u.totalSpent, 0);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        users,
+        stats: {
+          totalUsers: users.length,
+          totalBookings: bookings.length,
+          totalRevenue
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Get Location Users Error:', error);
     return res.status(500).json({ error: 'Server error' });
   }
 };
@@ -487,7 +610,7 @@ export const updateModeratorProfile = async (req, res) => {
 // GET /api/moderator/earnings-data
 export const getLocationEarningsData = async (req, res) => {
   try {
-    const moderatorId = req.user.userId;
+    const moderatorId = req.user.id;
 
     // Get moderator details
     const moderator = await Admin.findById(moderatorId).populate('assignedLocation');
@@ -601,9 +724,82 @@ export default {
   getLocationHelpers,
   approveHelper,
   rejectHelper,
+  suspendHelper,
+  reactivateHelper,
+  getLocationUsers,
   getLocationBookings,
   getLocationServices,
   getModeratorProfile,
   updateModeratorProfile,
   getLocationEarningsData
+};
+
+// ==================== FEEDBACK (Location-scoped) ====================
+
+export const getLocationFeedbacks = async (req, res) => {
+  try {
+    const moderatorId = req.user.id;
+    const moderator = await Admin.findById(moderatorId);
+
+    if (!moderator || !moderator.assignedLocation) {
+      return res.status(403).json({ error: 'No location assigned' });
+    }
+
+    const locationId = moderator.assignedLocation;
+
+    // All helpers in this location
+    const helpersInLocation = await Helper.find({ location: locationId }).select('_id');
+    const helperIds = helpersInLocation.map(h => h._id);
+
+    // All feedbacks for those helpers
+    const feedbacks = await Feedback.find({ helper: { $in: helperIds } })
+      .populate('seeker', 'name email')
+      .populate('helper', 'name email')
+      .sort({ date: -1 });
+
+    // Per-helper stats
+    const helperStatsMap = {};
+    feedbacks.forEach(f => {
+      const hId = f.helper?._id?.toString();
+      if (!hId) return;
+      if (!helperStatsMap[hId]) {
+        helperStatsMap[hId] = { helper: f.helper, total: 0, sum: 0, counts: [0, 0, 0, 0, 0] };
+      }
+      helperStatsMap[hId].total++;
+      helperStatsMap[hId].sum += f.rating;
+      helperStatsMap[hId].counts[f.rating - 1]++;
+    });
+
+    const helperStats = Object.values(helperStatsMap).map(h => ({
+      helper: h.helper,
+      totalReviews: h.total,
+      averageRating: h.total ? parseFloat((h.sum / h.total).toFixed(1)) : 0,
+      ratingCounts: h.counts
+    })).sort((a, b) => b.totalReviews - a.totalReviews);
+
+    const overallAvg = feedbacks.length
+      ? parseFloat((feedbacks.reduce((s, f) => s + f.rating, 0) / feedbacks.length).toFixed(1))
+      : 0;
+
+    const ratingDistribution = [1, 2, 3, 4, 5].map(
+      r => feedbacks.filter(f => f.rating === r).length
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        feedbacks,
+        stats: {
+          total: feedbacks.length,
+          averageRating: overallAvg,
+          ratingDistribution
+        },
+        helperStats
+      }
+    });
+
+  } catch (error) {
+    console.error('Get Location Feedbacks Error:', error);
+    return res.status(500).json({ error: 'Server error' });
+  }
 };

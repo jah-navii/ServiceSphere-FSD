@@ -25,6 +25,12 @@ const adminSchema = new mongoose.Schema({
             return this.role === 'moderator' ? 'pending' : 'active';
         }
     },
+    // Application details
+    coverLetter: { type: String, default: null },
+    experience: { type: String, default: null },      // e.g. "3 years in community management"
+    linkedinProfile: { type: String, default: null },
+    resume: { type: String, default: null },          // stored file path under uploads/resumes/
+
     // Tracking fields
     applicationDate: { type: Date, default: Date.now },
     approvedBy: { 

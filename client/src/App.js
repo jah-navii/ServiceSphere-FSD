@@ -41,9 +41,10 @@ import ModeratorLayout from "./components/ModeratorDashboard/ModeratorLayout";
 import ModeratorHome from "./components/ModeratorDashboard/ModeratorHome";
 import ModeratorHelpers from "./components/ModeratorDashboard/ModeratorHelpers";
 import ModeratorBookings from "./components/ModeratorDashboard/ModeratorBookings";
-import ModeratorServices from "./components/ModeratorDashboard/ModeratorServices";
+import ModeratorUsers from "./components/ModeratorDashboard/ModeratorUsers";
 import ModeratorProfile from "./components/ModeratorDashboard/ModeratorProfile";
 import ModeratorEarnings from "./components/ModeratorDashboard/ModeratorEarnings";
+import ModeratorFeedback from "./components/ModeratorDashboard/ModeratorFeedback";
 
 import AdminContact from "./pages/AdminContact/AdminContact";
 import TermsAndConditions from "./pages/TermsAndConditions/TermsAndConditions";
@@ -140,10 +141,11 @@ function App() {
         }>
           <Route path="dashboard" element={<ModeratorHome />} />
           <Route path="helpers" element={<ModeratorHelpers />} />
+          <Route path="users" element={<ModeratorUsers />} />
           <Route path="bookings" element={<ModeratorBookings />} />
-          <Route path="services" element={<ModeratorServices />} />
           <Route path="earnings" element={<ModeratorEarnings />} />
           <Route path="profile" element={<ModeratorProfile />} />
+          <Route path="feedback" element={<ModeratorFeedback />} />
         </Route>
 
         {/* Error Pages */}

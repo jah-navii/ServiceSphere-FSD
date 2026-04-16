@@ -4,11 +4,15 @@ import {
   getLocationHelpers,
   approveHelper,
   rejectHelper,
+  suspendHelper,
+  reactivateHelper,
+  getLocationUsers,
   getLocationBookings,
   getLocationServices,
   getModeratorProfile,
   updateModeratorProfile,
-  getLocationEarningsData
+  getLocationEarningsData,
+  getLocationFeedbacks
 } from '../controllers/moderatorController.js';
 import { isModerator } from '../middleware/authMiddleware.js';
 
@@ -88,6 +92,8 @@ router.patch('/helpers/:helperId/approve', isModerator, approveHelper);
  *         description: Helper rejected
  */
 router.patch('/helpers/:helperId/reject', isModerator, rejectHelper);
+router.patch('/helpers/:helperId/suspend', isModerator, suspendHelper);
+router.patch('/helpers/:helperId/reactivate', isModerator, reactivateHelper);
 
 /**
  * @swagger
@@ -167,5 +173,20 @@ router.put('/profile', isModerator, updateModeratorProfile);
  *         description: Earnings breakdown
  */
 router.get('/earnings-data', isModerator, getLocationEarningsData);
+
+/**
+ * @swagger
+ * /api/moderator/feedbacks:
+ *   get:
+ *     summary: Get feedbacks for helpers in moderator's location
+ *     tags: [Moderator]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Feedbacks and stats for the location
+ */
+router.get('/feedbacks', isModerator, getLocationFeedbacks);
+router.get('/users', isModerator, getLocationUsers);
 
 export default router;

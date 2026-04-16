@@ -1,149 +1,267 @@
-.pageContainer {
-  min-height: 100vh;
+/* ── PAGE SHELL ── */
+.page {
   display: flex;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ── BRAND PANEL (left) ── */
+.brandPanel {
+  width: 42%;
+  flex-shrink: 0;
+  background-color: #007ea7;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 2rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
 }
 
-.loginBox {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  padding: 3rem;
-  max-width: 480px;
-  width: 100%;
+.panelLogo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  position: absolute;
+  top: 24px;
+  left: 24px;
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 2rem;
+.panelLogoImg {
+  height: 30px;
+  width: auto;
 }
 
-.header h1 {
-  font-size: 2rem;
-  color: #1a202c;
-  margin: 0 0 0.5rem 0;
+.panelLogoName {
+  font-size: 1rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  color: #fff;
+  letter-spacing: -0.2px;
+}
+
+.animationWrapper {
+  width: 320px;
+  height: 320px;
+}
+
+.panelTagline {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: center;
+  margin: 16px 0 0;
+}
+
+/* ── FORM PANEL (right) ── */
+.formPanel {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  background-color: #f7f8fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.formWrap {
+  width: 100%;
+  max-width: 460px;
+  padding: 40px 24px 60px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── BACK BUTTON ── */
+.backBtn {
+  background: none;
+  border: none;
+  color: #718096;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 24px;
+  font-family: inherit;
+  transition: color 0.2s;
+  align-self: flex-start;
+}
+
+.backBtn:hover {
+  color: #007ea7;
+}
+
+/* ── FORM CARD ── */
+.formCard {
+  background-color: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 36px 32px;
+  width: 100%;
+  animation: fadeUp 0.5s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── FORM ELEMENTS ── */
+.title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin: 0 0 6px;
+  letter-spacing: -0.3px;
 }
 
 .subtitle {
+  font-size: 0.88rem;
   color: #718096;
-  font-size: 1rem;
-  margin: 0;
-  font-weight: 400;
-  letter-spacing: -0.01em;
-}
-
-.error {
-  background: #fed7d7;
-  color: #742a2a;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  border-left: 4px solid #e53e3e;
-  font-size: 0.95rem;
-  font-weight: 500;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  margin: 0 0 24px;
 }
 
 .formGroup {
-  display: flex;
-  flex-direction: column;
+  margin-bottom: 14px;
 }
 
 .label {
-  font-size: 0.95rem;
+  display: block;
+  margin-bottom: 5px;
+  color: #4a5568;
+  font-size: 0.82rem;
   font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .input {
-  padding: 0.875rem 1rem;
-  border: 2px solid #e2e8f0;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid #e2e8f0;
   border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.2s ease;
+  font-size: 0.9rem;
   font-family: inherit;
+  color: #1a1a2e;
+  background-color: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #007ea7;
+  box-shadow: 0 0 0 3px rgba(0, 126, 167, 0.1);
 }
 
-.submitBtn {
-  padding: 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+/* ── PASSWORD TOGGLE ── */
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputWrapper .input {
+  padding-right: 42px;
+}
+
+.eyeBtn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+
+.eyeBtn:hover {
+  color: #007ea7;
+}
+
+/* ── SUBMIT BUTTON ── */
+.submitButton {
+  width: 100%;
+  padding: 11px;
+  background-color: #007ea7;
+  color: #fff;
   border: none;
   border-radius: 8px;
-  font-size: 1.125rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  margin-top: 1rem;
+  font-size: 0.95rem;
+  font-weight: 700;
   font-family: inherit;
-  letter-spacing: -0.01em;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
 }
 
-.submitBtn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+.submitButton:hover {
+  background-color: #005f7a;
 }
 
-.submitBtn:disabled {
-  opacity: 0.6;
+.submitButton:disabled {
+  opacity: 0.65;
   cursor: not-allowed;
 }
 
-.footer {
-  text-align: center;
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid #e2e8f0;
+/* ── UTILITIES ── */
+.errorText {
+  background-color: #fff5f5;
+  color: #c53030;
+  border: 1px solid #fed7d7;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
 }
 
-.footer p {
-  margin: 0.5rem 0;
-  color: #4a5568;
+.switchText {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.88rem;
+  color: #718096;
 }
 
 .link {
-  color: #667eea;
-  text-decoration: none;
+  color: #007ea7;
   font-weight: 600;
-  transition: color 0.2s ease;
+  text-decoration: none;
 }
 
 .link:hover {
-  color: #764ba2;
   text-decoration: underline;
 }
 
-@media (max-width: 768px) {
-  .loginBox {
-    padding: 2rem 1.5rem;
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .brandPanel {
+    display: none;
   }
 
-  .header h1 {
-    font-size: 1.5rem;
+  .formPanel {
+    width: 100%;
   }
 
-  .subtitle {
-    font-size: 0.95rem;
+  .formWrap {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .formCard {
+    border: none;
+    padding: 24px 20px;
+    border-radius: 0;
+  }
+
+  .formWrap {
+    padding: 24px 16px 40px;
   }
 }

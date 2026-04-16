@@ -1,149 +1,347 @@
 .container {
-  max-width: 1200px;
+  max-width: 1300px;
+}
+
+/* ── Loading / Error ── */
+.loadingWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem;
+  gap: 1rem;
+  color: #718096;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e2e8f0;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error {
+  padding: 2rem;
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 12px;
+  color: #c53030;
+  text-align: center;
+}
+
+/* ── Page Header ── */
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
 }
 
 .title {
   font-size: 2rem;
+  font-weight: 700;
   color: #1a202c;
-  margin: 0 0 2rem 0;
+  margin: 0 0 0.5rem 0;
 }
 
-.loading,
-.error {
-  text-align: center;
-  padding: 2rem;
-  font-size: 1.125rem;
+.locationBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: #667eea;
+  font-weight: 600;
 }
 
-.error {
-  color: #e53e3e;
-  background: #fed7d7;
-  border-radius: 8px;
+.locationBadge svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
+/* ── Alert ── */
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-left: 4px solid #f59e0b;
+  border-radius: 10px;
+  margin-bottom: 1.75rem;
+  color: #92400e;
+  font-size: 0.9rem;
+}
+
+.alert svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: #f59e0b;
+}
+
+.alert span { flex: 1; }
+
+.alertBtn {
+  background: #f59e0b;
+  color: white;
+  border: none;
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.alertBtn:hover { background: #d97706; }
+
+/* ── Stats Grid ── */
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
   margin-bottom: 2rem;
 }
 
 .statCard {
   background: white;
-  padding: 1.5rem;
+  padding: 1.4rem 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  border-top: 3px solid #e2e8f0;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .statCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
 
-.statIcon {
-  font-size: 2.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 1rem;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.statCardAlert { border-top-color: #f59e0b; }
+
+.statValue {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #1a202c;
+  margin: 0 0 0.3rem 0;
+  line-height: 1;
 }
 
-.statInfo {
-  flex: 1;
-}
-
-.statInfo h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.95rem;
+.statLabel {
+  font-size: 0.78rem;
   color: #718096;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin: 0;
 }
 
-.statValue {
+/* ── Two-column layout ── */
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Panel ── */
+.panel {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid #f0f4f8;
+}
+
+.panelHeader h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2d3748;
   margin: 0;
-  font-size: 2rem;
+}
+
+.viewAllBtn {
+  background: none;
+  border: 1.5px solid #667eea;
+  color: #667eea;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.viewAllBtn:hover {
+  background: #667eea;
+  color: white;
+}
+
+.empty {
+  padding: 2.5rem;
+  text-align: center;
+  color: #a0aec0;
+  font-size: 0.9rem;
+}
+
+/* ── Booking List ── */
+.bookingList { display: flex; flex-direction: column; }
+
+.bookingRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1.5rem;
+  border-bottom: 1px solid #f7fafc;
+  transition: background 0.15s;
+}
+
+.bookingRow:last-child { border-bottom: none; }
+.bookingRow:hover { background: #fafbff; }
+
+.bookingMain {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.serviceType {
+  font-size: 0.88rem;
   font-weight: 700;
   color: #2d3748;
 }
 
-.locationInfo {
-  margin-top: 2rem;
+.bookingParties {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: #718096;
 }
 
-.locationInfo h2 {
-  font-size: 1.5rem;
-  color: #2d3748;
-  margin: 0 0 1rem 0;
-}
+.arrow { color: #cbd5e0; }
+.helperName { color: #667eea; font-weight: 600; }
 
-.locationCard {
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-}
-
-.locationDetail {
+.bookingRight {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  align-items: flex-end;
+  gap: 0.25rem;
+  flex-shrink: 0;
 }
 
-.label {
-  font-size: 0.875rem;
+.statusTag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.18rem 0.55rem;
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.tagPending   { background: #fef3c7; color: #92400e; }
+.tagConfirmed { background: #dbeafe; color: #1e40af; }
+.tagCompleted { background: #d1fae5; color: #065f46; }
+.tagCancelled { background: #fee2e2; color: #991b1b; }
+
+.bookingDate { font-size: 0.75rem; color: #a0aec0; }
+.bookingAmt  { font-size: 0.82rem; font-weight: 700; color: #2d3748; }
+
+/* ── Location Info ── */
+.locationGrid { display: flex; flex-direction: column; }
+
+.locationRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 1.5rem;
+  border-bottom: 1px solid #f7fafc;
+}
+
+.locationRow:last-child { border-bottom: none; }
+
+.locLabel {
+  font-size: 0.78rem;
   color: #718096;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
 }
 
-.value {
-  font-size: 1.25rem;
+.locVal {
+  font-size: 0.88rem;
   color: #2d3748;
   font-weight: 600;
-}
-
-.statusBadge {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-  color: white;
-  border-radius: 20px;
-  font-size: 1rem;
   text-transform: capitalize;
 }
 
-.alert {
-  margin-top: 2rem;
-  padding: 1.25rem;
-  background: #fef3c7;
-  border-left: 4px solid #f59e0b;
-  border-radius: 8px;
-  color: #92400e;
+/* ── Pending Applications panel ── */
+.pendingList { display: flex; flex-direction: column; }
+
+.pendingRow {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.85rem 1.5rem;
+  border-bottom: 1px solid #f7fafc;
 }
 
-.alert strong {
+.pendingRow:last-child { border-bottom: none; }
+
+.pendingAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
   font-weight: 700;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-@media (max-width: 768px) {
-  .statsGrid {
-    grid-template-columns: 1fr;
-  }
+.pendingInfo { display: flex; flex-direction: column; gap: 0.15rem; }
+.pendingName { font-size: 0.88rem; font-weight: 700; color: #2d3748; }
+.pendingDate { font-size: 0.75rem; color: #a0aec0; }
 
-  .locationCard {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .twoCol { grid-template-columns: 1fr; }
+  .rightCol {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
 }
+
+@media (max-width: 640px) {
+  .statsGrid { grid-template-columns: 1fr 1fr; }
+  .bookingRow { flex-direction: column; align-items: flex-start; }
+  .bookingRight { flex-direction: row; align-items: center; gap: 0.5rem; }
+}
+

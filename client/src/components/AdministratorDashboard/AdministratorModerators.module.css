@@ -220,3 +220,53 @@
     white-space: nowrap;
   }
 }
+
+/* ── resume / cover letter additions ── */
+.link {
+  color: #007ea7;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.resumeLink {
+  color: #007ea7;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.resumeLink:hover {
+  text-decoration: underline;
+}
+
+.coverLetterBlock {
+  margin-top: 10px;
+  background: #f7f8fa;
+  border-left: 3px solid #007ea7;
+  border-radius: 0 6px 6px 0;
+  padding: 10px 12px;
+}
+
+.coverLetterTitle {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #007ea7;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.coverLetterText {
+  font-size: 0.85rem;
+  color: #4a5568;
+  line-height: 1.55;
+  margin: 0;
+  max-height: 100px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}

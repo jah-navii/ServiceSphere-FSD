@@ -1,8 +1,36 @@
 import express from 'express';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import { signupHelper, loginHelper, signupSeeker, loginSeeker, signupAdministrator, loginAdministrator } from '../controllers/authController.js';
 import { applyModerator, loginModerator } from '../controllers/moderatorController.js';
 
 const router = express.Router();
+
+// ── Multer: resume uploads (PDF only, max 5 MB) ──
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const resumeStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, path.join(__dirname, '..', 'uploads', 'resumes')),
+  filename: (_req, file, cb) => {
+    const safeName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+    cb(null, `${Date.now()}-${safeName}`);
+  },
+});
+
+const resumeUpload = multer({
+  storage: resumeStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype === 'application/pdf') {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PDF files are allowed for resumes'));
+    }
+  },
+});
 
 /**
  * @swagger
@@ -235,7 +263,7 @@ router.post('/login/administrator', loginAdministrator);
  *       400:
  *         description: Validation error
  */
-router.post('/apply/moderator', applyModerator);
+router.post('/apply/moderator', resumeUpload.single('resume'), applyModerator);
 
 /**
  * @swagger

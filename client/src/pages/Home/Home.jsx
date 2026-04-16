@@ -48,6 +48,7 @@ const HOW_IT_WORKS = [
 
 const Home = () => {
   const [categories, setCategories] = useState([]);
+  const [openLocations, setOpenLocations] = useState([]);
   const { isAuthenticated } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
@@ -61,7 +62,17 @@ const Home = () => {
         console.error("Failed to load categories");
       }
     };
+    const fetchOpenLocations = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/locations/open");
+        const data = await res.json();
+        if (Array.isArray(data)) setOpenLocations(data);
+      } catch (err) {
+        console.error("Failed to load open locations");
+      }
+    };
     fetchCategories();
+    fetchOpenLocations();
   }, []);
 
   const getCategoryImage = (name) => {
@@ -173,6 +184,37 @@ const Home = () => {
           ))}
         </div>
       </section>
+
+      {/* ── OPEN MODERATOR POSITIONS ── */}
+      {openLocations.length > 0 && (
+        <section className={`${styles.section} ${styles.sectionGray}`}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.openBadge}>Now Accepting Applications</span>
+            <h2>Become a Local Moderator</h2>
+            <p>These locations are looking for a dedicated moderator to oversee services and helpers. Apply if you're ready to make an impact in your community.</p>
+          </div>
+          <div className={styles.openGrid}>
+            {openLocations.map((loc) => (
+              <div className={styles.openCard} key={loc._id}>
+                <div className={styles.openCardIcon}>📍</div>
+                <div className={styles.openCardBody}>
+                  <h3>{loc.name}</h3>
+                  {(loc.city || loc.state) && (
+                    <p className={styles.openCardMeta}>{[loc.city, loc.state].filter(Boolean).join(', ')}</p>
+                  )}
+                  <span className={styles.openBadgeSmall}>Open Position</span>
+                </div>
+                <Link
+                  to={`/apply/moderator?location=${loc._id}`}
+                  className={styles.openApplyBtn}
+                >
+                  Apply Now
+                </Link>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ── CTA BANNER ── */}
       {!isAuthenticated && (

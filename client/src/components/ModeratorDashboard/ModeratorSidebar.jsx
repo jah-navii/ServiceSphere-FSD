@@ -69,7 +69,24 @@ const ModeratorSidebar = () => {
               <polyline points="17 11 19 13 23 9"></polyline>
             </svg>
           </span>
-          Helper Applications
+          Helpers
+        </NavLink>
+
+        <NavLink
+          to="/moderator/users"
+          className={({ isActive }) =>
+            isActive ? `${styles.navItem} ${styles.active}` : styles.navItem
+          }
+        >
+          <span className={styles.icon}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </span>
+          User Management
         </NavLink>
 
         <NavLink
@@ -90,22 +107,6 @@ const ModeratorSidebar = () => {
         </NavLink>
 
         <NavLink
-          to="/moderator/services"
-          className={({ isActive }) =>
-            isActive ? `${styles.navItem} ${styles.active}` : styles.navItem
-          }
-        >
-          <span className={styles.icon}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-              <path d="M2 17l10 5 10-5"></path>
-              <path d="M2 12l10 5 10-5"></path>
-            </svg>
-          </span>
-          Services
-        </NavLink>
-
-        <NavLink
           to="/moderator/earnings"
           className={({ isActive }) =>
             isActive ? `${styles.navItem} ${styles.active}` : styles.navItem
@@ -118,6 +119,22 @@ const ModeratorSidebar = () => {
             </svg>
           </span>
           Earnings
+        </NavLink>
+
+        <NavLink
+          to="/moderator/feedback"
+          className={({ isActive }) =>
+            isActive ? `${styles.navItem} ${styles.active}` : styles.navItem
+          }
+        >
+          <span className={styles.icon}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              <line x1="8" y1="10" x2="16" y2="10"></line>
+              <line x1="8" y1="14" x2="13" y2="14"></line>
+            </svg>
+          </span>
+          Feedback &amp; Reviews
         </NavLink>
 
         <NavLink
