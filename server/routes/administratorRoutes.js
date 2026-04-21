@@ -28,7 +28,7 @@ import {
   deleteFeedback,
   cleanupOrphans
 } from '../controllers/administratorController.js';
-import { isAdministrator } from '../middleware/authMiddleware.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -67,7 +67,7 @@ const router = express.Router();
  *       500:
  *         description: Cleanup failed
  */
-router.delete('/cleanup/orphans', isAdministrator, cleanupOrphans);
+router.delete('/cleanup/orphans', requireAuth('administrator'), cleanupOrphans);
 
 /**
  * @swagger
@@ -94,7 +94,7 @@ router.delete('/cleanup/orphans', isAdministrator, cleanupOrphans);
  *       403:
  *         description: Forbidden — administrator only
  */
-router.get('/dashboard', isAdministrator, getAdministratorDashboard);
+router.get('/dashboard', requireAuth('administrator'), getAdministratorDashboard);
 
 // ---- Users ----
 
@@ -110,7 +110,7 @@ router.get('/dashboard', isAdministrator, getAdministratorDashboard);
  *       200:
  *         description: List of all users (helpers, seekers, admins, moderators)
  */
-router.get('/users/all', isAdministrator, getAllUsers);
+router.get('/users/all', requireAuth('administrator'), getAllUsers);
 
 /**
  * @swagger
@@ -141,7 +141,7 @@ router.get('/users/all', isAdministrator, getAllUsers);
  *       404:
  *         description: User not found
  */
-router.patch('/users/:userType/:id/suspend', isAdministrator, suspendUser);
+router.patch('/users/:userType/:id/suspend', requireAuth('administrator'), suspendUser);
 
 // ---- Bookings ----
 
@@ -157,7 +157,7 @@ router.patch('/users/:userType/:id/suspend', isAdministrator, suspendUser);
  *       200:
  *         description: List of all bookings
  */
-router.get('/bookings/all', isAdministrator, getAllBookings);
+router.get('/bookings/all', requireAuth('administrator'), getAllBookings);
 
 // ---- Activity & Analytics ----
 
@@ -173,7 +173,7 @@ router.get('/bookings/all', isAdministrator, getAllBookings);
  *       200:
  *         description: Recent platform activity
  */
-router.get('/activity', isAdministrator, getPlatformActivity);
+router.get('/activity', requireAuth('administrator'), getPlatformActivity);
 
 /**
  * @swagger
@@ -187,7 +187,7 @@ router.get('/activity', isAdministrator, getPlatformActivity);
  *       200:
  *         description: Analytics data (user growth, booking trends, revenue)
  */
-router.get('/analytics', isAdministrator, getPlatformAnalytics);
+router.get('/analytics', requireAuth('administrator'), getPlatformAnalytics);
 
 /**
  * @swagger
@@ -201,7 +201,7 @@ router.get('/analytics', isAdministrator, getPlatformAnalytics);
  *       200:
  *         description: System health metrics (DB status, uptime, memory)
  */
-router.get('/system-health', isAdministrator, getSystemHealth);
+router.get('/system-health', requireAuth('administrator'), getSystemHealth);
 
 // ---- Moderator Management ----
 
@@ -217,7 +217,7 @@ router.get('/system-health', isAdministrator, getSystemHealth);
  *       200:
  *         description: List of moderator applications
  */
-router.get('/moderator-applications', isAdministrator, getModeratorApplications);
+router.get('/moderator-applications', requireAuth('administrator'), getModeratorApplications);
 
 /**
  * @swagger
@@ -240,7 +240,7 @@ router.get('/moderator-applications', isAdministrator, getModeratorApplications)
  *       404:
  *         description: Application not found
  */
-router.patch('/moderator-applications/:id/approve', isAdministrator, approveModerator);
+router.patch('/moderator-applications/:id/approve', requireAuth('administrator'), approveModerator);
 
 /**
  * @swagger
@@ -263,7 +263,7 @@ router.patch('/moderator-applications/:id/approve', isAdministrator, approveMode
  *       404:
  *         description: Application not found
  */
-router.patch('/moderator-applications/:id/reject', isAdministrator, rejectModerator);
+router.patch('/moderator-applications/:id/reject', requireAuth('administrator'), rejectModerator);
 
 /**
  * @swagger
@@ -286,7 +286,7 @@ router.patch('/moderator-applications/:id/reject', isAdministrator, rejectModera
  *       404:
  *         description: Moderator not found
  */
-router.patch('/moderators/:id/suspend', isAdministrator, suspendModerator);
+router.patch('/moderators/:id/suspend', requireAuth('administrator'), suspendModerator);
 
 // ---- Location-Moderator Assignment ----
 
@@ -302,7 +302,7 @@ router.patch('/moderators/:id/suspend', isAdministrator, suspendModerator);
  *       200:
  *         description: Locations with moderator assignments
  */
-router.get('/locations-with-moderators', isAdministrator, getLocationsWithModerators);
+router.get('/locations-with-moderators', requireAuth('administrator'), getLocationsWithModerators);
 
 /**
  * @swagger
@@ -334,7 +334,7 @@ router.get('/locations-with-moderators', isAdministrator, getLocationsWithModera
  *       404:
  *         description: Location or moderator not found
  */
-router.patch('/locations/:locationId/assign-moderator', isAdministrator, assignModeratorToLocation);
+router.patch('/locations/:locationId/assign-moderator', requireAuth('administrator'), assignModeratorToLocation);
 
 // ---- Location CRUD ----
 
@@ -372,8 +372,8 @@ router.patch('/locations/:locationId/assign-moderator', isAdministrator, assignM
  *       201:
  *         description: Location created
  */
-router.get('/locations', isAdministrator, getAllLocations);
-router.post('/locations', isAdministrator, createLocation);
+router.get('/locations', requireAuth('administrator'), getAllLocations);
+router.post('/locations', requireAuth('administrator'), createLocation);
 
 /**
  * @swagger
@@ -424,8 +424,8 @@ router.post('/locations', isAdministrator, createLocation);
  *       404:
  *         description: Location not found
  */
-router.patch('/locations/:id', isAdministrator, updateLocation);
-router.delete('/locations/:id', isAdministrator, deleteLocation);
+router.patch('/locations/:id', requireAuth('administrator'), updateLocation);
+router.delete('/locations/:id', requireAuth('administrator'), deleteLocation);
 
 // ---- Categories CRUD ----
 
@@ -461,8 +461,8 @@ router.delete('/locations/:id', isAdministrator, deleteLocation);
  *       201:
  *         description: Category created
  */
-router.get('/categories', isAdministrator, getAllCategories);
-router.post('/categories', isAdministrator, createCategory);
+router.get('/categories', requireAuth('administrator'), getAllCategories);
+router.post('/categories', requireAuth('administrator'), createCategory);
 
 /**
  * @swagger
@@ -507,8 +507,8 @@ router.post('/categories', isAdministrator, createCategory);
  *       200:
  *         description: Category deleted
  */
-router.patch('/categories/:id', isAdministrator, updateCategory);
-router.delete('/categories/:id', isAdministrator, deleteCategory);
+router.patch('/categories/:id', requireAuth('administrator'), updateCategory);
+router.delete('/categories/:id', requireAuth('administrator'), deleteCategory);
 
 // ---- Services CRUD ----
 
@@ -540,7 +540,7 @@ router.delete('/categories/:id', isAdministrator, deleteCategory);
  *       201:
  *         description: Service created
  */
-router.post('/services', isAdministrator, createService);
+router.post('/services', requireAuth('administrator'), createService);
 
 /**
  * @swagger
@@ -589,8 +589,8 @@ router.post('/services', isAdministrator, createService);
  *       200:
  *         description: Service deleted
  */
-router.patch('/services/:id', isAdministrator, updateService);
-router.delete('/services/:id', isAdministrator, deleteService);
+router.patch('/services/:id', requireAuth('administrator'), updateService);
+router.delete('/services/:id', requireAuth('administrator'), deleteService);
 
 // ---- Feedback Management ----
 
@@ -606,7 +606,7 @@ router.delete('/services/:id', isAdministrator, deleteService);
  *       200:
  *         description: List of all feedback entries
  */
-router.get('/feedbacks', isAdministrator, getAllFeedbacks);
+router.get('/feedbacks', requireAuth('administrator'), getAllFeedbacks);
 
 /**
  * @swagger
@@ -628,6 +628,6 @@ router.get('/feedbacks', isAdministrator, getAllFeedbacks);
  *       404:
  *         description: Feedback not found
  */
-router.delete('/feedbacks/:id', isAdministrator, deleteFeedback);
+router.delete('/feedbacks/:id', requireAuth('administrator'), deleteFeedback);
 
 export default router;

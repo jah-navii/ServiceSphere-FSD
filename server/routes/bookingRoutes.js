@@ -9,6 +9,7 @@ import {
   getReviewDetails
 } from '../controllers/bookingController.js';
 import { bookingRateLimiter } from '../middleware/customMiddleware.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -63,7 +64,7 @@ const router = express.Router();
  *       200:
  *         description: List of user's bookings
  */
-router.post('/', bookingRateLimiter, createBooking);
+router.post('/', requireAuth('seeker'), bookingRateLimiter, createBooking);
 
 /**
  * @swagger

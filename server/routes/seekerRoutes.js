@@ -1,6 +1,6 @@
 import express from 'express';
 import { getSeekerProfile, updateSeekerProfile } from '../controllers/seekerController.js';
-import { isSeeker } from '../middleware/authMiddleware.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -29,6 +29,6 @@ const router = express.Router();
  *         description: Seeker profile data
  */
 router.get('/profile', getSeekerProfile);
-router.put('/profile', isSeeker, updateSeekerProfile);
+router.put('/profile', requireAuth('seeker'), updateSeekerProfile);
 
 export default router;

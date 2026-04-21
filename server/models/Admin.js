@@ -1,52 +1,60 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
-const adminSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    email: { type: String, unique: true, required: true },
+const BCRYPT_RE = /^\$2[ab]\$/;
+
+const adminSchema = new mongoose.Schema(
+  {
+    name:  { type: String, required: true },
+    email: { type: String, unique: true, required: true, lowercase: true, trim: true },
     password: { type: String, required: true },
     phone: { type: String },
-    role: { 
-        type: String, 
-        enum: ['moderator', 'administrator'], 
-        default: 'moderator',
-        required: true 
+    role: {
+      type:     String,
+      enum:     ['moderator', 'administrator'],
+      default:  'moderator',
+      required: true,
     },
-    // Location assignment (only for moderators)
     assignedLocation: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Location',
-        default: null
+      type:    mongoose.Schema.Types.ObjectId,
+      ref:     'Location',
+      default: null,
     },
-    // Application status (for moderator applications)
     status: {
-        type: String,
-        enum: ['pending', 'active', 'suspended', 'rejected'],
-        default: function() {
-            return this.role === 'moderator' ? 'pending' : 'active';
-        }
+      type:    String,
+      enum:    ['pending', 'active', 'suspended', 'rejected'],
+      default: function () {
+        return this.role === 'moderator' ? 'pending' : 'active';
+      },
     },
-    // Application details
-    coverLetter: { type: String, default: null },
-    experience: { type: String, default: null },      // e.g. "3 years in community management"
-    linkedinProfile: { type: String, default: null },
-    resume: { type: String, default: null },          // stored file path under uploads/resumes/
-
-    // Tracking fields
-    applicationDate: { type: Date, default: Date.now },
-    approvedBy: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Admin',
-        default: null 
+    coverLetter:      { type: String, default: null },
+    experience:       { type: String, default: null },
+    linkedinProfile:  { type: String, default: null },
+    resume:           { type: String, default: null },
+    applicationDate:  { type: Date,   default: Date.now },
+    approvedBy: {
+      type:    mongoose.Schema.Types.ObjectId,
+      ref:     'Admin',
+      default: null,
     },
-    approvedDate: { type: Date },
-    rejectionReason: { type: String }
-}, {
-    timestamps: true
-});
+    approvedDate:     { type: Date },
+    rejectionReason:  { type: String },
+  },
+  { timestamps: true }
+);
 
-// Index for efficient queries
 adminSchema.index({ role: 1, status: 1 });
 adminSchema.index({ assignedLocation: 1 });
-  
-export default mongoose.model('Admin', adminSchema);
 
+adminSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+adminSchema.methods.comparePassword = function (plain) {
+  if (!BCRYPT_RE.test(this.password ?? '')) return Promise.resolve(false);
+  return bcrypt.compare(plain, this.password);
+};
+
+export default mongoose.model('Admin', adminSchema);

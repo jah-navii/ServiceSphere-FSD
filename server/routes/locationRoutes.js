@@ -6,7 +6,7 @@
 // ============================================
 import express from 'express';
 import { getLocations, addLocation, deleteLocation, getOpenLocations } from '../controllers/locationController.js';
-import { isAdministrator } from '../middleware/authMiddleware.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -51,7 +51,7 @@ const router = express.Router();
  */
 router.get('/', getLocations);
 router.get('/open', getOpenLocations);
-router.post('/', isAdministrator, addLocation);
+router.post('/', requireAuth('administrator'), addLocation);
 
 /**
  * @swagger
@@ -71,7 +71,7 @@ router.post('/', isAdministrator, addLocation);
  *       200:
  *         description: Location deleted
  */
-router.delete('/:id', isAdministrator, deleteLocation);
+router.delete('/:id', requireAuth('administrator'), deleteLocation);
 
 export default router;
 

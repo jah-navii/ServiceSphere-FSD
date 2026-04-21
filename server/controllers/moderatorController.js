@@ -6,8 +6,8 @@ import Feedback from '../models/Feedback.js';
 import Service from '../models/Service.js';
 import Category from '../models/Category.js';
 import Location from '../models/Location.js';
-import bcrypt from 'bcryptjs';
 import { generateToken } from '../utils/jwtUtils.js';
+import logger from '../utils/logger.js';
 
 // ==================== MODERATOR APPLICATION ====================
 
@@ -49,15 +49,12 @@ export const applyModerator = async (req, res) => {
       });
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     // Create moderator application
     const moderator = new Admin({
       name,
       email,
       phone,
-      password: hashedPassword,
+      password,
       role: 'moderator',
       assignedLocation: desiredLocation,
       status: 'pending',
@@ -76,7 +73,7 @@ export const applyModerator = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Moderator Application Error:', error);
+    logger.error('Moderator application error', { error: error.message });
     return res.status(500).json({ error: 'Server error' });
   }
 };
@@ -104,9 +101,7 @@ export const loginModerator = async (req, res) => {
       });
     }
 
-    // Verify password
-    const isPasswordValid = await bcrypt.compare(password, moderator.password);
-    if (!isPasswordValid) {
+    if (!(await moderator.comparePassword(password))) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
@@ -122,7 +117,7 @@ export const loginModerator = async (req, res) => {
 
     const token = generateToken(userData);
 
-    console.log(`Moderator logged in: ${moderator.name} (${moderator.assignedLocation?.name})`);
+    logger.info('Moderator logged in', { name: moderator.name, location: moderator.assignedLocation?.name });
 
     return res.status(200).json({
       success: true,
@@ -131,7 +126,7 @@ export const loginModerator = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Moderator Login Error:', error);
+    logger.error('Moderator login error', { error: error.message });
     return res.status(500).json({ error: 'Server error' });
   }
 };

@@ -14,7 +14,7 @@ import {
   getLocationEarningsData,
   getLocationFeedbacks
 } from '../controllers/moderatorController.js';
-import { isModerator } from '../middleware/authMiddleware.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -37,7 +37,7 @@ const router = express.Router();
  *       200:
  *         description: Dashboard data for moderator's assigned location
  */
-router.get('/dashboard', isModerator, getModeratorDashboard);
+router.get('/dashboard', requireAuth('moderator'), getModeratorDashboard);
 
 /**
  * @swagger
@@ -51,7 +51,7 @@ router.get('/dashboard', isModerator, getModeratorDashboard);
  *       200:
  *         description: List of helpers
  */
-router.get('/helpers', isModerator, getLocationHelpers);
+router.get('/helpers', requireAuth('moderator'), getLocationHelpers);
 
 /**
  * @swagger
@@ -71,7 +71,7 @@ router.get('/helpers', isModerator, getLocationHelpers);
  *       200:
  *         description: Helper approved
  */
-router.patch('/helpers/:helperId/approve', isModerator, approveHelper);
+router.patch('/helpers/:helperId/approve', requireAuth('moderator'), approveHelper);
 
 /**
  * @swagger
@@ -91,9 +91,9 @@ router.patch('/helpers/:helperId/approve', isModerator, approveHelper);
  *       200:
  *         description: Helper rejected
  */
-router.patch('/helpers/:helperId/reject', isModerator, rejectHelper);
-router.patch('/helpers/:helperId/suspend', isModerator, suspendHelper);
-router.patch('/helpers/:helperId/reactivate', isModerator, reactivateHelper);
+router.patch('/helpers/:helperId/reject', requireAuth('moderator'), rejectHelper);
+router.patch('/helpers/:helperId/suspend', requireAuth('moderator'), suspendHelper);
+router.patch('/helpers/:helperId/reactivate', requireAuth('moderator'), reactivateHelper);
 
 /**
  * @swagger
@@ -107,7 +107,7 @@ router.patch('/helpers/:helperId/reactivate', isModerator, reactivateHelper);
  *       200:
  *         description: List of bookings
  */
-router.get('/bookings', isModerator, getLocationBookings);
+router.get('/bookings', requireAuth('moderator'), getLocationBookings);
 
 /**
  * @swagger
@@ -121,7 +121,7 @@ router.get('/bookings', isModerator, getLocationBookings);
  *       200:
  *         description: List of services
  */
-router.get('/services', isModerator, getLocationServices);
+router.get('/services', requireAuth('moderator'), getLocationServices);
 
 /**
  * @swagger
@@ -157,8 +157,8 @@ router.get('/services', isModerator, getLocationServices);
  *       200:
  *         description: Profile updated
  */
-router.get('/profile', isModerator, getModeratorProfile);
-router.put('/profile', isModerator, updateModeratorProfile);
+router.get('/profile', requireAuth('moderator'), getModeratorProfile);
+router.put('/profile', requireAuth('moderator'), updateModeratorProfile);
 
 /**
  * @swagger
@@ -172,7 +172,7 @@ router.put('/profile', isModerator, updateModeratorProfile);
  *       200:
  *         description: Earnings breakdown
  */
-router.get('/earnings-data', isModerator, getLocationEarningsData);
+router.get('/earnings-data', requireAuth('moderator'), getLocationEarningsData);
 
 /**
  * @swagger
@@ -186,7 +186,7 @@ router.get('/earnings-data', isModerator, getLocationEarningsData);
  *       200:
  *         description: Feedbacks and stats for the location
  */
-router.get('/feedbacks', isModerator, getLocationFeedbacks);
-router.get('/users', isModerator, getLocationUsers);
+router.get('/feedbacks', requireAuth('moderator'), getLocationFeedbacks);
+router.get('/users', requireAuth('moderator'), getLocationUsers);
 
 export default router;

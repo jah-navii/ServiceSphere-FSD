@@ -1,41 +1,58 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
-const helperSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, unique: true, required: true },
-  password: { type: String, required: true },
-  mobilenumber: { type: String, required: true },
-  aadharnumber: { type: String, required: true },
-  gender: { type: String, required: true },
-  address: { type: String }, // String name of location for display
-  location: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Location'
-  },
+const BCRYPT_RE = /^\$2[ab]\$/;
 
-  // NEW: The Single Category Constraint
-  category: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Category', 
-    required: true 
-  },
-
-  // Services selected from THAT category
-  services: [{
-    serviceId: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: 'Service',
-      required: true
+const helperSchema = new mongoose.Schema(
+  {
+    name:         { type: String, required: true },
+    email:        { type: String, unique: true, required: true, lowercase: true, trim: true },
+    password:     { type: String, required: true },
+    mobilenumber: { type: String, required: true },
+    aadharnumber: { type: String, required: true },
+    gender:       { type: String, required: true },
+    address:      { type: String },
+    location: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref:  'Location',
     },
-    // We store name here for easier frontend display without deep population every time
-    name: { type: String, required: true }, 
-    price: { type: Number, required: true }
-  }],
+    category: {
+      type:     mongoose.Schema.Types.ObjectId,
+      ref:      'Category',
+      required: true,
+    },
 
-  availability: { type: String },
-  certifications: [String], // Array of file paths/filenames
-  approved: { type: Boolean, default: false },
-  suspended: { type: Boolean, default: false }
-}, { timestamps: true });
+    // Ref-only: populate services.serviceId on read to get name/price from the
+    // Service document. customPrice overrides the Service base price for this
+    // helper if set. Do NOT store cached name here — sync issues are too painful.
+    services: [
+      {
+        serviceId: {
+          type:     mongoose.Schema.Types.ObjectId,
+          ref:      'Service',
+          required: true,
+        },
+        customPrice: { type: Number },
+      },
+    ],
+
+    availability:   { type: String },
+    certifications: [String],
+    approved:       { type: Boolean, default: false },
+    suspended:      { type: Boolean, default: false },
+  },
+  { timestamps: true }
+);
+
+helperSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+helperSchema.methods.comparePassword = function (plain) {
+  if (!BCRYPT_RE.test(this.password ?? '')) return Promise.resolve(false);
+  return bcrypt.compare(plain, this.password);
+};
 
 export default mongoose.model('Helper', helperSchema);

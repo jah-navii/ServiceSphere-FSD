@@ -5,6 +5,14 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { signupHelper, loginHelper, signupSeeker, loginSeeker, signupAdministrator, loginAdministrator } from '../controllers/authController.js';
 import { applyModerator, loginModerator } from '../controllers/moderatorController.js';
+import {
+  validate,
+  loginSchema,
+  seekerSignupSchema,
+  helperSignupSchema,
+  adminSignupSchema,
+  moderatorApplicationSchema,
+} from '../validators/authSchemas.js';
 
 const router = express.Router();
 
@@ -72,7 +80,7 @@ const resumeUpload = multer({
  *       400:
  *         description: Validation error or email already exists
  */
-router.post('/signup/helper', signupHelper);
+router.post('/signup/helper', validate(helperSignupSchema), signupHelper);
 
 /**
  * @swagger
@@ -102,7 +110,7 @@ router.post('/signup/helper', signupHelper);
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login/helper', loginHelper);
+router.post('/login/helper', validate(loginSchema), loginHelper);
 
 // ---- Seeker Auth ----
 
@@ -137,7 +145,7 @@ router.post('/login/helper', loginHelper);
  *       400:
  *         description: Validation error or email already exists
  */
-router.post('/signup/seeker', signupSeeker);
+router.post('/signup/seeker', validate(seekerSignupSchema), signupSeeker);
 
 /**
  * @swagger
@@ -165,7 +173,7 @@ router.post('/signup/seeker', signupSeeker);
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login/seeker', loginSeeker);
+router.post('/login/seeker', validate(loginSchema), loginSeeker);
 
 // ---- Administrator Auth ----
 
@@ -200,7 +208,7 @@ router.post('/login/seeker', loginSeeker);
  *       400:
  *         description: Validation error
  */
-router.post('/signup/administrator', signupAdministrator);
+router.post('/signup/administrator', validate(adminSignupSchema), signupAdministrator);
 
 /**
  * @swagger
@@ -228,7 +236,7 @@ router.post('/signup/administrator', signupAdministrator);
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login/administrator', loginAdministrator);
+router.post('/login/administrator', validate(loginSchema), loginAdministrator);
 
 // ---- Moderator Auth ----
 
@@ -263,7 +271,7 @@ router.post('/login/administrator', loginAdministrator);
  *       400:
  *         description: Validation error
  */
-router.post('/apply/moderator', resumeUpload.single('resume'), applyModerator);
+router.post('/apply/moderator', resumeUpload.single('resume'), validate(moderatorApplicationSchema), applyModerator);
 
 /**
  * @swagger
@@ -291,7 +299,7 @@ router.post('/apply/moderator', resumeUpload.single('resume'), applyModerator);
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login/moderator', loginModerator);
+router.post('/login/moderator', validate(loginSchema), loginModerator);
 
 // ---- Logout (all user types) ----
 
