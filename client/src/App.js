@@ -1,13 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import LandingPage from "./pages/LandingPage/LandingPage";
-import SignupPage from "./pages/SignupPage";
-import LoginPage from "./pages/LoginPage";
 import SignupSeeker from "./pages/SignupSeeker/SignupSeeker";
 import SignupHelper from "./pages/SignupHelper/SignupHelper";
-import LoginSeeker from "./pages/LoginSeeker";
-import LoginHelper from "./pages/LoginHelper";
-import LoginAdministrator from "./pages/LoginAdministrator";
+import SelectionPage from "./components/SelectionPage/SelectionPage";
+import LoginForm from "./components/LoginForm/LoginForm";
 import ApplyModerator from "./pages/ApplyModerator/ApplyModerator";
 import LoginModerator from "./pages/LoginModerator/LoginModerator";
 
@@ -58,13 +54,13 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Navigate to="/home" replace />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SelectionPage title="Sign Up as" helperPath="/signup/helper" seekerPath="/signup/seeker" />} />
+        <Route path="/login" element={<SelectionPage title="Login As" helperPath="/login/helper" seekerPath="/login/seeker" />} />
         <Route path="/signup/seeker" element={<SignupSeeker />} />
         <Route path="/signup/helper" element={<SignupHelper />} />
-        <Route path="/login/seeker" element={<LoginSeeker />} />
-        <Route path="/login/helper" element={<LoginHelper />} />
-        <Route path="/login/administrator" element={<LoginAdministrator />} />
+        <Route path="/login/seeker" element={<LoginForm title="Login as a Seeker" apiEndpoint="/api/auth/login/seeker" signupPath="/signup/seeker" redirectPath="/home" />} />
+        <Route path="/login/helper" element={<LoginForm title="Welcome Back, Helper!" apiEndpoint="/api/auth/login/helper" signupPath="/signup/helper" redirectPath="/helper/dashboard" />} />
+        <Route path="/login/administrator" element={<LoginForm title="Welcome Back, Administrator!" apiEndpoint="/api/auth/login/administrator" signupPath="/signup/administrator" redirectPath="/administrator/dashboard" />} />
         <Route path="/login/moderator" element={<LoginModerator />} />
         <Route path="/apply/moderator" element={<ApplyModerator />} />
         <Route path="/about" element={<AboutUs />} />

@@ -12,6 +12,7 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swagger.js';
 import errorHandler from './middleware/errorHandler.js';
 import { requestLogger, requestTimer, notFoundHandler } from './middleware/customMiddleware.js';
+import logger from './utils/logger.js';
 
 // Route imports
 import authRoutes from './routes/authRoutes.js';
@@ -34,7 +35,7 @@ const __dirname = dirname(__filename);
 
 // GLOBAL MIDDLEWARE
 app.use(helmet({ contentSecurityPolicy: false }));
-app.use(morgan('dev'));
+app.use(morgan('combined', { stream: { write: (msg) => logger.http(msg.trim()) } }));
 app.use(requestLogger);
 app.use(requestTimer);
 app.use(cors({

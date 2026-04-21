@@ -1,3 +1,5 @@
+import logger from '../utils/logger.js';
+
 /**
  * ERROR HANDLING MIDDLEWARE
  * Centralized error handler to catch and format errors consistently
@@ -5,13 +7,11 @@
  */
 
 const errorHandler = (err, req, res, next) => {
-  // Log error details for debugging
-  console.error('Error occurred:', {
-    message: err.message,
+  logger.error(err.message || 'Unhandled error', {
     stack: err.stack,
     url: req.originalUrl,
     method: req.method,
-    timestamp: new Date().toISOString()
+    statusCode: err.statusCode || err.status || 500,
   });
 
   // Determine status code

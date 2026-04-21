@@ -1,7 +1,7 @@
 // CUSTOM MIDDLEWARE
 
-
 import rateLimit from 'express-rate-limit';
+import logger from '../utils/logger.js';
 
 // Helper to properly handle IPv6 addresses in rate limiting
 const getClientIdentifier = (req) => {
@@ -18,9 +18,8 @@ const getClientIdentifier = (req) => {
 // Custom middleware that logs method, URL, IP, and timestamp
 
 export const requestLogger = (req, res, next) => {
-  const timestamp = new Date().toISOString();
   const ip = req.ip || req.connection.remoteAddress;
-  console.log(`[${timestamp}] ${req.method} ${req.originalUrl} - IP: ${ip}`);
+  logger.info(`${req.method} ${req.originalUrl}`, { ip });
   next();
 };
 
@@ -33,7 +32,7 @@ export const requestTimer = (req, res, next) => {
   
   res.on('finish', () => {
     const duration = Date.now() - req.startTime;
-    console.log(`[TIMING] ${req.method} ${req.originalUrl} - ${duration}ms`);
+    logger.info(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`);
   });
   
   next();

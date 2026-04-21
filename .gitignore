@@ -1,6 +1,34 @@
+# Dependencies
 node_modules/
+
+# Build output
+build/
+dist/
+client/build/
+
+# Environment variables
 .env
+.env.local
+.env.*.local
 
-TODO.md
+# Logs
+*.log
+logs/
 
-other
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+
+# Editor directories
+.vscode/
+.idea/
+
+# Uploaded files (keep directory structure via .gitkeep)
+server/uploads/*
+!server/uploads/.gitkeep
+!server/uploads/resumes/
+server/uploads/resumes/*
+!server/uploads/resumes/.gitkeep
