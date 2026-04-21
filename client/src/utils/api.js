@@ -61,8 +61,8 @@ export const apiRequest = async (endpoint, options = {}) => {
     const response = await fetch(url, config);
     const data = await response.json();
 
-    // If unauthorized, clear auth and redirect to login
-    if (response.status === 401) {
+    // If unauthorized (on non-auth endpoints), clear auth and redirect to login
+    if (response.status === 401 && !endpoint.startsWith('/api/auth/')) {
       clearAuth();
       window.location.href = '/login';
       throw new Error('Unauthorized - Please login again');

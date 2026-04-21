@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js",
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "lint": "eslint .",
     "swagger": "node swagger-autogen.js"
   },
   "keywords": [],
@@ -13,28 +17,27 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.3",
-    "body-parser": "^1.20.3",
+    "compression": "^1.8.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
-    "ejs": "^3.1.10",
     "express": "^4.21.2",
+    "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^8.2.1",
-    "express-session": "^1.18.1",
-    "fs": "^0.0.1-security",
-    "global": "^4.4.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.13.2",
     "morgan": "^1.10.1",
     "multer": "^1.4.5-lts.1",
-    "nodemon": "^3.1.9",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7",
-    "swagger-autogen": "^2.23.7",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.19.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "winston-daily-rotate-file": "^5.0.0",
+    "zod": "^4.3.6"
   },
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "swagger-autogen": "^2.23.7"
+  }
 }

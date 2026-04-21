@@ -201,6 +201,7 @@ const SignupSeeker = () => {
               placeholder="Enter your address"
               value={formData.address}
               onChange={handleChange}
+              required
             />
           </div>
 

@@ -1,13 +1,16 @@
+import { env } from './config/env.js';
 import express from 'express';
 import connectDB from './config/db.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import session from 'express-session';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
+import compression from 'compression';
+import cookieParser from 'cookie-parser';
+import mongoSanitize from 'express-mongo-sanitize';
+import mongoose from 'mongoose';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './config/swagger.js';
 import errorHandler from './middleware/errorHandler.js';
@@ -26,33 +29,34 @@ import locationRoutes from './routes/locationRoutes.js';
 import administratorRoutes from './routes/administratorRoutes.js';
 import moderatorRoutes from './routes/moderatorRoutes.js';
 
-dotenv.config();
-
 const app = express();
-const port = process.env.PORT || 5000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // GLOBAL MIDDLEWARE
-app.use(helmet({ contentSecurityPolicy: false }));
+app.use(compression());
+
+// Helmet — CSP disabled only for the Swagger UI
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api-docs')) {
+    return helmet({ contentSecurityPolicy: false })(req, res, next);
+  }
+  return helmet()(req, res, next);
+});
+
 app.use(morgan('combined', { stream: { write: (msg) => logger.http(msg.trim()) } }));
 app.use(requestLogger);
 app.use(requestTimer);
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
-  credentials: true,
-}));
+
+const corsOrigins = env.CLIENT_URL.split(',').map((u) => u.trim());
+app.use(cors({ origin: corsOrigins, credentials: true }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'fallback-secret-key-for-development',
-  resave: false,
-  saveUninitialized: true,
-}));
+app.use(cookieParser());
+app.use(mongoSanitize());
 
 // STATIC FILES
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.pdf')) {
@@ -61,9 +65,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
     }
   },
 }));
-app.use('/styles', express.static(path.join(__dirname, 'styles')));
-app.use('/javascript', express.static(path.join(__dirname, 'javascript')));
-app.use('/pics', express.static(path.join(__dirname, 'pics')));
 
 // SWAGGER
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
@@ -72,7 +73,13 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 }));
 app.get('/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
-  res.send(swaggerSpec);
+  res.json(swaggerSpec);
+});
+
+// HEALTH CHECK
+app.get('/api/health', (_req, res) => {
+  const db = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  res.json({ ok: true, uptime: process.uptime(), db });
 });
 
 // API ROUTES
@@ -91,8 +98,9 @@ app.use('/api/moderator', moderatorRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-
-connectDB();
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+// Start only after DB connects
+connectDB().then(() => {
+  app.listen(env.PORT, () => {
+    logger.info(`Server running on http://localhost:${env.PORT}`);
+  });
 });

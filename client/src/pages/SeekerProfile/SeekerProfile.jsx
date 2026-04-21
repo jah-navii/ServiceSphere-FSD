@@ -40,6 +40,16 @@ const SeekerProfile = () => {
     setIsEditing(true);
   };
 
+  const handleCancelEdit = () => {
+    // Reset fields to current saved values
+    setName(currentUser.name || "");
+    setMobile(currentUser.mobilenumber || "");
+    setAddress(currentUser.address || "");
+    setNameError("");
+    setMobileError("");
+    setIsEditing(false);
+  };
+
   const handleNameChange = (e) => {
     const value = e.target.value;
     setName(value);
@@ -69,6 +79,11 @@ const SeekerProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Guard: React's re-render can fire a submit event when the button
+    // type swaps from "button" to "submit" on the same click. Bail out
+    // if we're not actually in edit mode yet.
+    if (!isEditing) return;
 
     if (nameError || mobileError || !name || !mobile) {
       showToast("Please fix the errors before saving.", "error");
@@ -202,9 +217,18 @@ const SeekerProfile = () => {
                   Edit Profile
                 </button>
               ) : (
-                <button type="submit" className={styles.actionBtn}>
-                  Save Changes
-                </button>
+                <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <button type="submit" className={styles.actionBtn}>
+                    Save Changes
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.outlineBtn}
+                    onClick={handleCancelEdit}
+                  >
+                    Cancel
+                  </button>
+                </div>
               )}
             </form>
 

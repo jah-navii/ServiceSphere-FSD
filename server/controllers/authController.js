@@ -138,6 +138,12 @@ export const signupSeeker = async (req, res) => {
 
   } catch (err) {
     console.error("Seeker Signup Error:", err);
+
+    if (err.name === 'ValidationError') {
+      const messages = Object.values(err.errors).map(val => val.message);
+      return res.status(400).json({ error: messages[0] });
+    }
+
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };

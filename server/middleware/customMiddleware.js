@@ -76,10 +76,10 @@ export const bookingRateLimiter = rateLimit({
   // Only apply to seekers
   skip: (req) => {
     // Skip rate limiting if not a seeker (e.g., admin or helper)
-    return req.session?.user?.role !== 'seeker';
+    return req.user?.role !== 'seeker';
   },
   handler: (req, res) => {
-    console.log(`[RATE LIMIT] Booking limit exceeded for user: ${req.session?.user?.id || req.ip}`);
+    logger.warn(`Booking rate limit exceeded for user: ${req.user?.id || req.ip}`);
     res.status(429).json({
       success: false,
       message: 'Booking failed. You have made too many bookings. Please try again after 15 minutes.',
