@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useToast } from "../../context/ToastContext";
+import { bookingApi } from "../../utils/bookingApi";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import styles from "./PaymentPage.module.css";
@@ -101,23 +102,13 @@ const PaymentPage = () => {
     // 2. Submit Payment
     setLoading(true);
     
-    // Simulate delay
     setTimeout(async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/bookings/${bookingId}/pay`, {
-                method: "PATCH",
-            });
-            const data = await res.json();
-
-            if (res.ok) {
-                showToast("Payment Successful!", "success");
-                navigate("/cart");
-            } else {
-                showToast(data.error || "Payment failed", "error");
-            }
+            await bookingApi.pay(bookingId);
+            showToast("Payment Successful!", "success");
+            navigate("/cart");
         } catch (err) {
-            console.error(err);
-            showToast("Network Error", "error");
+            showToast(err.message || "Payment failed", "error");
         } finally {
             setLoading(false);
         }

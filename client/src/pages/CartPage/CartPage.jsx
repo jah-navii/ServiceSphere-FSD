@@ -1,57 +1,48 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
-import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
+import LoadingSpinner from "../../components/ui/LoadingSpinner";
+import EmptyState from "../../components/ui/EmptyState";
+import ErrorState from "../../components/ui/ErrorState";
+import { bookingApi } from "../../utils/bookingApi";
 import styles from "./CartPage.module.css";
 
 const CartPage = () => {
-  const { currentUser } = useSelector((state) => state.user);
+  const { user } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [refreshKey, setRefreshKey] = useState(0); 
-  const navigate = useNavigate(); // Initialize Navigation
+  const [error, setError] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const navigate = useNavigate();
 
-  // Fetch Bookings
-  useEffect(() => {
-    const fetchBookings = async () => {
-      if (!currentUser?.id) {
-        setLoading(false);
-        return;
+  const fetchBookings = async () => {
+    if (!user?.id) { setLoading(false); return; }
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await bookingApi.list(user.id);
+      if (data.success) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        setBookings(
+          data.bookings.filter((b) => {
+            const bookingDate = new Date(b.date);
+            return bookingDate >= today || !(b.status === "Accepted" && b.paid === true);
+          })
+        );
+      } else {
+        setBookings([]);
       }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      try {
-        const response = await fetch(`http://localhost:5000/api/bookings?userId=${currentUser.id}`, {
-          credentials: "include"
-        });
-        const data = await response.json();
-        
-        if (data.success) {
-            // Filter for future/active bookings only
-            // Exclude completed bookings from the past
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            const activeBookings = data.bookings.filter((booking) => {
-              const bookingDate = new Date(booking.date);
-              // Show future bookings or today's bookings regardless of status
-              // Hide past completed bookings
-              return bookingDate >= today || !(booking.status === "Accepted" && booking.paid === true);
-            });
-            
-            setBookings(activeBookings);
-        } else {
-            setBookings([]);
-        }
-      } catch (error) {
-        console.error("Error fetching bookings:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBookings();
-  }, [currentUser, refreshKey]);
+  useEffect(() => { fetchBookings(); }, [user, refreshKey]);
 
   // --- FIX IS HERE ---
   // We accept the whole 'booking' object, not just an ID
@@ -103,8 +94,10 @@ const CartPage = () => {
         </header>
 
         <main>
-          {loading ? (
-             <p className={styles.loadingText}>Loading bookings...</p>
+          {error ? (
+            <ErrorState message={error} onRetry={fetchBookings} />
+          ) : loading ? (
+            <LoadingSpinner message="Loading bookings..." />
           ) : bookings.length > 0 ? (
             <div className={styles.bookingsContainer}>
               {bookings.map((booking) => {
@@ -181,14 +174,12 @@ const CartPage = () => {
               })}
             </div>
           ) : (
-            <div className={styles.emptyState}>
-              <svg className={styles.emptyIcon} viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
-              <h3>No bookings yet</h3>
-              <p>When you book services, they will appear here</p>
-              <Link to="/search" className={styles.browseButton}>
-                Browse Services
-              </Link>
-            </div>
+            <EmptyState
+              title="No bookings yet"
+              description="When you book services, they will appear here."
+              ctaLabel="Browse Services"
+              ctaTo="/search"
+            />
           )}
         </main>
       </div>

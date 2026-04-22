@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { moderatorApi } from '../../utils/moderatorApi';
+import LoadingSpinner from '../ui/LoadingSpinner';
+import ErrorState from '../ui/ErrorState';
 import styles from './ModeratorHome.module.css';
 
 const statusLabel = (s) => {
@@ -31,33 +34,17 @@ const ModeratorHome = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/moderator/dashboard', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const json = await res.json();
-        setDashboardData(json.data);
-      } else {
-        setError('Failed to load dashboard data.');
-      }
+      const data = await moderatorApi.dashboard();
+      setDashboardData(data.data);
     } catch (err) {
-      setError('Unable to connect to server.');
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className={styles.loadingWrap}>
-        <div className={styles.spinner}></div>
-        <p>Loading dashboard…</p>
-      </div>
-    );
-  }
-
-  if (error) return <div className={styles.error}>{error}</div>;
+  if (loading) return <LoadingSpinner message="Loading dashboard..." />;
+  if (error)   return <ErrorState message={error} onRetry={fetchDashboardData} />;
 
   const stats   = dashboardData?.stats   || {};
   const location = dashboardData?.location || {};

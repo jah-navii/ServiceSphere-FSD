@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useToast } from "../../context/ToastContext";
+import { serviceApi } from "../../utils/serviceApi";
 import styles from "./ReviewModal.module.css";
 
 const ReviewModal = ({ booking, onClose }) => {
@@ -25,29 +26,14 @@ const ReviewModal = ({ booking, onClose }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/feedback", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          bookingId: booking._id || booking.id,
-          rating,
-          review: review.trim(),
-        }),
+      await serviceApi.postFeedback({
+        bookingId: booking._id || booking.id,
+        rating,
+        review: review.trim(),
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        showToast("Review submitted successfully!", "success");
-        onClose();
-      } else {
-        throw new Error(data.error || "Failed to submit review");
-      }
+      showToast("Review submitted successfully!", "success");
+      onClose();
     } catch (error) {
-      console.error("Error submitting review:", error);
       showToast(error.message || "Failed to submit review", "error");
     } finally {
       setIsSubmitting(false);

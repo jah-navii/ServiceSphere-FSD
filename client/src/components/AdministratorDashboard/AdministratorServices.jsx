@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { api } from "../../utils/api";
+import { adminApi } from "../../utils/adminApi";
+import { useToast } from "../../context/ToastContext";
+import useConfirm from "../../hooks/useConfirm";
+import ConfirmDialog from "../ui/ConfirmDialog";
+import LoadingSpinner from "../ui/LoadingSpinner";
+import ErrorState from "../ui/ErrorState";
 import styles from "./AdministratorServices.module.css";
 
 const AdministratorServices = () => {
+  const { showToast } = useToast();
+  const { confirm, isOpen, message, handleYes, handleNo } = useConfirm();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,11 +33,11 @@ const AdministratorServices = () => {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const data = await api.get("/api/administrator/categories");
+      setError(null);
+      const data = await adminApi.categories();
       setCategories(data.data);
     } catch (err) {
       setError(err.message);
-      console.error("Categories Error:", err);
     } finally {
       setLoading(false);
     }
@@ -102,69 +109,46 @@ const AdministratorServices = () => {
     
     try {
       if (modalMode === "createCategory") {
-        await api.post("/api/administrator/categories", {
-          name: formData.name,
-          description: formData.description,
-          image: formData.image
-        });
-        alert("Category created successfully");
+        await adminApi.createCategory({ name: formData.name, description: formData.description, image: formData.image });
+        showToast("Category created successfully", "success");
       } else if (modalMode === "editCategory") {
-        await api.patch(`/api/administrator/categories/${selectedCategory._id}`, {
-          name: formData.name,
-          description: formData.description,
-          image: formData.image
-        });
-        alert("Category updated successfully");
+        await adminApi.updateCategory(selectedCategory._id, { name: formData.name, description: formData.description, image: formData.image });
+        showToast("Category updated successfully", "success");
       } else if (modalMode === "createService") {
-        await api.post("/api/administrator/services", {
-          name: formData.name,
-          category: formData.categoryId,
-          isActive: formData.isActive
-        });
-        alert("Service created successfully");
+        await adminApi.createService({ name: formData.name, category: formData.categoryId, isActive: formData.isActive });
+        showToast("Service created successfully", "success");
       } else if (modalMode === "editService") {
-        await api.patch(`/api/administrator/services/${selectedCategory._id}`, {
-          name: formData.name,
-          isActive: formData.isActive
-        });
-        alert("Service updated successfully");
+        await adminApi.updateService(selectedCategory._id, { name: formData.name, isActive: formData.isActive });
+        showToast("Service updated successfully", "success");
       }
-      
       handleCloseModal();
       fetchCategories();
     } catch (err) {
-      alert(`Error: ${err.message}`);
-      console.error("Submit Error:", err);
+      showToast(`Error: ${err.message}`, "error");
     }
   };
 
   const handleDeleteCategory = async (categoryId) => {
-    if (!window.confirm("Are you sure you want to delete this category? This will fail if there are services in this category.")) {
-      return;
-    }
-
+    const ok = await confirm("Are you sure you want to delete this category? This will fail if there are services in it.");
+    if (!ok) return;
     try {
-      await api.delete(`/api/administrator/categories/${categoryId}`);
-      alert("Category deleted successfully");
+      await adminApi.deleteCategory(categoryId);
+      showToast("Category deleted successfully", "success");
       fetchCategories();
     } catch (err) {
-      alert(`Error deleting category: ${err.message}`);
-      console.error("Delete Error:", err);
+      showToast(`Error deleting category: ${err.message}`, "error");
     }
   };
 
   const handleDeleteService = async (serviceId) => {
-    if (!window.confirm("Are you sure you want to delete this service?")) {
-      return;
-    }
-
+    const ok = await confirm("Are you sure you want to delete this service?");
+    if (!ok) return;
     try {
-      await api.delete(`/api/administrator/services/${serviceId}`);
-      alert("Service deleted successfully");
+      await adminApi.deleteService(serviceId);
+      showToast("Service deleted successfully", "success");
       fetchCategories();
     } catch (err) {
-      alert(`Error deleting service: ${err.message}`);
-      console.error("Delete Error:", err);
+      showToast(`Error deleting service: ${err.message}`, "error");
     }
   };
 
@@ -182,18 +166,15 @@ const AdministratorServices = () => {
     );
   };
 
-  if (loading) {
-    return <div className={styles.loading}>Loading...</div>;
-  }
-
-  if (error) {
-    return <div className={styles.error}>Error: {error}</div>;
-  }
+  if (loading) return <LoadingSpinner message="Loading categories..." />;
+  if (error)   return <ErrorState message={error} onRetry={fetchCategories} />;
 
   const totalServices = getAllServices().length;
   const activeServices = getAllServices().filter(s => s.isActive !== false).length;
 
   return (
+    <>
+    <ConfirmDialog isOpen={isOpen} message={message} onConfirm={handleYes} onCancel={handleNo} />
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>Categories & Services Management</h1>
@@ -444,6 +425,7 @@ const AdministratorServices = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { moderatorApi } from '../../utils/moderatorApi';
+import LoadingSpinner from '../ui/LoadingSpinner';
+import ErrorState from '../ui/ErrorState';
 import styles from './ModeratorUsers.module.css';
 
 const getInitials = (name = '') =>
@@ -20,30 +23,17 @@ const ModeratorUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/moderator/users', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const json = await res.json();
-        setData(json.data);
-      } else {
-        setError('Failed to load user data.');
-      }
+      const json = await moderatorApi.users();
+      setData(json.data);
     } catch (err) {
-      setError('Unable to connect to server.');
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return (
-    <div className={styles.loadingWrap}>
-      <div className={styles.spinner}></div>
-      <p>Loading users…</p>
-    </div>
-  );
-  if (error) return <div className={styles.error}>{error}</div>;
+  if (loading) return <LoadingSpinner message="Loading users..." />;
+  if (error)   return <ErrorState message={error} onRetry={fetchUsers} />;
 
   const { users = [], stats = {} } = data || {};
 

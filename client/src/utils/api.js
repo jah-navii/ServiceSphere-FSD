@@ -1,131 +1,43 @@
-// API utility for making authenticated requests with JWT
+import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000';
+const baseURL = import.meta.env.VITE_API_URL ?? '';
 
-/**
- * Get the JWT token from localStorage
- */
-export const getToken = () => {
-  return localStorage.getItem('token');
-};
+const apiClient = axios.create({
+  baseURL,
+  timeout: 15_000,
+  headers: { 'Content-Type': 'application/json' },
+});
 
-/**
- * Get the current user from localStorage
- */
-export const getCurrentUser = () => {
-  const user = localStorage.getItem('user');
-  return user ? JSON.parse(user) : null;
-};
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
-/**
- * Remove token and user data (logout)
- */
-export const clearAuth = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-};
-
-/**
- * Check if user is authenticated
- */
-export const isAuthenticated = () => {
-  return !!getToken();
-};
-
-/**
- * Get authorization header with JWT token
- */
-export const getAuthHeader = () => {
-  const token = getToken();
-  return token ? { 'Authorization': `Bearer ${token}` } : {};
-};
-
-/**
- * Make an authenticated API request
- * @param {string} endpoint - API endpoint (e.g., '/api/seeker/profile')
- * @param {object} options - Fetch options (method, body, etc.)
- */
-export const apiRequest = async (endpoint, options = {}) => {
-  const url = `${API_BASE_URL}${endpoint}`;
-  
-  const config = {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...getAuthHeader(),
-      ...options.headers,
-    },
-  };
-
-  try {
-    const response = await fetch(url, config);
-    const data = await response.json();
-
-    // If unauthorized (on non-auth endpoints), clear auth and redirect to login
-    if (response.status === 401 && !endpoint.startsWith('/api/auth/')) {
-      clearAuth();
-      window.location.href = '/login';
-      throw new Error('Unauthorized - Please login again');
+apiClient.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401 && !err.config?.url?.includes('/auth/')) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.replace('/login');
     }
-
-    if (!response.ok) {
-      throw new Error(data.error || data.message || 'Request failed');
-    }
-
-    return data;
-  } catch (error) {
-    console.error('API Request Error:', error);
-    throw error;
+    const message =
+      err.response?.data?.error ??
+      err.response?.data?.message ??
+      err.message ??
+      'Request failed';
+    return Promise.reject(new Error(message));
   }
-};
+);
 
-/**
- * Convenience methods for common HTTP methods
- */
+export default apiClient;
+
+// Backward-compatible thin wrappers used by existing Administrator components
 export const api = {
-  get: (endpoint, options = {}) => 
-    apiRequest(endpoint, { ...options, method: 'GET' }),
-  
-  post: (endpoint, data, options = {}) => 
-    apiRequest(endpoint, { 
-      ...options, 
-      method: 'POST', 
-      body: JSON.stringify(data) 
-    }),
-  
-  put: (endpoint, data, options = {}) => 
-    apiRequest(endpoint, { 
-      ...options, 
-      method: 'PUT', 
-      body: JSON.stringify(data) 
-    }),
-  
-  patch: (endpoint, data, options = {}) => 
-    apiRequest(endpoint, { 
-      ...options, 
-      method: 'PATCH', 
-      body: JSON.stringify(data) 
-    }),
-  
-  delete: (endpoint, options = {}) => 
-    apiRequest(endpoint, { ...options, method: 'DELETE' }),
+  get:    (url, config)       => apiClient.get(url, config).then((r) => r.data),
+  post:   (url, data, config) => apiClient.post(url, data, config).then((r) => r.data),
+  put:    (url, data, config) => apiClient.put(url, data, config).then((r) => r.data),
+  patch:  (url, data, config) => apiClient.patch(url, data, config).then((r) => r.data),
+  delete: (url, config)       => apiClient.delete(url, config).then((r) => r.data),
 };
-
-/**
- * Example usage:
- * 
- * import { api, getCurrentUser, clearAuth } from './utils/api';
- * 
- * // Get data
- * const profile = await api.get('/api/seeker/profile');
- * 
- * // Post data
- * const result = await api.post('/api/bookings', { helper_id: '123', date: '2024-01-15' });
- * 
- * // Get current user
- * const user = getCurrentUser();
- * 
- * // Logout
- * clearAuth();
- * navigate('/login');
- */

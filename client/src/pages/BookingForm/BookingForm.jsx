@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { updateField, clearForm } from "../../redux/bookingFormSlice";
+import useAuth from "../../hooks/useAuth";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
-
 import { useToast } from "../../context/ToastContext";
+import { bookingApi } from "../../utils/bookingApi";
 import styles from "./BookingForm.module.css";
 
 const BookingForm = () => {
@@ -15,13 +16,12 @@ const BookingForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { showToast } = useToast();
+  const { user: currentUser } = useAuth();
 
   // 1. Get Data passed from Search Page
   const { helperId, helperName, serviceName, price } = location.state || {};
 
-  // Redux State
   const bookingForm = useSelector((state) => state.bookingForm);
-  const { currentUser } = useSelector((state) => state.user);
 
   // Local UI State
   const [errors, setErrors] = useState({});
@@ -85,30 +85,12 @@ const BookingForm = () => {
     };
 
     try {
-      // API Call
-      const response = await fetch("http://localhost:5000/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(bookingPayload),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Use the message from backend (e.g., rate limit error)
-        const errorMessage = data.message || data.error || "Booking failed";
-        throw new Error(errorMessage);
-      }
-
+      await bookingApi.create(bookingPayload);
       showToast("Booking Confirmed Successfully!", "success");
       dispatch(clearForm());
-      navigate("/home"); // Or /profile to see bookings
-
+      navigate("/home");
     } catch (err) {
-      console.error(err);
-      // Display the actual error message from the backend
-      showToast(err.message || "Failed to book service. Try again.", "error");
+      showToast(err.message ?? "Failed to book service. Try again.", "error");
     } finally {
       setIsSubmitting(false);
     }

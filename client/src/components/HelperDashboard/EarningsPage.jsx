@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import Chart from 'chart.js/auto';
+import { helperApi } from '../../utils/helperApi';
 import styles from './EarningsPage.module.css';
 
 function EarningsPage() {
@@ -25,18 +26,10 @@ function EarningsPage() {
       if (!helperId) return;
 
       try {
-        const res = await fetch(`http://localhost:5000/api/helper/earnings/${helperId}`, {
-          credentials: 'include'
-        });
-        const data = await res.json();
-
-        if (res.ok) {
-          setEarningsData(data);
-        } else {
-          console.error("Failed to load earnings:", data.error);
-        }
+        const data = await helperApi.earnings(helperId);
+        setEarningsData(data);
       } catch (err) {
-        console.error("Network error fetching earnings:", err);
+        console.error("Failed to load earnings:", err.message);
       } finally {
         setLoading(false);
       }

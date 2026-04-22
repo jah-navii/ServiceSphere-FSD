@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useToast } from '../../context/ToastContext';
+import { serviceApi } from '../../utils/serviceApi';
+import { helperApi } from '../../utils/helperApi';
 import styles from './ProfilePage.module.css';
 
 function ProfilePage() {
@@ -27,18 +29,10 @@ function ProfilePage() {
   const [servicePrices, setServicePrices] = useState({});
   const [locations, setLocations] = useState([]); 
 
-  // --- 3. INITIAL FETCH (Locations) ---
   useEffect(() => {
-    const fetchLocations = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/locations");
-        const data = await res.json();
-        setLocations(data || []);
-      } catch (err) {
-        console.error("Failed to load locations", err);
-      }
-    };
-    fetchLocations();
+    serviceApi.locations()
+      .then(data => setLocations(Array.isArray(data) ? data : []))
+      .catch(() => {});
   }, []);
 
   // --- 4. SYNC STATE WITH USER DATA ---
@@ -127,28 +121,11 @@ function ProfilePage() {
     }
 
     try {
-      // UPDATED URL based on your request
-      const response = await fetch("http://localhost:5000/api/helper/profile", { 
-        method: "PUT",
-        credentials: "include",
-        body: submitData,
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Update Context so the UI (and Sidebar) reflects changes immediately
-        setUserData({
-            ...userData,
-            helper: data.user 
-        });
-        showToast("Profile updated successfully!", "success");
-      } else {
-        showToast(data.error || "Update failed", "error");
-      }
+      const data = await helperApi.updateProfile(submitData);
+      setUserData({ ...userData, helper: data.user });
+      showToast("Profile updated successfully!", "success");
     } catch (err) {
-      console.error(err);
-      showToast("Network error", "error");
+      showToast(err.message || "Update failed", "error");
     }
   };
   
@@ -161,7 +138,7 @@ function ProfilePage() {
     // Show most recent cert
     const cert = certifications[certifications.length - 1]; 
     if (typeof cert === 'string') {
-      const url = `http://localhost:5000/uploads/${cert}`;
+      const url = `/uploads/${cert}`;
       if (cert.endsWith('.pdf')) {
         return (
           <div style={{textAlign: 'center', marginTop: '10px'}}>

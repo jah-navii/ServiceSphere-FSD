@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom"; // 1. Import useNavigate
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import apiClient from "../../utils/api";
 import Sidebar from "./Sidebar";
 import styles from "./HelperDashboard.module.css";
-// Optional: Import Toast to tell them why they were redirected
-import { useToast } from "../../context/ToastContext"; 
+import { useToast } from "../../context/ToastContext";
 
 function HelperDashboard() {
   const location = useLocation();
@@ -47,19 +47,10 @@ function HelperDashboard() {
       }
 
       try {
-        const url = `http://localhost:5000/api/helper/profile/${userId}`;
-        const res = await fetch(url, {
-          credentials: "include"
-        });
-        const data = await res.json();
-        
-        if (res.ok) {
-          setUserData(data);
-        } else {
-          console.error("API ERROR:", data.error);
-        }
+        const res = await apiClient.get(`/api/helper/profile/${userId}`);
+        setUserData(res.data);
       } catch (err) {
-        console.error("NETWORK ERROR:", err);
+        console.error("Profile fetch error:", err.message);
       } finally {
         setLoading(false);
       }

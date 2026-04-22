@@ -1,21 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
-import { loginSuccess, logout } from "../../redux/userSlice";
 import { useToast } from "../../context/ToastContext";
+import useAuth from "../../hooks/useAuth";
+import apiClient from "../../utils/api";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import styles from "./SeekerProfile.module.css";
-
-// Use local profile picture from assets
 import profilePic from "../../assets/profile-picture.png";
 
 const SeekerProfile = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { showToast } = useToast();
-
-  const { currentUser } = useSelector((state) => state.user);
+  const { user: currentUser, login, logout: logoutAction } = useAuth();
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -72,7 +68,7 @@ const SeekerProfile = () => {
   const handleAddressChange = (e) => setAddress(e.target.value);
 
   const handleLogout = () => {
-    dispatch(logout());
+    logoutAction();
     showToast("Logged out successfully!", "success");
     navigate("/login");
   };
@@ -91,36 +87,16 @@ const SeekerProfile = () => {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/seeker/profile`,
-        {
-          method: "PUT",
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem('token')}`
-          },
-          body: JSON.stringify({
-            id: currentUser.id,
-            name,
-            mobilenumber: mobile,
-            address,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Update failed");
-      }
-
-      const updatedUser = { ...currentUser, name, mobilenumber: mobile, address };
-      dispatch(loginSuccess(updatedUser));
-
+      await apiClient.put("/api/seeker/profile", {
+        id: currentUser.id,
+        name,
+        mobilenumber: mobile,
+        address,
+      });
+      login({ ...currentUser, name, mobilenumber: mobile, address });
       showToast("Profile updated successfully!", "success");
       setIsEditing(false);
     } catch (err) {
-      console.error(err);
       showToast("Failed to update profile.", "error");
     }
   };

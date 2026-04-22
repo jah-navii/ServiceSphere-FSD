@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { moderatorApi } from '../../utils/moderatorApi';
+import LoadingSpinner from '../ui/LoadingSpinner';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -31,33 +33,14 @@ const ModeratorEarnings = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch Data
   useEffect(() => {
-    const fetchEarnings = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const res = await fetch("http://localhost:5000/api/moderator/earnings-data", {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const json = await res.json();
-        setData(json);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchEarnings();
+    moderatorApi.earningsData()
+      .then(json => setData(json))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return (
-    <div className={styles.loadingWrap}>
-      <div className={styles.spinner}></div>
-      <p>Loading analytics…</p>
-    </div>
-  );
+  if (loading) return <LoadingSpinner message="Loading analytics..." />;
 
   // Use real data only — no static fallbacks
   const monthlyEarnings  = data?.monthlyEarnings  || [];

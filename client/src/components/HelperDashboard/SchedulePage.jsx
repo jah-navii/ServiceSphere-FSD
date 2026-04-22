@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useOutletContext } from "react-router-dom";
+import { helperApi } from '../../utils/helperApi';
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -21,17 +22,10 @@ function SchedulePage() {
       if (!helperId) return;
 
       try {
-        const res = await fetch(`http://localhost:5000/api/helper/schedule/${helperId}`);
-        const data = await res.json();
-
-        if (res.ok) {
-          console.log('Schedule received:', data);
-          setEvents(data);
-        } else {
-          console.error("Failed to load schedule");
-        }
+        const data = await helperApi.schedule(helperId);
+        setEvents(data);
       } catch (err) {
-        console.error("Network error:", err);
+        console.error("Failed to load schedule:", err.message);
       } finally {
         setLoading(false);
       }

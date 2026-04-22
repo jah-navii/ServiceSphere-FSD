@@ -31,7 +31,7 @@ const AdministratorBookings = () => {
 
     let bookings = [];
     if (activeStatus === "all") {
-      bookings = bookingsData.allBookings || [];
+      bookings = bookingsData.bookings || [];
     } else {
       bookings = bookingsData.byStatus?.[activeStatus] || [];
     }
@@ -92,28 +92,24 @@ const AdministratorBookings = () => {
       {/* Stats Cards */}
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>📋</div>
           <div className={styles.statContent}>
             <div className={styles.statValue}>{stats?.total || 0}</div>
             <div className={styles.statLabel}>Total Bookings</div>
           </div>
         </div>
         <div className={`${styles.statCard} ${styles.completed}`}>
-          <div className={styles.statIcon}>✅</div>
           <div className={styles.statContent}>
             <div className={styles.statValue}>{stats?.completed || 0}</div>
             <div className={styles.statLabel}>Completed</div>
           </div>
         </div>
         <div className={`${styles.statCard} ${styles.pending}`}>
-          <div className={styles.statIcon}>⏳</div>
           <div className={styles.statContent}>
             <div className={styles.statValue}>{stats?.pending || 0}</div>
             <div className={styles.statLabel}>Pending</div>
           </div>
         </div>
         <div className={`${styles.statCard} ${styles.cancelled}`}>
-          <div className={styles.statIcon}>❌</div>
           <div className={styles.statContent}>
             <div className={styles.statValue}>{stats?.cancelled || 0}</div>
             <div className={styles.statLabel}>Cancelled</div>

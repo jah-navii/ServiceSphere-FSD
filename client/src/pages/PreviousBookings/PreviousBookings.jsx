@@ -1,62 +1,48 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import useAuth from "../../hooks/useAuth";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import ReviewModal from "./ReviewModal";
+import LoadingSpinner from "../../components/ui/LoadingSpinner";
+import EmptyState from "../../components/ui/EmptyState";
+import ErrorState from "../../components/ui/ErrorState";
+import { bookingApi } from "../../utils/bookingApi";
 import styles from "./PreviousBookings.module.css";
 
 const PreviousBookings = () => {
-  const { currentUser } = useSelector((state) => state.user);
+  const { user } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
 
-  // Fetch completed past bookings
-  useEffect(() => {
-    const fetchPastBookings = async () => {
-      if (!currentUser?.id) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const response = await fetch(
-          `http://localhost:5000/api/bookings?userId=${currentUser.id}`,
-          {
-            credentials: "include",
-          }
+  const fetchPastBookings = async () => {
+    if (!user?.id) { setLoading(false); return; }
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await bookingApi.list(user.id);
+      if (data.success) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        setBookings(
+          data.bookings.filter((b) =>
+            b.status === "Accepted" && b.paid === true && new Date(b.date) < today
+          )
         );
-        const data = await response.json();
-
-        if (data.success) {
-          // Filter for completed bookings in the past
-          const completedPastBookings = data.bookings.filter((booking) => {
-            const bookingDate = new Date(booking.date);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            // Show only completed and paid bookings that are in the past
-            return (
-              booking.status === "Accepted" &&
-              booking.paid === true &&
-              bookingDate < today
-            );
-          });
-          setBookings(completedPastBookings);
-        } else {
-          setBookings([]);
-        }
-      } catch (error) {
-        console.error("Error fetching past bookings:", error);
-      } finally {
-        setLoading(false);
+      } else {
+        setBookings([]);
       }
-    };
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchPastBookings();
-  }, [currentUser]);
+  useEffect(() => { fetchPastBookings(); }, [user]);
 
   const handleReviewClick = (booking) => {
     setSelectedBooking(booking);
@@ -92,8 +78,10 @@ const PreviousBookings = () => {
         </header>
 
         <main>
-          {loading ? (
-            <p style={{ textAlign: "center" }}>Loading bookings...</p>
+          {error ? (
+            <ErrorState message={error} onRetry={fetchPastBookings} />
+          ) : loading ? (
+            <LoadingSpinner message="Loading bookings..." />
           ) : bookings.length > 0 ? (
             <div className={styles.bookingsContainer}>
               {bookings.map((booking) => {
@@ -178,20 +166,12 @@ const PreviousBookings = () => {
               })}
             </div>
           ) : (
-            <div className={styles.emptyState}>
-              <svg
-                className={styles.emptyIcon}
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" />
-              </svg>
-              <h3>No completed bookings yet</h3>
-              <p>When you complete service bookings, they will appear here</p>
-              <Link to="/search" className={styles.browseButton}>
-                Browse Services
-              </Link>
-            </div>
+            <EmptyState
+              title="No completed bookings yet"
+              description="When you complete service bookings, they will appear here."
+              ctaLabel="Browse Services"
+              ctaTo="/search"
+            />
           )}
         </main>
       </div>

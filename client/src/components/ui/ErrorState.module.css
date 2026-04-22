@@ -1,0 +1,43 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 72px 16px;
+  text-align: center;
+}
+
+.icon {
+  width: 56px;
+  height: 56px;
+  color: #f87171;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+.message {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0;
+  max-width: 340px;
+}
+
+.retryBtn {
+  margin-top: 6px;
+  padding: 10px 22px;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.retryBtn:hover { background: #dc2626; }

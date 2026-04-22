@@ -1,15 +1,13 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../../redux/userSlice";
-import styles from "./Navbar.module.css";
-import logoImg from "../../assets/logo.png";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import useAuth from '../../hooks/useAuth';
+import styles from './Navbar.module.css';
+import logoImg from '../../assets/logo.png';
 
 const Navbar = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector((state) => state.user);
+  const { isAuthenticated, logout } = useAuth();
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -17,25 +15,21 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logout());
-    navigate("/");
+    logout();
+    navigate('/');
   };
 
   return (
     <nav className={styles.navbar}>
       <Link to="/home" className={styles.logoContainer}>
-        <img src={logoImg} alt="Service Sphere" className={styles.logo} />
+        <img src={logoImg} alt="Service Sphere" className={styles.logo} loading="lazy" decoding="async" />
         <span className={styles.companyName}>Service Sphere</span>
       </Link>
 
       <form onSubmit={handleSearch} className={styles.searchForm}>
-        <input
-          type="text"
-          className={styles.searchInput}
-          placeholder="Search for services…"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+        <input type="text" className={styles.searchInput}
+          placeholder="Search for services…" value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)} />
         <button type="submit" className={styles.searchBtn}>Search</button>
       </form>
 

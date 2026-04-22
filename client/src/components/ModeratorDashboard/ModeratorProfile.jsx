@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { moderatorApi } from '../../utils/moderatorApi';
+import { useToast } from '../../context/ToastContext';
+import LoadingSpinner from '../ui/LoadingSpinner';
 import styles from './ModeratorProfile.module.css';
 
 const ModeratorProfile = () => {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
   
   const [profileData, setProfileData] = useState({
     name: '',
@@ -25,29 +28,8 @@ const ModeratorProfile = () => {
 
   const fetchProfile = async () => {
     try {
-      const token = localStorage.getItem('token');
-      
-      console.log('Fetching moderator profile...');
-      
-      const response = await fetch(
-        `http://localhost:5000/api/moderator/profile`,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
-
-      console.log('Response status:', response.status);
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('Error response:', errorData);
-        throw new Error(errorData.error || 'Failed to fetch profile');
-      }
-
-      const data = await response.json();
-      console.log('Profile data received:', data);
+      const data = await moderatorApi.profile();
       const profile = data.profile;
-      
       setProfileData({
         name: profile.name || '',
         email: profile.email || '',
@@ -55,16 +37,10 @@ const ModeratorProfile = () => {
         locationName: profile.locationName || '',
         status: profile.status || ''
       });
-      
-      setEditedData({
-        name: profile.name || '',
-        phone: profile.phone || ''
-      });
-
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-      setMessage({ type: 'error', text: `Failed to load profile: ${error.message}` });
+      setEditedData({ name: profile.name || '', phone: profile.phone || '' });
+    } catch (err) {
+      showToast(`Failed to load profile: ${err.message}`, 'error');
+    } finally {
       setLoading(false);
     }
   };
@@ -79,54 +55,16 @@ const ModeratorProfile = () => {
 
   const handleSave = async () => {
     setSaving(true);
-    setMessage({ type: '', text: '' });
-
     try {
-      const token = localStorage.getItem('token');
-
-      const response = await fetch(
-        'http://localhost:5000/api/moderator/profile',
-        {
-          method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: editedData.name,
-            phone: editedData.phone
-          })
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update profile');
-      }
-
-      const data = await response.json();
-
-      // Update profileData with saved values
-      setProfileData(prev => ({
-        ...prev,
-        name: editedData.name,
-        phone: editedData.phone
-      }));
-
-      // Update localStorage user name
+      await moderatorApi.updateProfile({ name: editedData.name, phone: editedData.phone });
+      setProfileData(prev => ({ ...prev, name: editedData.name, phone: editedData.phone }));
       const userData = JSON.parse(localStorage.getItem('user') || '{}');
-      const updatedUserData = {
-        ...userData,
-        name: editedData.name
-      };
-      localStorage.setItem('user', JSON.stringify(updatedUserData));
-
-      setMessage({ type: 'success', text: 'Profile updated successfully!' });
+      localStorage.setItem('user', JSON.stringify({ ...userData, name: editedData.name }));
+      showToast('Profile updated successfully!', 'success');
       setIsEditMode(false);
-      setSaving(false);
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      setMessage({ type: 'error', text: error.message || 'Failed to update profile' });
+    } catch (err) {
+      showToast(err.message || 'Failed to update profile', 'error');
+    } finally {
       setSaving(false);
     }
   };
@@ -140,13 +78,7 @@ const ModeratorProfile = () => {
     setMessage({ type: '', text: '' });
   };
 
-  if (loading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loading}>Loading profile...</div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingSpinner message="Loading profile..." />;
 
   return (
     <div className={styles.container}>
@@ -172,11 +104,6 @@ const ModeratorProfile = () => {
         )}
       </div>
 
-      {message.text && (
-        <div className={`${styles.message} ${styles[message.type]}`}>
-          {message.text}
-        </div>
-      )}
 
       <div className={styles.profileCard}>
         <div className={styles.section}>

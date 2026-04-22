@@ -1,147 +1,128 @@
-import React, { useState, useEffect } from 'react';
-import styles from './AdministratorModerators.module.css';
+import React, { useState, useEffect } from "react";
+import { adminApi } from "../../utils/adminApi";
+import { useToast } from "../../context/ToastContext";
+import useConfirm from "../../hooks/useConfirm";
+import ConfirmDialog from "../ui/ConfirmDialog";
+import LoadingSpinner from "../ui/LoadingSpinner";
+import ErrorState from "../ui/ErrorState";
+import styles from "./AdministratorModerators.module.css";
 
 const AdministratorModerators = () => {
-  const [activeTab, setActiveTab] = useState('pending');
+  const { showToast } = useToast();
+  const { confirm, isOpen, message, handleYes, handleNo } = useConfirm();
+
+  const [activeTab, setActiveTab] = useState("pending");
   const [moderators, setModerators] = useState([]);
-  const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
+
+  const [reasonModal, setReasonModal] = useState({ open: false, type: null, moderatorId: null });
+  const [reasonText, setReasonText] = useState("");
 
   useEffect(() => {
     fetchModerators();
-    fetchLocations();
   }, [activeTab]);
 
   const fetchModerators = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/administrator/moderator-applications?status=${activeTab}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setModerators(data.data?.applications || []);
-      } else {
-        setError('Failed to fetch moderators');
-      }
+      setError(null);
+      const data = await adminApi.moderatorApplications(activeTab);
+      setModerators(data.data?.applications || []);
     } catch (err) {
-      console.error('Fetch error:', err);
-      setError('Unable to connect to server');
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchLocations = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/locations');
-      if (response.ok) {
-        const data = await response.json();
-        setLocations(data || []);
-      }
-    } catch (err) {
-      console.error('Locations fetch error:', err);
-    }
-  };
-
   const handleApprove = async (moderatorId) => {
-    if (!window.confirm('Approve this moderator application?')) return;
-
+    const ok = await confirm("Approve this moderator application?");
+    if (!ok) return;
     setActionLoading(moderatorId);
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/administrator/moderator-applications/${moderatorId}/approve`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-      });
-
-      if (response.ok) {
-        alert('Moderator approved successfully!');
-        fetchModerators();
-      } else {
-        const data = await response.json();
-        alert(data.error || data.message || 'Failed to approve moderator');
-      }
+      await adminApi.approveModerator(moderatorId);
+      showToast("Moderator approved successfully!", "success");
+      fetchModerators();
     } catch (err) {
-      console.error('Approve error:', err);
-      alert('Unable to approve moderator');
+      showToast(`Failed to approve moderator: ${err.message}`, "error");
     } finally {
       setActionLoading(null);
     }
   };
 
-  const handleReject = async (moderatorId) => {
-    const reason = prompt('Enter rejection reason:');
-    if (!reason) return;
+  const openReasonModal = (type, moderatorId) => {
+    setReasonModal({ open: true, type, moderatorId });
+    setReasonText("");
+  };
 
+  const closeReasonModal = () => {
+    setReasonModal({ open: false, type: null, moderatorId: null });
+    setReasonText("");
+  };
+
+  const handleReasonSubmit = async () => {
+    if (!reasonText.trim()) {
+      showToast("Please enter a reason", "error");
+      return;
+    }
+    const { type, moderatorId } = reasonModal;
+    closeReasonModal();
     setActionLoading(moderatorId);
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/administrator/moderator-applications/${moderatorId}/reject`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ rejectionReason: reason })
-      });
-
-      if (response.ok) {
-        alert('Moderator rejected');
-        fetchModerators();
-      } else {
-        const data = await response.json();
-        alert(data.message || 'Failed to reject moderator');
+      if (type === "reject") {
+        await adminApi.rejectModerator(moderatorId, { rejectionReason: reasonText });
+        showToast("Moderator rejected", "success");
+      } else if (type === "suspend") {
+        await adminApi.suspendModerator(moderatorId, { suspensionReason: reasonText });
+        showToast("Moderator suspended", "success");
       }
+      fetchModerators();
     } catch (err) {
-      console.error('Reject error:', err);
-      alert('Unable to reject moderator');
+      showToast(`Failed to ${type} moderator: ${err.message}`, "error");
     } finally {
       setActionLoading(null);
     }
   };
 
-  const handleSuspend = async (moderatorId) => {
-    const reason = prompt('Enter suspension reason:');
-    if (!reason) return;
-
-    if (!window.confirm('Are you sure you want to suspend this moderator? They will lose access to their location.')) return;
-
-    setActionLoading(moderatorId);
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/administrator/moderators/${moderatorId}/suspend`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ suspensionReason: reason })
-      });
-
-      if (response.ok) {
-        alert('Moderator suspended');
-        fetchModerators();
-      } else {
-        const data = await response.json();
-        alert(data.message || 'Failed to suspend moderator');
-      }
-    } catch (err) {
-      console.error('Suspend error:', err);
-      alert('Unable to suspend moderator');
-    } finally {
-      setActionLoading(null);
-    }
-  };
+  if (loading) return <LoadingSpinner message="Loading moderators..." />;
+  if (error)   return <ErrorState message={error} onRetry={fetchModerators} />;
 
   return (
+    <>
+    <ConfirmDialog isOpen={isOpen} message={message} onConfirm={handleYes} onCancel={handleNo} />
+
+    {reasonModal.open && (
+      <div className={styles.modalOverlay} onClick={closeReasonModal}>
+        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.modalHeader}>
+            <h2>{reasonModal.type === "reject" ? "Rejection Reason" : "Suspension Reason"}</h2>
+            <button className={styles.closeBtn} onClick={closeReasonModal}>×</button>
+          </div>
+          <div className={styles.modalBody}>
+            <textarea
+              className={styles.reasonInput}
+              rows="4"
+              placeholder={`Enter reason for ${reasonModal.type}...`}
+              value={reasonText}
+              onChange={(e) => setReasonText(e.target.value)}
+              autoFocus
+            />
+          </div>
+          <div className={styles.modalActions}>
+            <button className={styles.cancelBtn} onClick={closeReasonModal}>Cancel</button>
+            <button
+              className={reasonModal.type === "reject" ? styles.rejectBtn : styles.suspendBtn}
+              onClick={handleReasonSubmit}
+            >
+              {reasonModal.type === "reject" ? "Reject" : "Suspend"}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>Moderator Management</h1>
@@ -149,148 +130,121 @@ const AdministratorModerators = () => {
       </div>
 
       <div className={styles.tabs}>
-        <button
-          className={`${styles.tab} ${activeTab === 'pending' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('pending')}
-        >
-          Pending Applications
-        </button>
-        <button
-          className={`${styles.tab} ${activeTab === 'active' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('active')}
-        >
-          Active Moderators
-        </button>
-        <button
-          className={`${styles.tab} ${activeTab === 'rejected' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('rejected')}
-        >
-          Rejected
-        </button>
-        <button
-          className={`${styles.tab} ${activeTab === 'suspended' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('suspended')}
-        >
-          Suspended
-        </button>
+        {["pending", "active", "rejected", "suspended"].map((tab) => (
+          <button
+            key={tab}
+            className={`${styles.tab} ${activeTab === tab ? styles.activeTab : ""}`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}{tab === "pending" ? " Applications" : tab === "active" ? " Moderators" : ""}
+          </button>
+        ))}
       </div>
 
-      {loading && <div className={styles.loading}>Loading moderators...</div>}
-      {error && <div className={styles.error}>{error}</div>}
+      <div className={styles.content}>
+        {moderators.length === 0 ? (
+          <p className={styles.emptyMessage}>No {activeTab} moderators</p>
+        ) : (
+          <div className={styles.cardGrid}>
+            {moderators.map((moderator) => (
+              <div key={moderator._id} className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <h3>{moderator.name}</h3>
+                  <span className={`${styles.badge} ${styles[`${activeTab}Badge`]}`}>
+                    {activeTab}
+                  </span>
+                </div>
 
-      {!loading && !error && (
-        <div className={styles.content}>
-          {moderators.length === 0 ? (
-            <p className={styles.emptyMessage}>No {activeTab} moderators</p>
-          ) : (
-            <div className={styles.cardGrid}>
-              {moderators.map((moderator) => (
-                <div key={moderator._id} className={styles.card}>
-                  <div className={styles.cardHeader}>
-                    <h3>{moderator.name}</h3>
-                    <span className={`${styles.badge} ${styles[`${activeTab}Badge`]}`}>
-                      {activeTab}
-                    </span>
+                <div className={styles.cardBody}>
+                  <div className={styles.info}><strong>Email:</strong> {moderator.email}</div>
+                  <div className={styles.info}><strong>Phone:</strong> {moderator.phone}</div>
+                  <div className={styles.info}>
+                    <strong>Desired Location:</strong> {moderator.assignedLocation?.name || "N/A"}
                   </div>
-
-                  <div className={styles.cardBody}>
+                  {moderator.assignedLocation?.city && (
                     <div className={styles.info}>
-                      <strong>Email:</strong> {moderator.email}
+                      <strong>City:</strong> {moderator.assignedLocation.city}, {moderator.assignedLocation.state}
                     </div>
+                  )}
+                  {moderator.experience && (
+                    <div className={styles.info}><strong>Experience:</strong> {moderator.experience}</div>
+                  )}
+                  {moderator.linkedinProfile && (
                     <div className={styles.info}>
-                      <strong>Phone:</strong> {moderator.phone}
+                      <strong>LinkedIn:</strong>{" "}
+                      <a href={moderator.linkedinProfile} target="_blank" rel="noreferrer" className={styles.link}>
+                        View Profile
+                      </a>
                     </div>
+                  )}
+                  {moderator.resume && (
                     <div className={styles.info}>
-                      <strong>Desired Location:</strong> {moderator.assignedLocation?.name || 'N/A'}
+                      <strong>Resume:</strong>{" "}
+                      <a
+                        href={`/uploads/${moderator.resume}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={styles.resumeLink}
+                      >
+                        View Resume (PDF)
+                      </a>
                     </div>
-                    {moderator.assignedLocation?.city && (
-                      <div className={styles.info}>
-                        <strong>City:</strong> {moderator.assignedLocation.city}, {moderator.assignedLocation.state}
-                      </div>
-                    )}
-                    {moderator.experience && (
-                      <div className={styles.info}>
-                        <strong>Experience:</strong> {moderator.experience}
-                      </div>
-                    )}
-                    {moderator.linkedinProfile && (
-                      <div className={styles.info}>
-                        <strong>LinkedIn:</strong>{' '}
-                        <a href={moderator.linkedinProfile} target="_blank" rel="noreferrer" className={styles.link}>
-                          View Profile
-                        </a>
-                      </div>
-                    )}
-                    {moderator.resume && (
-                      <div className={styles.info}>
-                        <strong>Resume:</strong>{' '}
-                        <a
-                          href={`http://localhost:5000/${moderator.resume}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className={styles.resumeLink}
-                        >
-                          📄 View Resume (PDF)
-                        </a>
-                      </div>
-                    )}
-                    {moderator.coverLetter && (
-                      <div className={styles.coverLetterBlock}>
-                        <strong className={styles.coverLetterTitle}>Cover Letter</strong>
-                        <p className={styles.coverLetterText}>{moderator.coverLetter}</p>
-                      </div>
-                    )}
-                    <div className={styles.info}>
-                      <strong>Applied:</strong> {new Date(moderator.createdAt).toLocaleDateString()}
+                  )}
+                  {moderator.coverLetter && (
+                    <div className={styles.coverLetterBlock}>
+                      <strong className={styles.coverLetterTitle}>Cover Letter</strong>
+                      <p className={styles.coverLetterText}>{moderator.coverLetter}</p>
                     </div>
-                    {moderator.approvedDate && (
-                      <div className={styles.info}>
-                        <strong>Approved:</strong> {new Date(moderator.approvedDate).toLocaleDateString()}
-                      </div>
-                    )}
-                    {moderator.rejectionReason && (
-                      <div className={styles.info}>
-                        <strong>Reason:</strong> {moderator.rejectionReason}
-                      </div>
-                    )}
+                  )}
+                  <div className={styles.info}>
+                    <strong>Applied:</strong> {new Date(moderator.createdAt).toLocaleDateString()}
                   </div>
+                  {moderator.approvedDate && (
+                    <div className={styles.info}>
+                      <strong>Approved:</strong> {new Date(moderator.approvedDate).toLocaleDateString()}
+                    </div>
+                  )}
+                  {moderator.rejectionReason && (
+                    <div className={styles.info}><strong>Reason:</strong> {moderator.rejectionReason}</div>
+                  )}
+                </div>
 
-                  <div className={styles.cardActions}>
-                    {activeTab === 'pending' && (
-                      <>
-                        <button
-                          className={styles.approveBtn}
-                          onClick={() => handleApprove(moderator._id)}
-                          disabled={actionLoading === moderator._id}
-                        >
-                          {actionLoading === moderator._id ? 'Processing...' : 'Approve'}
-                        </button>
-                        <button
-                          className={styles.rejectBtn}
-                          onClick={() => handleReject(moderator._id)}
-                          disabled={actionLoading === moderator._id}
-                        >
-                          Reject
-                        </button>
-                      </>
-                    )}
-                    {activeTab === 'active' && (
+                <div className={styles.cardActions}>
+                  {activeTab === "pending" && (
+                    <>
                       <button
-                        className={styles.suspendBtn}
-                        onClick={() => handleSuspend(moderator._id)}
+                        className={styles.approveBtn}
+                        onClick={() => handleApprove(moderator._id)}
                         disabled={actionLoading === moderator._id}
                       >
-                        {actionLoading === moderator._id ? 'Processing...' : 'Suspend'}
+                        {actionLoading === moderator._id ? "Processing..." : "Approve"}
                       </button>
-                    )}
-                  </div>
+                      <button
+                        className={styles.rejectBtn}
+                        onClick={() => openReasonModal("reject", moderator._id)}
+                        disabled={actionLoading === moderator._id}
+                      >
+                        Reject
+                      </button>
+                    </>
+                  )}
+                  {activeTab === "active" && (
+                    <button
+                      className={styles.suspendBtn}
+                      onClick={() => openReasonModal("suspend", moderator._id)}
+                      disabled={actionLoading === moderator._id}
+                    >
+                      {actionLoading === moderator._id ? "Processing..." : "Suspend"}
+                    </button>
+                  )}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
+    </>
   );
 };
 

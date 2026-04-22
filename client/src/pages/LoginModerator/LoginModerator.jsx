@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { authApi } from "../../utils/authApi";
 import styles from "./LoginModerator.module.css";
 import logoImg from "../../assets/logo.png";
 
@@ -9,17 +10,6 @@ const LoginModerator = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
-  // Load dotlottie-player via CDN
-  useEffect(() => {
-    if (!document.querySelector('script[src*="dotlottie-player"]')) {
-      const script = document.createElement("script");
-      script.type = "module";
-      script.src =
-        "https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs";
-      document.body.appendChild(script);
-    }
-  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,37 +27,19 @@ const LoginModerator = () => {
 
     try {
       setLoading(true);
-      const response = await fetch(
-        "http://localhost:5000/api/auth/login/moderator",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            id: data.user.id,
-            name: data.user.name,
-            email: data.user.email,
-            role: data.user.role,
-            locationId: data.user.locationId,
-            locationName: data.user.locationName,
-          })
-        );
-        navigate("/moderator/dashboard");
-      } else {
-        setError(data.error || data.message || "Login failed");
-      }
+      const data = await authApi.loginModerator(formData);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify({
+        id: data.user.id,
+        name: data.user.name,
+        email: data.user.email,
+        role: data.user.role,
+        locationId: data.user.locationId,
+        locationName: data.user.locationName,
+      }));
+      navigate("/moderator/dashboard");
     } catch (err) {
-      console.error("Login error:", err);
-      setError("Unable to connect to server. Please try again.");
+      setError(err.message || "Login failed");
     } finally {
       setLoading(false);
     }

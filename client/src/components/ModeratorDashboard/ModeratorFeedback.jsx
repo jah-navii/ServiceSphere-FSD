@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { moderatorApi } from '../../utils/moderatorApi';
+import LoadingSpinner from '../ui/LoadingSpinner';
+import ErrorState from '../ui/ErrorState';
 import styles from './ModeratorFeedback.module.css';
 
 const StarRating = ({ rating, size = 'md' }) => (
@@ -45,19 +48,10 @@ const ModeratorFeedback = () => {
 
   const fetchFeedbacks = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/moderator/feedbacks', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const json = await res.json();
-        setData(json.data);
-      } else {
-        setError('Failed to load feedback data.');
-      }
+      const json = await moderatorApi.feedbacks();
+      setData(json.data);
     } catch (err) {
-      console.error('Feedback fetch error:', err);
-      setError('Unable to connect to server.');
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -97,18 +91,8 @@ const ModeratorFeedback = () => {
     return list;
   };
 
-  if (loading) {
-    return (
-      <div className={styles.loadingWrap}>
-        <div className={styles.spinner}></div>
-        <p>Loading reviews…</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return <div className={styles.error}>{error}</div>;
-  }
+  if (loading) return <LoadingSpinner message="Loading reviews..." />;
+  if (error)   return <ErrorState message={error} onRetry={fetchFeedbacks} />;
 
   const { stats = {}, helperStats = [] } = data || {};
   const feedbacks = getFilteredFeedbacks();

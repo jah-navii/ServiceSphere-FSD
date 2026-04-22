@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { api } from "../../utils/api";
+import { adminApi } from "../../utils/adminApi";
+import { useToast } from "../../context/ToastContext";
+import useConfirm from "../../hooks/useConfirm";
+import ConfirmDialog from "../ui/ConfirmDialog";
+import LoadingSpinner from "../ui/LoadingSpinner";
+import ErrorState from "../ui/ErrorState";
 import styles from "./AdministratorFeedbacks.module.css";
 
 const AdministratorFeedbacks = () => {
+  const { showToast } = useToast();
+  const { confirm, isOpen, message, handleYes, handleNo } = useConfirm();
   const [feedbacksData, setFeedbacksData] = useState({ feedbacks: [], stats: {} });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,83 +23,62 @@ const AdministratorFeedbacks = () => {
   const fetchFeedbacks = async () => {
     try {
       setLoading(true);
-      const data = await api.get("/api/administrator/feedbacks");
+      setError(null);
+      const data = await adminApi.feedbacks();
       setFeedbacksData(data.data);
     } catch (err) {
       setError(err.message);
-      console.error("Feedbacks Error:", err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (feedbackId) => {
-    if (!window.confirm("Are you sure you want to delete this feedback?")) {
-      return;
-    }
-
+    const ok = await confirm("Are you sure you want to delete this feedback?");
+    if (!ok) return;
     try {
-      await api.delete(`/api/administrator/feedbacks/${feedbackId}`);
-      alert("Feedback deleted successfully");
+      await adminApi.deleteFeedback(feedbackId);
+      showToast("Feedback deleted successfully", "success");
       fetchFeedbacks();
     } catch (err) {
-      alert(`Error deleting feedback: ${err.message}`);
-      console.error("Delete Error:", err);
+      showToast(`Error deleting feedback: ${err.message}`, "error");
     }
   };
 
   const getFilteredFeedbacks = () => {
     let feedbacks = feedbacksData.feedbacks || [];
-
-    // Filter by search term
     if (searchTerm) {
-      feedbacks = feedbacks.filter(feedback => 
+      feedbacks = feedbacks.filter(feedback =>
         (feedback.seeker?.name && feedback.seeker.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (feedback.helper?.name && feedback.helper.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (feedback.feedback && feedback.feedback.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
-
-    // Filter by rating
     if (filterRating !== "all") {
       feedbacks = feedbacks.filter(feedback => feedback.rating === parseInt(filterRating));
     }
-
     return feedbacks;
   };
 
-  const renderStars = (rating) => {
-    return (
-      <div className={styles.stars}>
-        {[1, 2, 3, 4, 5].map((star) => (
-          <span key={star} className={star <= rating ? styles.starFilled : styles.starEmpty}>
-            ★
-          </span>
-        ))}
-      </div>
-    );
-  };
+  const renderStars = (rating) => (
+    <div className={styles.stars}>
+      {[1, 2, 3, 4, 5].map((star) => (
+        <span key={star} className={star <= rating ? styles.starFilled : styles.starEmpty}>★</span>
+      ))}
+    </div>
+  );
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  };
+  const formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 
-  if (loading) {
-    return <div className={styles.loading}>Loading...</div>;
-  }
-
-  if (error) {
-    return <div className={styles.error}>Error: {error}</div>;
-  }
+  if (loading) return <LoadingSpinner message="Loading feedbacks..." />;
+  if (error)   return <ErrorState message={error} onRetry={fetchFeedbacks} />;
 
   const { stats } = feedbacksData;
 
   return (
+    <>
+    <ConfirmDialog isOpen={isOpen} message={message} onConfirm={handleYes} onCancel={handleNo} danger />
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>Feedbacks & Reviews</h1>
@@ -144,18 +130,12 @@ const AdministratorFeedbacks = () => {
             <div className={styles.feedbackHeader}>
               <div className={styles.feedbackInfo}>
                 <div className={styles.feedbackUsers}>
-                  <span className={styles.seeker}>
-                    {feedback.seeker?.name || "Unknown Seeker"}
-                  </span>
+                  <span className={styles.seeker}>{feedback.seeker?.name || "Unknown Seeker"}</span>
                   <span className={styles.arrow}>→</span>
-                  <span className={styles.helper}>
-                    {feedback.helper?.name || "Unknown Helper"}
-                  </span>
+                  <span className={styles.helper}>{feedback.helper?.name || "Unknown Helper"}</span>
                 </div>
                 {feedback.helper?.category && (
-                  <span className={styles.category}>
-                    {feedback.helper.category.name}
-                  </span>
+                  <span className={styles.category}>{feedback.helper.category.name}</span>
                 )}
               </div>
               <div className={styles.feedbackRating}>
@@ -163,32 +143,24 @@ const AdministratorFeedbacks = () => {
                 <span className={styles.ratingNumber}>{feedback.rating}/5</span>
               </div>
             </div>
-            
-            <div className={styles.feedbackText}>
-              {feedback.feedback}
-            </div>
-            
+
+            <div className={styles.feedbackText}>{feedback.feedback}</div>
+
             <div className={styles.feedbackFooter}>
-              <span className={styles.feedbackDate}>
-                {formatDate(feedback.date)}
-              </span>
-              <button
-                className={styles.deleteBtn}
-                onClick={() => handleDelete(feedback._id)}
-              >
+              <span className={styles.feedbackDate}>{formatDate(feedback.date)}</span>
+              <button className={styles.deleteBtn} onClick={() => handleDelete(feedback._id)}>
                 Delete
               </button>
             </div>
           </div>
         ))}
-        
+
         {getFilteredFeedbacks().length === 0 && (
-          <div className={styles.noData}>
-            No feedbacks found
-          </div>
+          <div className={styles.noData}>No feedbacks found</div>
         )}
       </div>
     </div>
+    </>
   );
 };
 

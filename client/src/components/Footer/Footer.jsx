@@ -10,8 +10,8 @@ const Footer = () => {
           <h3>Quick Links</h3>
           <ul>
             <li><Link to="/about">About Us</Link></li>
-            <li><Link to="/TermsAndConditions">Terms and conditions</Link></li>
-            <li><Link to="/AdminContact">Contact us</Link></li>
+            <li><Link to="/terms">Terms and conditions</Link></li>
+            <li><Link to="/admin-contact">Contact us</Link></li>
           </ul>
         </div>
         

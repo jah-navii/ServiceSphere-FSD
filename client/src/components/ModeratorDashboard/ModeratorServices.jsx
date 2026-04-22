@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { moderatorApi } from '../../utils/moderatorApi';
+import LoadingSpinner from '../ui/LoadingSpinner';
+import ErrorState from '../ui/ErrorState';
 import styles from './ModeratorServices.module.css';
 
 const ModeratorServices = () => {
@@ -13,23 +16,10 @@ const ModeratorServices = () => {
 
   const fetchServices = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/moderator/services', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Services response:', data);
-        setCategories(data.data || []);
-      } else {
-        setError('Failed to load services');
-      }
+      const data = await moderatorApi.services();
+      setCategories(data.data || []);
     } catch (err) {
-      console.error('Services fetch error:', err);
-      setError('Unable to connect to server');
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -49,13 +39,8 @@ const ModeratorServices = () => {
     return matchesSearch || hasMatchingService;
   });
 
-  if (loading) {
-    return <div className={styles.loading}>Loading services...</div>;
-  }
-
-  if (error) {
-    return <div className={styles.error}>{error}</div>;
-  }
+  if (loading) return <LoadingSpinner message="Loading services..." />;
+  if (error)   return <ErrorState message={error} onRetry={fetchServices} />;
 
   return (
     <div className={styles.container}>

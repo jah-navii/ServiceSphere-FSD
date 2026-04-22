@@ -1,4 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
+import { moderatorApi } from '../../utils/moderatorApi';
+import LoadingSpinner from '../ui/LoadingSpinner';
+import ErrorState from '../ui/ErrorState';
 import styles from './ModeratorBookings.module.css';
 
 const STATUS_LABELS = {
@@ -30,18 +33,10 @@ const ModeratorBookings = () => {
 
   const fetchBookings = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/moderator/bookings', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setBookings(data.data || data.bookings || []);
-      } else {
-        setError('Failed to load bookings.');
-      }
+      const data = await moderatorApi.bookings();
+      setBookings(data.data || data.bookings || []);
     } catch (err) {
-      setError('Unable to connect to server.');
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -80,13 +75,8 @@ const ModeratorBookings = () => {
       return 0;
     });
 
-  if (loading) return (
-    <div className={styles.loadingWrap}>
-      <div className={styles.spinner}></div>
-      <p>Loading bookingsâ€¦</p>
-    </div>
-  );
-  if (error) return <div className={styles.error}>{error}</div>;
+  if (loading) return <LoadingSpinner message="Loading bookings..." />;
+  if (error)   return <ErrorState message={error} onRetry={fetchBookings} />;
 
   return (
     <div className={styles.container}>

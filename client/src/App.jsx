@@ -64,8 +64,10 @@ function App() {
         <Route path="/login/moderator" element={<LoginModerator />} />
         <Route path="/apply/moderator" element={<ApplyModerator />} />
         <Route path="/about" element={<AboutUs />} />
-        <Route path="/AdminContact" element={<AdminContact />} />
-        <Route path="/TermsAndConditions" element={<TermsAndConditions />} />
+        <Route path="/admin-contact" element={<AdminContact />} />
+        <Route path="/AdminContact" element={<Navigate to="/admin-contact" replace />} />
+        <Route path="/terms" element={<TermsAndConditions />} />
+        <Route path="/TermsAndConditions" element={<Navigate to="/terms" replace />} />
         
         {/* Public Home Route */}
         <Route path="/home" element={<Home />} />

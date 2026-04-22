@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { authApi } from "../../utils/authApi";
+import { useToast } from "../../context/ToastContext";
 import styles from "./SignupSeeker.module.css";
 import logoImg from "../../assets/logo.png";
 
 const SignupSeeker = () => {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -18,58 +21,23 @@ const SignupSeeker = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Load dotlottie-player via CDN
-  useEffect(() => {
-    if (!document.querySelector('script[src*="dotlottie-player"]')) {
-      const script = document.createElement("script");
-      script.type = "module";
-      script.src = "https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs";
-      document.body.appendChild(script);
-    }
-  }, []);
-
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match!");
       return;
     }
-
     try {
-      const response = await fetch("http://localhost:5000/api/auth/signup/seeker", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-         setError(data.error || "Signup failed");
-         return;
-      }
-      
-      alert("Seeker registered successfully!");
-      // Ideally navigate to login here: navigate('/login/seeker'); TODO
-      
-      setFormData({
-        name: "",
-        email: "",
-        mobilenumber: "",
-        password: "",
-        confirmPassword: "",
-        address: "",
-      });
-      setError("");
+      await authApi.signupSeeker(formData);
+      showToast("Account created! Please log in.", "success");
+      navigate("/login/seeker");
     } catch (err) {
-      console.error(err);
-      setError("Registration failed. Please try again.");
+      const msg = err.message ?? "Registration failed. Please try again.";
+      setError(msg);
+      showToast(msg, "error");
     }
   };
 

@@ -40,16 +40,15 @@ const SignupHelper = () => {
 
     const fetchData = async () => {
       try {
-        const catRes =await fetch("http://localhost:5000/api/services/categories");
-        const catData = await catRes.json();
+        const { serviceApi } = await import("../../utils/serviceApi");
+        const [catData, locData] = await Promise.all([
+          serviceApi.categories(),
+          serviceApi.locations(),
+        ]);
         setCategories(catData.categories || []);
-
-        const locRes = await fetch("http://localhost:5000/api/locations");
-        const locData = await locRes.json();
         setLocations(locData || []);
       } catch (err) {
-        console.error("Failed to load options", err);
-        // Optional: showToast("Failed to load form options", "error");
+        showToast("Failed to load form options", "error");
       }
     };
     fetchData();
@@ -84,30 +83,14 @@ const SignupHelper = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/signup/helper", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(finalPayload),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        const errorMsg = data.error || "Signup failed.";
-        setError(errorMsg);
-        // Also show a toast for visibility
-        showToast(errorMsg, "error");
-        return;
-      }
-
-      // 3. SUCCESS TOAST (Replaces Alert)
+      const { authApi } = await import("../../utils/authApi");
+      await authApi.signupHelper(finalPayload);
       showToast("Registration successful! Please login.", "success");
-      
       navigate("/login/helper");
     } catch (err) {
-      setError("Registration failed. Please try again later.");
-      showToast("Network error. Please try again.", "error");
+      const msg = err.message ?? "Registration failed. Please try again later.";
+      setError(msg);
+      showToast(msg, "error");
     }
   };
 

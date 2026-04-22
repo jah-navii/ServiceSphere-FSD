@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import useAuth from "../../hooks/useAuth";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
+import { serviceApi } from "../../utils/serviceApi";
 import styles from "./Home.module.css";
 import heroBg from "../../assets/hero.jpg";
 
-import spaService from "../../assets/spa-service.png";
-import cleaningService from "../../assets/cleaning-service.png";
-import electricianService from "../../assets/electrician-service.png";
+// Large category images served from public/ (not bundled)
+const SPA_IMG        = "/images/spa-service.png";
+const CLEANING_IMG   = "/images/cleaning-service.png";
+const ELECTRIC_IMG   = "/images/electrician-service.png";
 
 const STATS = [
   { value: "500+", label: "Verified Helpers" },
@@ -49,37 +51,19 @@ const HOW_IT_WORKS = [
 const Home = () => {
   const [categories, setCategories] = useState([]);
   const [openLocations, setOpenLocations] = useState([]);
-  const { isAuthenticated } = useSelector((state) => state.user);
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/services/categories");
-        const data = await res.json();
-        if (data.categories) setCategories(data.categories);
-      } catch (err) {
-        console.error("Failed to load categories");
-      }
-    };
-    const fetchOpenLocations = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/locations/open");
-        const data = await res.json();
-        if (Array.isArray(data)) setOpenLocations(data);
-      } catch (err) {
-        console.error("Failed to load open locations");
-      }
-    };
-    fetchCategories();
-    fetchOpenLocations();
+    serviceApi.categories().then((d) => setCategories(d.categories ?? [])).catch(() => {});
+    serviceApi.locationsOpen().then((d) => { if (Array.isArray(d)) setOpenLocations(d); }).catch(() => {});
   }, []);
 
   const getCategoryImage = (name) => {
     const n = name.toLowerCase();
-    if (n.includes("repair") || n.includes("maintenance") || n.includes("electric")) return electricianService;
-    if (n.includes("care") || n.includes("spa") || n.includes("beauty")) return spaService;
-    return cleaningService;
+    if (n.includes("repair") || n.includes("maintenance") || n.includes("electric")) return ELECTRIC_IMG;
+    if (n.includes("care") || n.includes("spa") || n.includes("beauty")) return SPA_IMG;
+    return CLEANING_IMG;
   };
 
   const handleCategoryClick = (catId) => {
@@ -148,7 +132,7 @@ const Home = () => {
             categories.map((cat) => (
               <div className={styles.card} key={cat._id}>
                 <div className={styles.cardImageWrap}>
-                  <img src={getCategoryImage(cat.name)} alt={cat.name} className={styles.cardImage} />
+                  <img src={getCategoryImage(cat.name)} alt={cat.name} className={styles.cardImage} loading="lazy" decoding="async" />
                 </div>
                 <div className={styles.cardBody}>
                   <h3>{cat.name}</h3>

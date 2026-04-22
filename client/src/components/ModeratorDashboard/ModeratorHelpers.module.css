@@ -324,3 +324,87 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Rejection reason modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 0;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modalHeader h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: #718096;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.modalBody {
+  padding: 1.25rem;
+}
+
+.reasonInput {
+  width: 100%;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.reasonInput:focus {
+  border-color: #007ea7;
+  box-shadow: 0 0 0 3px rgba(0, 126, 167, 0.15);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.cancelModalBtn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #cbd5e0;
+  background: #fff;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  color: #4a5568;
+}

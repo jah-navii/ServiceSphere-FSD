@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useOutletContext } from 'react-router-dom';
+import { helperApi } from '../../utils/helperApi';
 import styles from './FeedbackPage.module.css';
 
 function FeedbackPage() {
@@ -17,16 +18,10 @@ function FeedbackPage() {
       if (!helperId) return;
 
       try {
-        const res = await fetch(`http://localhost:5000/api/helper/feedback/${helperId}`);
-        const data = await res.json();
-
-        if (res.ok) {
-          setFeedbackList(data);
-        } else {
-          console.error("Failed to load feedback");
-        }
+        const data = await helperApi.feedback(helperId);
+        setFeedbackList(data);
       } catch (err) {
-        console.error("Network error:", err);
+        console.error("Failed to load feedback:", err.message);
       } finally {
         setLoading(false);
       }

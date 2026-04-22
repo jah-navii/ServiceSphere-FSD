@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { api } from "../../utils/api";
+import { adminApi } from "../../utils/adminApi";
+import { useToast } from "../../context/ToastContext";
+import useConfirm from "../../hooks/useConfirm";
+import ConfirmDialog from "../ui/ConfirmDialog";
+import LoadingSpinner from "../ui/LoadingSpinner";
+import ErrorState from "../ui/ErrorState";
 import styles from "./AdministratorLocations.module.css";
 
 const AdministratorLocations = () => {
+  const { showToast } = useToast();
+  const { confirm, isOpen, message, handleYes, handleNo } = useConfirm();
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,11 +32,11 @@ const AdministratorLocations = () => {
   const fetchLocations = async () => {
     try {
       setLoading(true);
-      const data = await api.get("/api/administrator/locations");
+      setError(null);
+      const data = await adminApi.locations();
       setLocations(data.data);
     } catch (err) {
       setError(err.message);
-      console.error("Locations Error:", err);
     } finally {
       setLoading(false);
     }
@@ -72,33 +79,30 @@ const AdministratorLocations = () => {
     
     try {
       if (modalMode === "create") {
-        await api.post("/api/administrator/locations", formData);
-        alert("Location created successfully");
+        await adminApi.createLocation(formData);
+        showToast("Location created successfully", "success");
       } else if (modalMode === "edit") {
-        await api.patch(`/api/administrator/locations/${selectedLocation._id}`, formData);
-        alert("Location updated successfully");
+        await adminApi.updateLocation(selectedLocation._id, formData);
+        showToast("Location updated successfully", "success");
       }
-      
       handleCloseModal();
       fetchLocations();
     } catch (err) {
-      alert(`Error: ${err.message}`);
-      console.error("Submit Error:", err);
+      showToast(`Error: ${err.message}`, "error");
     }
   };
 
   const handleDelete = async (locationId) => {
-    if (!window.confirm("Are you sure you want to delete this location? This will fail if there are helpers or moderators assigned to it.")) {
-      return;
-    }
-
+    const ok = await confirm(
+      "Are you sure you want to delete this location? This will fail if helpers or moderators are assigned to it."
+    );
+    if (!ok) return;
     try {
-      await api.delete(`/api/administrator/locations/${locationId}`);
-      alert("Location deleted successfully");
+      await adminApi.deleteLocation(locationId);
+      showToast("Location deleted successfully", "success");
       fetchLocations();
     } catch (err) {
-      alert(`Error deleting location: ${err.message}`);
-      console.error("Delete Error:", err);
+      showToast(`Error deleting location: ${err.message}`, "error");
     }
   };
 
@@ -115,19 +119,16 @@ const AdministratorLocations = () => {
     });
   };
 
-  if (loading) {
-    return <div className={styles.loading}>Loading...</div>;
-  }
-
-  if (error) {
-    return <div className={styles.error}>Error: {error}</div>;
-  }
+  if (loading) return <LoadingSpinner message="Loading locations..." />;
+  if (error)   return <ErrorState message={error} onRetry={fetchLocations} />;
 
   const activeLocations = locations.filter(l => l.status === 'active').length;
   const pendingLocations = locations.filter(l => l.status === 'pending_moderator').length;
   const totalHelpers = locations.reduce((sum, l) => sum + (l.helpersCount || 0), 0);
 
   return (
+    <>
+    <ConfirmDialog isOpen={isOpen} message={message} onConfirm={handleYes} onCancel={handleNo} />
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>Locations Management</h1>
@@ -299,6 +300,7 @@ const AdministratorLocations = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

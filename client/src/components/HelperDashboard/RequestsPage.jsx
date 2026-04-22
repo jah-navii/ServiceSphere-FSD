@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useToast } from '../../context/ToastContext';
+import { helperApi } from '../../utils/helperApi';
 import styles from './RequestsPage.module.css';
 
 function RequestsPage() {
@@ -18,16 +19,10 @@ function RequestsPage() {
       if (!helperId) return;
 
       try {
-        const res = await fetch(`http://localhost:5000/api/helper/requests/${helperId}`);
-        const data = await res.json();
-
-        if (res.ok) {
-          setRequests(data);
-        } else {
-          console.error("Failed to fetch requests");
-        }
+        const data = await helperApi.requests(helperId);
+        setRequests(data);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to fetch requests:", err.message);
       } finally {
         setLoading(false);
       }
@@ -39,26 +34,16 @@ function RequestsPage() {
   // Handling Accept and Reject Buttons
   const handleStatusUpdate = async (requestId, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/helper/requests/update`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ requestId, status: newStatus }),
-      });
-
-      const data = await res.json();
-
+      const data = await helperApi.updateRequest({ requestId, status: newStatus });
       if (data.success) {
-        setRequests(prev => 
-          prev.map(req => 
-            req._id === requestId ? { ...req, status: newStatus } : req
-          )
+        setRequests(prev =>
+          prev.map(req => req._id === requestId ? { ...req, status: newStatus } : req)
         );
         showToast(`Request ${newStatus}`, "success");
       } else {
         showToast(data.message || "Update failed", "error");
       }
     } catch (err) {
-      console.error(err);
       showToast("Network error", "error");
     }
   };
