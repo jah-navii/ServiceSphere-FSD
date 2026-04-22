@@ -2,79 +2,91 @@ import Helper from '../models/Helper.js';
 import Service from '../models/Service.js';
 import Feedback from '../models/Feedback.js';
 import Category from '../models/Category.js';
+import Location from '../models/Location.js';
+import { getOrSet } from '../utils/cache.js';
+
+const SERVICES_TTL  = 10 * 60;  // 10 min — helpers change infrequently
+const LOCATIONS_TTL = 60 * 60;  // 1 hr  — locations almost never change
 
 // GET /api/services
 export const getServicesAPI = async (req, res) => {
     try {
-        // FIX 1: Check for 'search' OR 'q' (handles mismatch)
         const rawSearch = req.query.search || req.query.q || "";
-        // Clean the string to prevent Regex errors
         const search = rawSearch.trim();
 
-        const { 
-            type = "all", 
-            gender = "all", 
+        const {
+            type = "all",
+            gender = "all",
             price = 5000,
             category = "all",
             location = "all"
         } = req.query;
 
-        console.log(`Searching for: "${search}"`); // Debug log
-
-        let query = { approved: true };
-
-        if (category !== "all") query.category = category; 
+        // Build DB-side query — push as many filters as possible to Mongo
+        const query = { approved: true, suspended: false };
+        if (category !== "all") query.category = category;
         if (gender !== 'all') query.gender = new RegExp(`^${gender}$`, 'i');
-        if (location !== 'all') query.address = new RegExp(`^${location}$`, 'i');
 
-        const helpers = await Helper.find(query).populate('category');
-        let results = [];
+        // Resolve location name → ObjectId so we can use the indexed Helper.location field
+        if (location !== 'all') {
+            const locDoc = await Location.findOne({ name: new RegExp(`^${location}$`, 'i') }).select('_id').lean();
+            if (locDoc) query.location = locDoc._id;
+        }
 
-        // ... (Ratings logic remains same) ...
-        const feedbacks = await Feedback.aggregate([
-            { $group: { _id: "$helper", avgRating: { $avg: "$rating" } } }
+        // Cache key encodes all filter dimensions
+        const cacheKey = `services:${JSON.stringify({ query, type, search, maxPrice: Number(price) })}`;
+
+        const payload = await getOrSet(cacheKey, SERVICES_TTL, async () => {
+        const [helpers, feedbacks] = await Promise.all([
+            Helper.find(query)
+                .populate('category', 'name _id')
+                .populate('services.serviceId', 'name price')
+                .lean(),
+            Feedback.aggregate([
+                { $group: { _id: "$helper", avgRating: { $avg: "$rating" } } }
+            ]),
         ]);
+
         const avgRatings = feedbacks.reduce((acc, f) => {
             acc[f._id.toString()] = f.avgRating.toFixed(1);
             return acc;
         }, {});
 
+        const maxPrice = Number(price) || 5000;
+        const results = [];
+
         helpers.forEach(helper => {
-            if (!helper.services) return;
+            if (!helper.services?.length) return;
+            helper.services.forEach(svc => {
+                const svcDoc = svc.serviceId; // populated Service doc
+                if (!svcDoc) return;
+                const svcPrice = svc.customPrice ?? svcDoc.price ?? 0;
+                if (svcPrice > maxPrice) return;
+                if (type !== "all" && svcDoc.name !== type) return;
+                if (search && !new RegExp(search, 'i').test(svcDoc.name)) return;
 
-            helper.services.forEach(service => {
-                // FIX 2: Stronger Search Logic
-                // If search is empty, it matches. If not, Regex test.
-                const matchesSearch = search === "" || new RegExp(search, 'i').test(service.name);
-                
-                const matchesType = type === "all" || service.name === type;
-                const matchesPrice = service.price <= Number(price);
-
-                if (matchesSearch && matchesType && matchesPrice) {
-                    results.push({
-                        id: helper._id,
-                        name: helper.name,
-                        availability: helper.availability,
-                        gender: helper.gender,
-                        address: helper.address,
-                        rating: avgRatings[helper._id.toString()] || '4.5',
-                        service: service.name,
-                        price: service.price,
-                        categoryName: helper.category?.name,
-                        categoryId: helper.category?._id
-                    });
-                }
+                results.push({
+                    id:           helper._id,
+                    name:         helper.name,
+                    availability: helper.availability,
+                    gender:       helper.gender,
+                    address:      helper.address,
+                    rating:       avgRatings[helper._id.toString()] || '4.5',
+                    service:      svcDoc.name,
+                    price:        svcPrice,
+                    categoryName: helper.category?.name,
+                    categoryId:   helper.category?._id,
+                });
             });
         });
 
-        // ... (Rest of function remains same) ...
-        const availableServiceTypes = await Service.find(category !== "all" ? { category } : {}).select('name');
-        
-        res.status(200).json({ 
-            success: true, 
-            helpers: results, 
-            serviceTypes: availableServiceTypes
+        const availableServiceTypes = await Service.find(category !== "all" ? { category } : {})
+            .select('name').lean();
+
+            return { helpers: results, serviceTypes: availableServiceTypes };
         });
+
+        res.status(200).json({ success: true, ...payload });
 
     } catch (err) {
         console.error("API Error:", err);
@@ -85,7 +97,9 @@ export const getServicesAPI = async (req, res) => {
 
 export const getCategoriesAPI = async (req, res) => {
   try {
-    const categories = await Category.find();
+    const categories = await getOrSet('categories:all', LOCATIONS_TTL, () =>
+      Category.find().lean()
+    );
     res.status(200).json({ success: true, categories });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Failed to fetch categories' });

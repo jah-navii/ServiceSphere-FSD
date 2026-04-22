@@ -1,0 +1,124 @@
+{
+  "explainVersion": "1",
+  "queryPlanner": {
+    "namespace": "jahnavipro.bookings",
+    "parsedQuery": {},
+    "indexFilterSet": false,
+    "queryHash": "7B43E37B",
+    "planCacheKey": "76FECFA7",
+    "optimizationTimeMillis": 0,
+    "maxIndexedOrSolutionsReached": false,
+    "maxIndexedAndSolutionsReached": false,
+    "maxScansToExplodeReached": false,
+    "prunedSimilarIndexes": false,
+    "winningPlan": {
+      "isCached": false,
+      "stage": "SORT",
+      "sortPattern": {
+        "createdAt": -1
+      },
+      "memLimit": 104857600,
+      "type": "simple",
+      "inputStage": {
+        "stage": "PROJECTION_SIMPLE",
+        "transformBy": {
+          "seeded": 0
+        },
+        "inputStage": {
+          "stage": "COLLSCAN",
+          "direction": "forward"
+        }
+      }
+    },
+    "rejectedPlans": []
+  },
+  "executionStats": {
+    "executionSuccess": true,
+    "nReturned": 5014,
+    "executionTimeMillis": 28,
+    "totalKeysExamined": 0,
+    "totalDocsExamined": 5014,
+    "executionStages": {
+      "isCached": false,
+      "stage": "SORT",
+      "nReturned": 5014,
+      "executionTimeMillisEstimate": 20,
+      "works": 10030,
+      "advanced": 5014,
+      "needTime": 5015,
+      "needYield": 0,
+      "saveState": 1,
+      "restoreState": 1,
+      "isEOF": 1,
+      "sortPattern": {
+        "createdAt": -1
+      },
+      "memLimit": 104857600,
+      "type": "simple",
+      "totalDataSizeSorted": 1412032,
+      "usedDisk": false,
+      "spills": 0,
+      "spilledDataStorageSize": 0,
+      "inputStage": {
+        "stage": "PROJECTION_SIMPLE",
+        "nReturned": 5014,
+        "executionTimeMillisEstimate": 20,
+        "works": 5015,
+        "advanced": 5014,
+        "needTime": 0,
+        "needYield": 0,
+        "saveState": 1,
+        "restoreState": 1,
+        "isEOF": 1,
+        "transformBy": {
+          "seeded": 0
+        },
+        "inputStage": {
+          "stage": "COLLSCAN",
+          "nReturned": 5014,
+          "executionTimeMillisEstimate": 10,
+          "works": 5015,
+          "advanced": 5014,
+          "needTime": 0,
+          "needYield": 0,
+          "saveState": 1,
+          "restoreState": 1,
+          "isEOF": 1,
+          "direction": "forward",
+          "docsExamined": 5014
+        }
+      }
+    },
+    "allPlansExecution": []
+  },
+  "command": {
+    "find": "bookings",
+    "filter": {},
+    "sort": {
+      "createdAt": -1
+    },
+    "projection": {
+      "seeded": 0
+    },
+    "$db": "jahnavipro"
+  },
+  "serverInfo": {
+    "host": "Jahnavi",
+    "port": 27017,
+    "version": "8.0.1",
+    "gitVersion": "fcbe67d668fff5a370e2d87b9b1f74bc11bb7b94"
+  },
+  "serverParameters": {
+    "internalQueryFacetBufferSizeBytes": 104857600,
+    "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+    "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+    "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+    "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+    "internalQueryProhibitBlockingMergeOnMongoS": 0,
+    "internalQueryMaxAddToSetBytes": 104857600,
+    "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+    "internalQueryFrameworkControl": "trySbeRestricted",
+    "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+  },
+  "ok": 1
+}

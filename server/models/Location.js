@@ -20,7 +20,8 @@ const locationSchema = new mongoose.Schema({
     type: String,
     enum: ['active', 'inactive', 'pending_moderator'],
     default: 'pending_moderator'
-  }
+  },
+  seeded: { type: Boolean, default: false, select: false },
 }, {
   timestamps: true
 });

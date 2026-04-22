@@ -1,0 +1,95 @@
+{
+  "explainVersion": "1",
+  "queryPlanner": {
+    "namespace": "jahnavipro.helpers",
+    "parsedQuery": {},
+    "indexFilterSet": false,
+    "queryHash": "8F2383EE",
+    "planCacheKey": "7DF350EE",
+    "optimizationTimeMillis": 0,
+    "maxIndexedOrSolutionsReached": false,
+    "maxIndexedAndSolutionsReached": false,
+    "maxScansToExplodeReached": false,
+    "prunedSimilarIndexes": false,
+    "winningPlan": {
+      "isCached": false,
+      "stage": "PROJECTION_SIMPLE",
+      "transformBy": {
+        "password": 0,
+        "seeded": 0
+      },
+      "inputStage": {
+        "stage": "COLLSCAN",
+        "direction": "forward"
+      }
+    },
+    "rejectedPlans": []
+  },
+  "executionStats": {
+    "executionSuccess": true,
+    "nReturned": 304,
+    "executionTimeMillis": 0,
+    "totalKeysExamined": 0,
+    "totalDocsExamined": 304,
+    "executionStages": {
+      "isCached": false,
+      "stage": "PROJECTION_SIMPLE",
+      "nReturned": 304,
+      "executionTimeMillisEstimate": 0,
+      "works": 305,
+      "advanced": 304,
+      "needTime": 0,
+      "needYield": 0,
+      "saveState": 0,
+      "restoreState": 0,
+      "isEOF": 1,
+      "transformBy": {
+        "password": 0,
+        "seeded": 0
+      },
+      "inputStage": {
+        "stage": "COLLSCAN",
+        "nReturned": 304,
+        "executionTimeMillisEstimate": 0,
+        "works": 305,
+        "advanced": 304,
+        "needTime": 0,
+        "needYield": 0,
+        "saveState": 0,
+        "restoreState": 0,
+        "isEOF": 1,
+        "direction": "forward",
+        "docsExamined": 304
+      }
+    },
+    "allPlansExecution": []
+  },
+  "command": {
+    "find": "helpers",
+    "filter": {},
+    "projection": {
+      "password": 0,
+      "seeded": 0
+    },
+    "$db": "jahnavipro"
+  },
+  "serverInfo": {
+    "host": "Jahnavi",
+    "port": 27017,
+    "version": "8.0.1",
+    "gitVersion": "fcbe67d668fff5a370e2d87b9b1f74bc11bb7b94"
+  },
+  "serverParameters": {
+    "internalQueryFacetBufferSizeBytes": 104857600,
+    "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+    "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+    "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+    "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+    "internalQueryProhibitBlockingMergeOnMongoS": 0,
+    "internalQueryMaxAddToSetBytes": 104857600,
+    "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+    "internalQueryFrameworkControl": "trySbeRestricted",
+    "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+  },
+  "ok": 1
+}

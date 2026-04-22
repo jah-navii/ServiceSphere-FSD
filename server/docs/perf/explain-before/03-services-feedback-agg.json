@@ -1,0 +1,171 @@
+{
+  "explainVersion": "2",
+  "queryPlanner": {
+    "namespace": "jahnavipro.feedbacks",
+    "parsedQuery": {},
+    "indexFilterSet": false,
+    "queryHash": "0735C5B8",
+    "planCacheKey": "B7219628",
+    "optimizationTimeMillis": 10,
+    "optimizedPipeline": true,
+    "maxIndexedOrSolutionsReached": false,
+    "maxIndexedAndSolutionsReached": false,
+    "maxScansToExplodeReached": false,
+    "prunedSimilarIndexes": false,
+    "winningPlan": {
+      "isCached": false,
+      "queryPlan": {
+        "stage": "GROUP",
+        "planNodeId": 3,
+        "inputStage": {
+          "stage": "COLLSCAN",
+          "planNodeId": 1,
+          "filter": {},
+          "direction": "forward"
+        }
+      },
+      "slotBasedPlan": {
+        "slots": "$$RESULT=s11 env: {  }",
+        "stages": "[3] project [s11 = newBsonObj(\"_id\", s7, \"avgRating\", s10)] \n[3] project [s10 = \n    if (s9 == 0ll) \n    then null \n    else (doubleDoubleSumFinalize(s8) / s9) \n] \n[3] group [s7] [s8 = aggDoubleDoubleSum(s2), s9 = sum(\n    if ((typeMatch(s2, 1088) ?: true) || !(isNumber(s2))) \n    then 0ll \n    else 1ll \n)] spillSlots[s5, s6] mergingExprs[aggMergeDoubleDoubleSums(s5), sum(s6)] \n[3] project [s7 = (s1 ?: null)] \n[1] scan s3 s4 none none none none none none lowPriority [s1 = helper, s2 = rating] @\"03a430f0-fb71-40ca-ade4-8d0fb43373b2\" true false "
+      }
+    },
+    "rejectedPlans": []
+  },
+  "executionStats": {
+    "executionSuccess": true,
+    "nReturned": 301,
+    "executionTimeMillis": 37,
+    "totalKeysExamined": 0,
+    "totalDocsExamined": 2001,
+    "executionStages": {
+      "stage": "project",
+      "planNodeId": 3,
+      "nReturned": 301,
+      "executionTimeMillisEstimate": 10,
+      "opens": 1,
+      "closes": 1,
+      "saveState": 1,
+      "restoreState": 1,
+      "isEOF": 1,
+      "projections": {
+        "11": "newBsonObj(\"_id\", s7, \"avgRating\", s10) "
+      },
+      "inputStage": {
+        "stage": "project",
+        "planNodeId": 3,
+        "nReturned": 301,
+        "executionTimeMillisEstimate": 10,
+        "opens": 1,
+        "closes": 1,
+        "saveState": 1,
+        "restoreState": 1,
+        "isEOF": 1,
+        "projections": {
+          "10": "\n    if (s9 == 0ll) \n    then null \n    else (doubleDoubleSumFinalize(s8) / s9) \n"
+        },
+        "inputStage": {
+          "stage": "group",
+          "planNodeId": 3,
+          "nReturned": 301,
+          "executionTimeMillisEstimate": 0,
+          "opens": 1,
+          "closes": 1,
+          "saveState": 1,
+          "restoreState": 1,
+          "isEOF": 1,
+          "groupBySlots": [
+            7
+          ],
+          "expressions": {
+            "8": "aggDoubleDoubleSum(s2) ",
+            "9": "sum(\n    if ((typeMatch(s2, 1088) ?: true) || !(isNumber(s2))) \n    then 0ll \n    else 1ll \n) ",
+            "initExprs": {
+              "8": null,
+              "9": null
+            }
+          },
+          "mergingExprs": {
+            "5": "aggMergeDoubleDoubleSums(s5) ",
+            "6": "sum(s6) "
+          },
+          "usedDisk": false,
+          "spills": 0,
+          "spilledBytes": 0,
+          "spilledRecords": 0,
+          "spilledDataStorageSize": 0,
+          "inputStage": {
+            "stage": "project",
+            "planNodeId": 3,
+            "nReturned": 2001,
+            "executionTimeMillisEstimate": 0,
+            "opens": 1,
+            "closes": 1,
+            "saveState": 1,
+            "restoreState": 1,
+            "isEOF": 1,
+            "projections": {
+              "7": "(s1 ?: null) "
+            },
+            "inputStage": {
+              "stage": "scan",
+              "planNodeId": 1,
+              "nReturned": 2001,
+              "executionTimeMillisEstimate": 0,
+              "opens": 1,
+              "closes": 1,
+              "saveState": 1,
+              "restoreState": 1,
+              "isEOF": 1,
+              "numReads": 2001,
+              "recordSlot": 3,
+              "recordIdSlot": 4,
+              "scanFieldNames": [
+                "helper",
+                "rating"
+              ],
+              "scanFieldSlots": [
+                1,
+                2
+              ]
+            }
+          }
+        }
+      }
+    },
+    "allPlansExecution": []
+  },
+  "command": {
+    "aggregate": "feedbacks",
+    "pipeline": [
+      {
+        "$group": {
+          "_id": "$helper",
+          "avgRating": {
+            "$avg": "$rating"
+          }
+        }
+      }
+    ],
+    "cursor": {},
+    "$db": "jahnavipro"
+  },
+  "serverInfo": {
+    "host": "Jahnavi",
+    "port": 27017,
+    "version": "8.0.1",
+    "gitVersion": "fcbe67d668fff5a370e2d87b9b1f74bc11bb7b94"
+  },
+  "serverParameters": {
+    "internalQueryFacetBufferSizeBytes": 104857600,
+    "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+    "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+    "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+    "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+    "internalQueryProhibitBlockingMergeOnMongoS": 0,
+    "internalQueryMaxAddToSetBytes": 104857600,
+    "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+    "internalQueryFrameworkControl": "trySbeRestricted",
+    "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+  },
+  "ok": 1
+}

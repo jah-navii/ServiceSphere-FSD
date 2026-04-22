@@ -1,0 +1,140 @@
+{
+  "explainVersion": "1",
+  "queryPlanner": {
+    "namespace": "jahnavipro.feedbacks",
+    "parsedQuery": {
+      "helper": {
+        "$eq": "69e8921d65e544dfb8965f2f"
+      }
+    },
+    "indexFilterSet": false,
+    "queryHash": "F838DAF3",
+    "planCacheKey": "2F2B73CF",
+    "optimizationTimeMillis": 0,
+    "maxIndexedOrSolutionsReached": false,
+    "maxIndexedAndSolutionsReached": false,
+    "maxScansToExplodeReached": false,
+    "prunedSimilarIndexes": false,
+    "winningPlan": {
+      "isCached": false,
+      "stage": "SORT",
+      "sortPattern": {
+        "createdAt": -1
+      },
+      "memLimit": 104857600,
+      "type": "simple",
+      "inputStage": {
+        "stage": "PROJECTION_SIMPLE",
+        "transformBy": {
+          "seeded": 0
+        },
+        "inputStage": {
+          "stage": "COLLSCAN",
+          "filter": {
+            "helper": {
+              "$eq": "69e8921d65e544dfb8965f2f"
+            }
+          },
+          "direction": "forward"
+        }
+      }
+    },
+    "rejectedPlans": []
+  },
+  "executionStats": {
+    "executionSuccess": true,
+    "nReturned": 4,
+    "executionTimeMillis": 1,
+    "totalKeysExamined": 0,
+    "totalDocsExamined": 2001,
+    "executionStages": {
+      "isCached": false,
+      "stage": "SORT",
+      "nReturned": 4,
+      "executionTimeMillisEstimate": 0,
+      "works": 2007,
+      "advanced": 4,
+      "needTime": 2002,
+      "needYield": 0,
+      "saveState": 0,
+      "restoreState": 0,
+      "isEOF": 1,
+      "sortPattern": {
+        "createdAt": -1
+      },
+      "memLimit": 104857600,
+      "type": "simple",
+      "totalDataSizeSorted": 867,
+      "usedDisk": false,
+      "spills": 0,
+      "spilledDataStorageSize": 0,
+      "inputStage": {
+        "stage": "PROJECTION_SIMPLE",
+        "nReturned": 4,
+        "executionTimeMillisEstimate": 0,
+        "works": 2002,
+        "advanced": 4,
+        "needTime": 1997,
+        "needYield": 0,
+        "saveState": 0,
+        "restoreState": 0,
+        "isEOF": 1,
+        "transformBy": {
+          "seeded": 0
+        },
+        "inputStage": {
+          "stage": "COLLSCAN",
+          "filter": {
+            "helper": {
+              "$eq": "69e8921d65e544dfb8965f2f"
+            }
+          },
+          "nReturned": 4,
+          "executionTimeMillisEstimate": 0,
+          "works": 2002,
+          "advanced": 4,
+          "needTime": 1997,
+          "needYield": 0,
+          "saveState": 0,
+          "restoreState": 0,
+          "isEOF": 1,
+          "direction": "forward",
+          "docsExamined": 2001
+        }
+      }
+    },
+    "allPlansExecution": []
+  },
+  "command": {
+    "find": "feedbacks",
+    "filter": {
+      "helper": "69e8921d65e544dfb8965f2f"
+    },
+    "sort": {
+      "createdAt": -1
+    },
+    "projection": {
+      "seeded": 0
+    },
+    "$db": "jahnavipro"
+  },
+  "serverInfo": {
+    "host": "Jahnavi",
+    "port": 27017,
+    "version": "8.0.1",
+    "gitVersion": "fcbe67d668fff5a370e2d87b9b1f74bc11bb7b94"
+  },
+  "serverParameters": {
+    "internalQueryFacetBufferSizeBytes": 104857600,
+    "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+    "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+    "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+    "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+    "internalQueryProhibitBlockingMergeOnMongoS": 0,
+    "internalQueryMaxAddToSetBytes": 104857600,
+    "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+    "internalQueryFrameworkControl": "trySbeRestricted",
+    "internalQueryPlannerIgnoreIndexWithCollationForRegex": 1
+  },
+  "ok": 1
+}

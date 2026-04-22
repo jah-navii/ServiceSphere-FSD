@@ -40,9 +40,14 @@ const helperSchema = new mongoose.Schema(
     certifications: [String],
     approved:       { type: Boolean, default: false },
     suspended:      { type: Boolean, default: false },
+    seeded:         { type: Boolean, default: false, select: false },
   },
   { timestamps: true }
 );
+
+helperSchema.index({ location: 1, approved: 1 });
+helperSchema.index({ approved: 1, suspended: 1 });
+helperSchema.index({ category: 1, approved: 1 });
 
 helperSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();

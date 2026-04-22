@@ -8,7 +8,8 @@ const categorySchema = new mongoose.Schema({
     trim: true 
   },
   description: { type: String }, 
-  image: { type: String } // Optional icon for the UI
+  image: { type: String }, // Optional icon for the UI
+  seeded: { type: Boolean, default: false, select: false },
 }, { timestamps: true });
 
 export default mongoose.model('Category', categorySchema);

@@ -13,6 +13,7 @@ const serviceSchema = new mongoose.Schema(
       required: true,
     },
     isActive: { type: Boolean, default: true },
+    seeded: { type: Boolean, default: false, select: false },
   },
   { timestamps: true }
 );

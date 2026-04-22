@@ -39,6 +39,7 @@ const adminSchema = new mongoose.Schema(
     },
     approvedDate:     { type: Date },
     rejectionReason:  { type: String },
+    seeded: { type: Boolean, default: false, select: false },
   },
   { timestamps: true }
 );
