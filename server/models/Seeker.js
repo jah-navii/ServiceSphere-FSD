@@ -23,6 +23,7 @@ const seekerSchema = new mongoose.Schema(
     },
     address:   { type: String, required: true },
     suspended: { type: Boolean, default: false },
+    seeded:    { type: Boolean, default: false, select: false },
   },
   { timestamps: true }
 );

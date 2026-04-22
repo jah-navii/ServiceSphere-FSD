@@ -1,9 +1,14 @@
 import Location from '../models/Location.js';
+import { getOrSet, del } from '../utils/cache.js';
+
+const LOCATION_TTL = 60 * 60; // 1 hour
 
 // GET /api/locations
 export const getLocations = async (req, res) => {
   try {
-    const locations = await Location.find().sort({ name: 1 });
+    const locations = await getOrSet('locations:all', LOCATION_TTL, () =>
+      Location.find().sort({ name: 1 }).lean()
+    );
     res.status(200).json(locations);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch locations' });

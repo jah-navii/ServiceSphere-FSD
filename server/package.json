@@ -10,7 +10,12 @@
     "dev": "nodemon index.js",
     "start": "node index.js",
     "lint": "eslint .",
-    "swagger": "node swagger-autogen.js"
+    "swagger": "node swagger-autogen.js",
+    "seed": "node scripts/seed.js",
+    "seed:clean": "node scripts/seed.js --clean",
+    "seed:reset": "node scripts/seed.js --reset",
+    "bench": "node benchmarks/bench-all.js",
+    "explain": "node benchmarks/helpers/run-explains.js"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +34,7 @@
     "mongoose": "^8.13.2",
     "morgan": "^1.10.1",
     "multer": "^1.4.5-lts.1",
+    "node-cache": "^5.1.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.19.0",
@@ -37,6 +43,8 @@
   },
   "description": "",
   "devDependencies": {
+    "@faker-js/faker": "^9.9.0",
+    "autocannon": "^8.0.0",
     "nodemon": "^3.1.14",
     "swagger-autogen": "^2.23.7"
   }

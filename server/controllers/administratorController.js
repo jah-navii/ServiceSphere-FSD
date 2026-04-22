@@ -8,6 +8,7 @@ import Location from '../models/Location.js';
 import ContactMessage from '../models/ContactMessage.js';
 import Feedback from '../models/Feedback.js';
 import ServiceRequest from '../models/ServiceRequest.js';
+import { getOrSet } from '../utils/cache.js';
 
 /**
  * Administrator Dashboard - Overview of entire platform
@@ -41,16 +42,12 @@ export const getAdministratorDashboard = async (req, res) => {
     const pendingBookings = await Booking.countDocuments({ status: 'pending' });
     const cancelledBookings = await Booking.countDocuments({ status: 'rejected' });
 
-    // Calculate total revenue from completed bookings (past date + paid)
-    const allBookings = await Booking.find({});
-    const totalRevenue = allBookings
-      .filter(b => {
-        const bookingDate = new Date(b.date);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return b.paid === true && bookingDate < today;
-      })
-      .reduce((sum, b) => sum + (b.price || 0), 0);
+    // Calculate total revenue from paid bookings via aggregate (avoids full scan in JS)
+    const revenueAgg = await Booking.aggregate([
+      { $match: { paid: true } },
+      { $group: { _id: null, total: { $sum: '$price' } } },
+    ]);
+    const totalRevenue = revenueAgg[0]?.total ?? 0;
 
     res.status(200).json({
       success: true,
@@ -93,18 +90,33 @@ export const getAdministratorDashboard = async (req, res) => {
 
 /**
  * Get all users (Helpers, Seekers, Admins)
- * GET /api/administrator/users/all
+ * GET /api/administrator/users/all?role=helpers&page=1&limit=50
  */
 export const getAllUsers = async (req, res) => {
   try {
-    const helpers = await Helper.find()
-      .populate('location', 'name')
-      .populate('category', 'name')
-      .select('-password');
-    const seekers = await Seeker.find().select('-password');
-    const moderators = await Admin.find({ role: 'moderator' })
-      .populate('assignedLocation', 'name')
-      .select('-password');
+    const page  = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit = Math.min(500, parseInt(req.query.limit) || 50);
+    const skip  = (page - 1) * limit;
+    const role  = req.query.role || 'all';
+
+    const [helpers, seekers, moderators, counts] = await Promise.all([
+      (role === 'all' || role === 'helpers')
+        ? Helper.find().populate('location', 'name').populate('category', 'name')
+            .select('-password').sort({ createdAt: -1 }).skip(skip).limit(limit).lean()
+        : [],
+      (role === 'all' || role === 'seekers')
+        ? Seeker.find().select('-password').sort({ createdAt: -1 }).skip(skip).limit(limit).lean()
+        : [],
+      (role === 'all' || role === 'moderators')
+        ? Admin.find({ role: 'moderator' }).populate('assignedLocation', 'name')
+            .select('-password').lean()
+        : [],
+      Promise.all([
+        Helper.countDocuments(),
+        Seeker.countDocuments(),
+        Admin.countDocuments({ role: 'moderator' }),
+      ]),
+    ]);
 
     res.status(200).json({
       success: true,
@@ -113,69 +125,74 @@ export const getAllUsers = async (req, res) => {
         seekers,
         moderators,
         counts: {
-          helpers: helpers.length,
-          seekers: seekers.length,
-          moderators: moderators.length,
-          total: helpers.length + seekers.length + moderators.length
-        }
-      }
+          helpers:    counts[0],
+          seekers:    counts[1],
+          moderators: counts[2],
+          total:      counts[0] + counts[1] + counts[2],
+        },
+        pagination: { page, limit },
+      },
     });
   } catch (error) {
     console.error('Get All Users Error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Failed to fetch users' 
-    });
+    res.status(500).json({ success: false, error: 'Failed to fetch users' });
   }
 };
 
 /**
  * Get all bookings with detailed information
- * GET /api/administrator/bookings/all
+ * GET /api/administrator/bookings/all?page=1&limit=50&status=pending
  */
 export const getAllBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find()
-      .populate('helper', 'name email mobilenumber category')
-      .populate('seeker', 'name email mobilenumber address')
-      .sort({ createdAt: -1 });
+    const page   = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit  = Math.min(200, parseInt(req.query.limit) || 50);
+    const skip   = (page - 1) * limit;
+    const filter = {};
+    if (req.query.status) filter.status = req.query.status;
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const statsKey = `admin:bookings:stats${req.query.status ? ':' + req.query.status : ''}`;
+    const [bookings, agg] = await Promise.all([
+      Booking.find(filter)
+        .populate('helper', 'name email mobilenumber category')
+        .populate('seeker', 'name email mobilenumber address')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      getOrSet(statsKey, 30, () => Booking.aggregate([
+        ...(filter.status ? [{ $match: filter }] : []),
+        { $group: {
+          _id: null,
+          total:       { $sum: 1 },
+          pending:     { $sum: { $cond: [{ $eq: ['$status', 'pending']     }, 1, 0] } },
+          confirmed:   { $sum: { $cond: [{ $eq: ['$status', 'confirmed']   }, 1, 0] } },
+          in_progress: { $sum: { $cond: [{ $eq: ['$status', 'in_progress'] }, 1, 0] } },
+          completed:   { $sum: { $cond: [{ $eq: ['$status', 'completed']   }, 1, 0] } },
+          cancelled:   { $sum: { $cond: [{ $eq: ['$status', 'cancelled']   }, 1, 0] } },
+          totalRevenue:{ $sum: { $cond: ['$paid', '$price', 0] } },
+        }},
+      ])),
+    ]);
+    const [agg0] = agg;
 
-    // Group by status - using proper statuses and completion logic
-    const byStatus = {
-      pending: bookings.filter(b => b.status === 'pending'),
-      completed: bookings.filter(b => {
-        const bookingDate = new Date(b.date);
-        return b.paid === true && bookingDate < today;
-      }),
-      cancelled: bookings.filter(b => b.status === 'rejected')
-    };
-
-    // Calculate stats
-    const stats = {
-      total: bookings.length,
-      pending: byStatus.pending.length,
-      completed: byStatus.completed.length,
-      cancelled: byStatus.cancelled.length,
-      totalRevenue: byStatus.completed.reduce((sum, b) => sum + (b.price || 0), 0)
-    };
+    const stats = agg0
+      ? { total: agg0.total, pending: agg0.pending, confirmed: agg0.confirmed,
+          in_progress: agg0.in_progress, completed: agg0.completed,
+          cancelled: agg0.cancelled, totalRevenue: agg0.totalRevenue }
+      : { total: 0, pending: 0, confirmed: 0, in_progress: 0, completed: 0, cancelled: 0, totalRevenue: 0 };
 
     res.status(200).json({
       success: true,
       data: {
         bookings,
-        byStatus,
-        stats
-      }
+        stats,
+        pagination: { page, limit, total: stats.total, pages: Math.ceil(stats.total / limit) },
+      },
     });
   } catch (error) {
     console.error('Get All Bookings Error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Failed to fetch bookings' 
-    });
+    res.status(500).json({ success: false, error: 'Failed to fetch bookings' });
   }
 };
 

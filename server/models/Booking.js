@@ -19,11 +19,14 @@ const bookingSchema = new mongoose.Schema(
     },
     price:        { type: Number,  required: true },
     paid:         { type: Boolean, default: false },
+    seeded:       { type: Boolean, default: false, select: false },
   },
   { timestamps: true }
 );
 
 bookingSchema.index({ seeker: 1, createdAt: -1 });
 bookingSchema.index({ helper: 1, status: 1 });
+bookingSchema.index({ status: 1, createdAt: -1 });
+bookingSchema.index({ helper: 1, createdAt: -1 });
 
 export default mongoose.model('Booking', bookingSchema);

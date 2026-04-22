@@ -12,6 +12,7 @@ const contactMessageSchema = new mongoose.Schema(
     phone:     { type: String, required: true },
     issueType: { type: String, required: true },
     message:   { type: String, required: true },
+    seeded:    { type: Boolean, default: false, select: false },
   },
   { timestamps: true }
 );

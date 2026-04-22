@@ -136,95 +136,85 @@ export const loginModerator = async (req, res) => {
 // Get moderator dashboard data (location-specific)
 export const getModeratorDashboard = async (req, res) => {
   try {
-    const moderatorId = req.user.id;
-    const moderator = await Admin.findById(moderatorId);
-
-    if (!moderator || !moderator.assignedLocation) {
+    const moderator = await Admin.findById(req.user.id).lean();
+    if (!moderator?.assignedLocation) {
       return res.status(403).json({ error: 'No location assigned' });
     }
-
     const locationId = moderator.assignedLocation;
-    console.log('Moderator Dashboard - Location ID:', locationId);
 
-    // Get helpers in this location
-    const helpers = await Helper.find({ location: locationId });
-    const pendingHelpers = helpers.filter(h => !h.approved && !h.suspended).length;
-    const activeHelpers  = helpers.filter(h =>  h.approved && !h.suspended).length;
-    const suspendedHelpers = helpers.filter(h => h.suspended).length;
-    const helperIds = helpers.map(h => h._id);
+    // Phase 1: helper IDs + counts (single collection scan, indexed on location)
+    const helperDocs = await Helper.find({ location: locationId })
+      .select('_id approved suspended name createdAt').lean();
+    const helperIds      = helperDocs.map(h => h._id);
+    const pendingCount   = helperDocs.filter(h => !h.approved && !h.suspended).length;
+    const activeCount    = helperDocs.filter(h =>  h.approved && !h.suspended).length;
+    const suspendedCount = helperDocs.filter(h =>  h.suspended).length;
 
-    // Get bookings for helpers in this location
-    const bookings = await Booking.find({ helper: { $in: helperIds } })
-      .populate('helper', 'name')
-      .populate('seeker', 'name');
+    // Phase 2: booking stats, feedback avg, location doc, recent bookings — all in parallel
+    const today      = new Date(); today.setHours(0, 0, 0, 0);
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
-    const todayStr   = new Date().toISOString().split('T')[0];
-    const monthStr   = todayStr.substring(0, 7);
+    const [bookingAgg, feedbackAgg, location, pendingHelpersList, recentBookings] = await Promise.all([
+      Booking.aggregate([
+        { $match: { helper: { $in: helperIds } } },
+        { $group: {
+          _id:           null,
+          total:         { $sum: 1 },
+          pending:       { $sum: { $cond: [{ $eq: ['$status', 'pending']   }, 1, 0] } },
+          completed:     { $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] } },
+          cancelled:     { $sum: { $cond: [{ $eq: ['$status', 'cancelled'] }, 1, 0] } },
+          todayCount:    { $sum: { $cond: [{ $gte: ['$date', today]         }, 1, 0] } },
+          totalRevenue:  { $sum: { $cond: ['$paid', '$price', 0] } },
+          monthlyRevenue:{ $sum: { $cond: [{ $and: ['$paid', { $gte: ['$date', monthStart] }] }, '$price', 0] } },
+          seekerSet:     { $addToSet: '$seeker' },
+        }},
+      ]),
+      Feedback.aggregate([
+        { $match: { helper: { $in: helperIds } } },
+        { $group: { _id: null, avg: { $avg: '$rating' } } },
+      ]),
+      Location.findById(locationId).lean(),
+      helperDocs
+        .filter(h => !h.approved && !h.suspended)
+        .sort((a, b) => b.createdAt - a.createdAt)
+        .slice(0, 3)
+        .map(h => ({ _id: h._id, name: h.name, createdAt: h.createdAt })),
+      Booking.find({ helper: { $in: helperIds } })
+        .populate('helper', 'name').populate('seeker', 'name')
+        .sort({ createdAt: -1 }).limit(5).lean(),
+    ]);
 
-    const todayBookings     = bookings.filter(b => b.date === todayStr).length;
-    const completedBookings = bookings.filter(b => b.status === 'completed').length;
-    const pendingBookings   = bookings.filter(b => b.status === 'pending').length;
-    const cancelledBookings = bookings.filter(b => b.status === 'cancelled').length;
-
-    const totalRevenue   = bookings.filter(b => b.paid).reduce((s, b) => s + (b.price || 0), 0);
-    const monthlyRevenue = bookings
-      .filter(b => b.paid && b.date && b.date.startsWith(monthStr))
-      .reduce((s, b) => s + (b.price || 0), 0);
-
-    // Distinct seekers who have booked
-    const totalSeekers = new Set(bookings.map(b => b.seeker?._id?.toString()).filter(Boolean)).size;
-
-    // Average rating
-    const feedbacks = await Feedback.find({ helper: { $in: helperIds } });
-    const avgRating = feedbacks.length
-      ? parseFloat((feedbacks.reduce((s, f) => s + f.rating, 0) / feedbacks.length).toFixed(1))
+    const b = bookingAgg[0] ?? {
+      total: 0, pending: 0, completed: 0, cancelled: 0,
+      todayCount: 0, totalRevenue: 0, monthlyRevenue: 0, seekerSet: [],
+    };
+    const avgRating = feedbackAgg[0]?.avg != null
+      ? parseFloat(feedbackAgg[0].avg.toFixed(1))
       : null;
-
-    // Recent bookings (last 5, sorted by date desc)
-    const recentBookings = [...bookings]
-      .sort((a, b) => b.date.localeCompare(a.date))
-      .slice(0, 5)
-      .map(b => ({
-        _id: b._id,
-        seeker: b.seeker,
-        helper: b.helper,
-        service_type: b.service_type,
-        date: b.date,
-        time: b.time,
-        status: b.status,
-        price: b.price,
-        paid: b.paid
-      }));
-
-    // Pending helper applications (first 3 for dashboard widget)
-    const pendingHelpersList = helpers
-      .filter(h => !h.approved && !h.suspended)
-      .slice(0, 3)
-      .map(h => ({ _id: h._id, name: h.name, createdAt: h.createdAt }));
 
     return res.status(200).json({
       success: true,
       data: {
-        location: await Location.findById(locationId),
+        location,
         moderator: { name: moderator.name },
         stats: {
-          totalHelpers: helpers.length,
-          pendingHelpers,
-          activeHelpers,
-          suspendedHelpers,
-          totalSeekers,
-          totalBookings: bookings.length,
-          todayBookings,
-          completedBookings,
-          pendingBookings,
-          cancelledBookings,
-          totalRevenue,
-          monthlyRevenue,
-          avgRating
+          totalHelpers:     helperDocs.length,
+          pendingHelpers:   pendingCount,
+          activeHelpers:    activeCount,
+          suspendedHelpers: suspendedCount,
+          totalSeekers:     b.seekerSet?.length ?? 0,
+          totalBookings:    b.total,
+          todayBookings:    b.todayCount,
+          completedBookings:b.completed,
+          pendingBookings:  b.pending,
+          cancelledBookings:b.cancelled,
+          totalRevenue:     b.totalRevenue,
+          monthlyRevenue:   b.monthlyRevenue,
+          avgRating,
         },
         recentBookings,
-        pendingHelpersList
-      }
+        pendingHelpersList,
+      },
     });
 
   } catch (error) {
@@ -430,48 +420,48 @@ export const getLocationUsers = async (req, res) => {
 // Get bookings in moderator's location
 export const getLocationBookings = async (req, res) => {
   try {
-    const moderatorId = req.user.id;
-    const moderator = await Admin.findById(moderatorId);
-
-    if (!moderator || !moderator.assignedLocation) {
+    const moderator = await Admin.findById(req.user.id).lean();
+    if (!moderator?.assignedLocation) {
       return res.status(403).json({ error: 'No location assigned' });
     }
 
-    const locationId = moderator.assignedLocation;
-    console.log('Fetching bookings for location:', locationId);
+    const page  = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit = Math.min(200, parseInt(req.query.limit) || 50);
+    const skip  = (page - 1) * limit;
 
-    // First, get all helpers in this location
-    const helpersInLocation = await Helper.find({ location: locationId }).select('_id');
-    const helperIds = helpersInLocation.map(h => h._id);
+    // Two-step but indexed: helper IDs (indexed on location) then bookings (indexed on helper)
+    const helperIds = (await Helper.find({ location: moderator.assignedLocation })
+      .select('_id').lean()).map(h => h._id);
 
-    console.log(`Found ${helperIds.length} helpers in location`);
+    const [locationBookings, total] = await Promise.all([
+      Booking.find({ helper: { $in: helperIds } })
+        .populate('helper', 'name email mobilenumber')
+        .populate('seeker', 'name email mobilenumber')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Booking.countDocuments({ helper: { $in: helperIds } }),
+    ]);
 
-    // Get bookings for these helpers
-    const locationBookings = await Booking.find({ helper: { $in: helperIds } })
-      .populate('helper', 'name email mobilenumber')
-      .populate('seeker', 'name email mobilenumber')
-      .sort({ createdAt: -1 });
-
-    console.log(`Found ${locationBookings.length} bookings for location`);
-
-    // Transform the data to include service information
-    const formattedBookings = locationBookings.map(booking => ({
-      _id: booking._id,
-      seeker: booking.seeker,
-      helper: booking.helper,
-      service: { name: booking.service_type },
-      date: booking.date,
-      time: booking.time,
-      address: booking.address,
-      status: booking.status,
-      totalAmount: booking.price,
-      paid: booking.paid,
-      createdAt: booking.createdAt
+    const formattedBookings = locationBookings.map(b => ({
+      _id:         b._id,
+      seeker:      b.seeker,
+      helper:      b.helper,
+      service:     { name: b.service_type },
+      date:        b.date,
+      time:        b.time,
+      address:     b.address,
+      status:      b.status,
+      totalAmount: b.price,
+      paid:        b.paid,
+      createdAt:   b.createdAt,
     }));
 
     return res.status(200).json({
       success: true,
-      data: formattedBookings
+      data: formattedBookings,
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) },
     });
 
   } catch (error) {
