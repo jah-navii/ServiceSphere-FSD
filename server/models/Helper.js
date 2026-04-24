@@ -55,6 +55,33 @@ helperSchema.pre('save', async function (next) {
   next();
 });
 
+// ── Meilisearch sync hooks ────────────────────────────────────────────────────
+// Wrapped in try/catch so a Meili outage never breaks Mongo writes.
+helperSchema.post('save', async function (doc) {
+  try {
+    if (process.env.SEARCH_DRIVER !== 'meili') return;
+    const { indexHelper } = await import('../utils/search/meiliSearch.js');
+    // Populate before indexing so category/services are available
+    const populated = await doc.constructor.findById(doc._id)
+      .populate('category', 'name _id')
+      .populate('services.serviceId', 'name price')
+      .lean();
+    if (populated) await indexHelper(populated);
+  } catch (err) {
+    console.error('[meili] helper post-save sync failed:', err.message);
+  }
+});
+
+helperSchema.post('deleteOne', { document: true, query: false }, async function (doc) {
+  try {
+    if (process.env.SEARCH_DRIVER !== 'meili') return;
+    const { removeHelper } = await import('../utils/search/meiliSearch.js');
+    await removeHelper(doc._id);
+  } catch (err) {
+    console.error('[meili] helper post-delete sync failed:', err.message);
+  }
+});
+
 helperSchema.methods.comparePassword = function (plain) {
   if (!BCRYPT_RE.test(this.password ?? '')) return Promise.resolve(false);
   return bcrypt.compare(plain, this.password);

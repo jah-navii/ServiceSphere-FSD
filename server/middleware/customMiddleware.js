@@ -1,7 +1,8 @@
 // CUSTOM MIDDLEWARE
 
-import rateLimit from 'express-rate-limit';
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import logger from '../utils/logger.js';
+import { getCache } from '../utils/cache/index.js';
 
 // Helper to properly handle IPv6 addresses in rate limiting
 const getClientIdentifier = (req) => {
@@ -88,3 +89,61 @@ export const bookingRateLimiter = rateLimit({
     });
   }
 });
+
+// ── Auth Rate Limiter ─────────────────────────────────────────────────────────
+//
+// Limits login attempts to 10 per IP per 15 minutes.
+// When CACHE_DRIVER=redis the backing store uses Redis so the counter persists
+// across server restarts and is shared across all Node.js worker processes —
+// properties in-memory rate limiting cannot provide.
+//
+// Rate-limit key = IP + email (body field) for maximum precision.  The email
+// is extracted in keyGenerator to prevent an attacker enumerating accounts via
+// a single shared IP counter.
+
+function buildAuthRateLimitStore() {
+  const cache = getCache();
+  const driver = process.env.CACHE_DRIVER ?? 'memory';
+
+  if (driver !== 'redis') return undefined; // use express-rate-limit default (memory)
+
+  // Custom express-rate-limit v7 store backed by our Redis driver
+  return {
+    async increment(key) {
+      const ttl = 15 * 60; // 15 minutes in seconds
+      const hits = await cache.incr(`rl:auth:${key}`, ttl);
+      // pttl in ms for resetTime — approximate from TTL
+      const resetTime = new Date(Date.now() + ttl * 1000);
+      return { totalHits: hits, resetTime };
+    },
+    async decrement(key) {
+      const current = await cache.get(`rl:auth:${key}`);
+      if (current && current > 0) await cache.set(`rl:auth:${key}`, current - 1, 15 * 60);
+    },
+    async resetKey(key) {
+      await cache.del(`rl:auth:${key}`);
+    },
+  };
+}
+
+export const authRateLimiter = rateLimit({
+  windowMs:         15 * 60 * 1000, // 15 minutes
+  max:              10,              // 10 login attempts per window per key
+  standardHeaders:  true,
+  legacyHeaders:    false,
+  store:            buildAuthRateLimitStore(),
+  keyGenerator(req) {
+    // Key = IP + email so one abuser doesn't block a whole shared IP
+    const email = req.body?.email ?? '';
+    return `${ipKeyGenerator(req)}:${email.toLowerCase()}`;
+  },
+  handler(req, res) {
+    logger.warn(`Auth rate limit exceeded: IP=${req.ip} email=${req.body?.email ?? ''}`);
+    res.status(429).json({
+      success: false,
+      message: 'Too many login attempts. Please try again after 15 minutes.',
+      retryAfter: '15 minutes',
+    });
+  },
+});
+

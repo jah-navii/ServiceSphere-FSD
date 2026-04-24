@@ -26,7 +26,8 @@ import {
   deleteLocation,
   getAllFeedbacks,
   deleteFeedback,
-  cleanupOrphans
+  cleanupOrphans,
+  triggerReindex
 } from '../controllers/administratorController.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
 
@@ -68,6 +69,9 @@ const router = express.Router();
  *         description: Cleanup failed
  */
 router.delete('/cleanup/orphans', requireAuth('administrator'), cleanupOrphans);
+
+// POST /api/administrator/reindex — trigger full Meilisearch reindex
+router.post('/reindex', requireAuth('administrator'), triggerReindex);
 
 /**
  * @swagger

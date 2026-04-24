@@ -1,0 +1,24 @@
+# ── Dependencies ───────────────────────────────────────────────────────────────
+node_modules/
+
+# ── Dev / test artefacts ────────────────────────────────────────────────────────
+coverage/
+test-results/
+logs/
+*.log
+
+# ── Local env (secrets must not land in the image) ────────────────────────────
+.env
+.env.*
+
+# ── Editor / OS noise ──────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Source-control ─────────────────────────────────────────────────────────────
+.git
+.gitignore
+
+# ── Docs / benchmarks (not needed at runtime) ─────────────────────────────────
+docs/
+benchmarks/

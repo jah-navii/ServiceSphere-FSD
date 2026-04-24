@@ -1,0 +1,20 @@
+{
+  "name": "servicesphere-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Root workspace — infrastructure scripts only. App code lives in server/ and client/.",
+  "scripts": {
+    "infra:up":     "docker compose --env-file .env.docker up -d",
+    "infra:down":   "docker compose down",
+    "infra:logs":   "docker compose logs -f",
+    "infra:nuke":   "docker compose down -v",
+    "test":         "concurrently --kill-others-on-fail \"npm run test --prefix server\" \"npm run test --prefix client\"",
+    "test:server":  "npm run test --prefix server",
+    "test:client":  "npm run test --prefix client",
+    "test:coverage":"concurrently \"npm run test:coverage --prefix server\" \"npm run test:coverage --prefix client\"",
+    "test:ci":      "concurrently --kill-others-on-fail \"npm run test:ci --prefix server\" \"npm run test:ci --prefix client\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { signupHelper, loginHelper, signupSeeker, loginSeeker, signupAdministrator, loginAdministrator } from '../controllers/authController.js';
 import { applyModerator, loginModerator } from '../controllers/moderatorController.js';
+import { authRateLimiter } from '../middleware/customMiddleware.js';
 import {
   validate,
   loginSchema,
@@ -110,7 +111,7 @@ router.post('/signup/helper', validate(helperSignupSchema), signupHelper);
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login/helper', validate(loginSchema), loginHelper);
+router.post('/login/helper', authRateLimiter, validate(loginSchema), loginHelper);
 
 // ---- Seeker Auth ----
 
@@ -173,7 +174,7 @@ router.post('/signup/seeker', validate(seekerSignupSchema), signupSeeker);
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login/seeker', validate(loginSchema), loginSeeker);
+router.post('/login/seeker', authRateLimiter, validate(loginSchema), loginSeeker);
 
 // ---- Administrator Auth ----
 
@@ -236,7 +237,7 @@ router.post('/signup/administrator', validate(adminSignupSchema), signupAdminist
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login/administrator', validate(loginSchema), loginAdministrator);
+router.post('/login/administrator', authRateLimiter, validate(loginSchema), loginAdministrator);
 
 // ---- Moderator Auth ----
 
@@ -299,7 +300,7 @@ router.post('/apply/moderator', resumeUpload.single('resume'), validate(moderato
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login/moderator', validate(loginSchema), loginModerator);
+router.post('/login/moderator', authRateLimiter, validate(loginSchema), loginModerator);
 
 // ---- Logout (all user types) ----
 

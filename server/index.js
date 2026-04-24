@@ -17,7 +17,8 @@ import errorHandler from './middleware/errorHandler.js';
 import { requestLogger, requestTimer, notFoundHandler } from './middleware/customMiddleware.js';
 import logger from './utils/logger.js';
 
-// Route imports
+import { getCache } from './utils/cache/index.js';
+import { getSearch } from './utils/search/index.js';
 import authRoutes from './routes/authRoutes.js';
 import helperRoutes from './routes/helperRoutes.js';
 import seekerRoutes from './routes/seekerRoutes.js';
@@ -76,10 +77,35 @@ app.get('/api-docs.json', (req, res) => {
   res.json(swaggerSpec);
 });
 
-// HEALTH CHECK
-app.get('/api/health', (_req, res) => {
-  const db = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
-  res.json({ ok: true, uptime: process.uptime(), db });
+// HEALTH CHECK — reports MongoDB, Redis, Meilisearch connectivity
+app.get('/api/health', async (_req, res) => {
+  const t = (fn) => {
+    const start = Date.now();
+    return fn().then(
+      (r) => ({ ok: true,  result: r, latencyMs: Date.now() - start }),
+      (e) => ({ ok: false, error: e.message, latencyMs: Date.now() - start }),
+    );
+  };
+
+  const [mongoOk, cacheOk, searchOk] = await Promise.all([
+    t(() => Promise.resolve(mongoose.connection.readyState === 1 ? 'connected' : 'disconnected')),
+    t(() => getCache().ping()),
+    t(() => getSearch().ping()),
+  ]);
+
+  const allOk = mongoOk.ok && cacheOk.ok && searchOk.ok;
+
+  res.status(allOk ? 200 : 503).json({
+    ok:     allOk,
+    uptime: process.uptime(),
+    drivers: {
+      cache:  process.env.CACHE_DRIVER  ?? 'memory',
+      search: process.env.SEARCH_DRIVER ?? 'mongo',
+    },
+    mongo:  mongoOk,
+    cache:  { ...cacheOk, stats: getCache().stats() },
+    search: searchOk,
+  });
 });
 
 // API ROUTES
@@ -98,9 +124,24 @@ app.use('/api/moderator', moderatorRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Start only after DB connects
-connectDB().then(() => {
-  app.listen(env.PORT, () => {
-    logger.info(`Server running on http://localhost:${env.PORT}`);
+// Export app for testing (supertest imports this without starting the server)
+export { app };
+
+// Start only after DB connects — skipped in test environment
+if (env.NODE_ENV !== 'test') {
+  connectDB().then(() => {
+    app.listen(env.PORT, () => {
+      logger.info(`Server running on http://localhost:${env.PORT}`);
+    });
+
+    // Warm up the cache driver eagerly (connects Redis if CACHE_DRIVER=redis)
+    getCache();
+
+    // Kick off async Meili sync if SEARCH_DRIVER=meili
+    if ((process.env.SEARCH_DRIVER ?? 'mongo') === 'meili') {
+      getSearch().syncOnStartup().catch((err) =>
+        logger.error('[meili] startup sync failed:', err.message),
+      );
+    }
   });
-});
+}

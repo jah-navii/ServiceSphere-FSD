@@ -9,7 +9,8 @@ definition: {
       description: 'API documentation for the service booking platform',
     },
     servers: [
-      { url: 'http://localhost:5000', description: 'Development' },
+      { url: 'http://localhost', description: 'Docker (nginx proxy)' },
+      { url: 'http://localhost:5000', description: 'Local dev' },
     ],
     security: [          // ← add this
       { bearerAuth: [] } // ← applies bearerAuth to all routes by default
