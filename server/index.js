@@ -1,3 +1,13 @@
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION:', err.message, err.stack);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('UNHANDLED REJECTION:', err.message, err.stack);
+  process.exit(1);
+});
+
 import { env } from './config/env.js';
 import express from 'express';
 import connectDB from './config/db.js';
