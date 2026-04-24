@@ -29,7 +29,7 @@ const AdministratorBookings = () => {
   const getFilteredBookings = () => {
     if (!bookingsData) return [];
 
-    let bookings = [];
+    let bookings;
     if (activeStatus === "all") {
       bookings = bookingsData.bookings || [];
     } else {
