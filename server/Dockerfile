@@ -31,4 +31,5 @@ EXPOSE ${PORT:-5000}
 HEALTHCHECK --interval=15s --timeout=5s --retries=5 \
   CMD wget -qO- http://localhost:${PORT:-5000}/api/health || exit 1
 
-CMD ["sh", "-c", "echo 'Starting on port $PORT' && node index.js"]
+# CMD ["sh", "-c", "echo 'Starting on port $PORT' && node index.js"]
+CMD ["node", "index.js"]
