@@ -28,6 +28,12 @@ const schema = z.object({
   SEARCH_DRIVER: z.enum(['meili', 'mongo']).default('mongo'),
 });
 
+console.log('ENV CHECK:', {
+  MONGO_URI: !!process.env.MONGO_URI,
+  JWT_SECRET: !!process.env.JWT_SECRET,
+  PORT: process.env.PORT,
+});
+
 const parsed = schema.safeParse(process.env);
 
 if (!parsed.success) {
