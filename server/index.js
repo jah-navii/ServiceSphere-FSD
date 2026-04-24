@@ -1,13 +1,3 @@
-process.on('uncaughtException', (err) => {
-  console.error('UNCAUGHT EXCEPTION:', err.message, err.stack);
-  process.exit(1);
-});
-
-process.on('unhandledRejection', (err) => {
-  console.error('UNHANDLED REJECTION:', err.message, err.stack);
-  process.exit(1);
-});
-
 import { env } from './config/env.js';
 import express from 'express';
 import connectDB from './config/db.js';
@@ -26,7 +16,6 @@ import swaggerSpec from './config/swagger.js';
 import errorHandler from './middleware/errorHandler.js';
 import { requestLogger, requestTimer, notFoundHandler } from './middleware/customMiddleware.js';
 import logger from './utils/logger.js';
-
 import { getCache } from './utils/cache/index.js';
 import { getSearch } from './utils/search/index.js';
 import authRoutes from './routes/authRoutes.js';
@@ -47,7 +36,6 @@ const __dirname = dirname(__filename);
 // GLOBAL MIDDLEWARE
 app.use(compression());
 
-// Helmet — CSP disabled only for the Swagger UI
 app.use((req, res, next) => {
   if (req.path.startsWith('/api-docs')) {
     return helmet({ contentSecurityPolicy: false })(req, res, next);
@@ -87,12 +75,12 @@ app.get('/api-docs.json', (req, res) => {
   res.json(swaggerSpec);
 });
 
-// HEALTH CHECK — reports MongoDB, Redis, Meilisearch connectivity
+// HEALTH CHECK
 app.get('/api/health', async (_req, res) => {
   const t = (fn) => {
     const start = Date.now();
     return fn().then(
-      (r) => ({ ok: true,  result: r, latencyMs: Date.now() - start }),
+      (r) => ({ ok: true, result: r, latencyMs: Date.now() - start }),
       (e) => ({ ok: false, error: e.message, latencyMs: Date.now() - start }),
     );
   };
@@ -106,14 +94,14 @@ app.get('/api/health', async (_req, res) => {
   const allOk = mongoOk.ok && cacheOk.ok && searchOk.ok;
 
   res.status(allOk ? 200 : 503).json({
-    ok:     allOk,
+    ok: allOk,
     uptime: process.uptime(),
     drivers: {
-      cache:  process.env.CACHE_DRIVER  ?? 'memory',
+      cache: process.env.CACHE_DRIVER ?? 'memory',
       search: process.env.SEARCH_DRIVER ?? 'mongo',
     },
-    mongo:  mongoOk,
-    cache:  { ...cacheOk, stats: getCache().stats() },
+    mongo: mongoOk,
+    cache: { ...cacheOk, stats: getCache().stats() },
     search: searchOk,
   });
 });
@@ -134,24 +122,27 @@ app.use('/api/moderator', moderatorRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Export app for testing (supertest imports this without starting the server)
 export { app };
 
-// Start only after DB connects — skipped in test environment
+// Start server
 if (env.NODE_ENV !== 'test') {
-  connectDB().then(() => {
-    app.listen(env.PORT, '0.0.0.0', () => {
-      logger.info(`Server running on http://localhost:${env.PORT}`);
+  connectDB()
+    .then(() => {
+      app.listen(env.PORT, '0.0.0.0', () => {
+        logger.info(`Server running on port ${env.PORT}`);
+        console.log(`Server running on port ${env.PORT}`);
+      });
+
+      getCache();
+
+      if ((process.env.SEARCH_DRIVER ?? 'mongo') === 'meili') {
+        getSearch().syncOnStartup().catch((err) =>
+          logger.error('[meili] startup sync failed:', err.message),
+        );
+      }
+    })
+    .catch((err) => {
+      console.error('STARTUP FAILED:', err.message, err.stack);
+      process.exit(1);
     });
-
-    // Warm up the cache driver eagerly (connects Redis if CACHE_DRIVER=redis)
-    getCache();
-
-    // Kick off async Meili sync if SEARCH_DRIVER=meili
-    if ((process.env.SEARCH_DRIVER ?? 'mongo') === 'meili') {
-      getSearch().syncOnStartup().catch((err) =>
-        logger.error('[meili] startup sync failed:', err.message),
-      );
-    }
-  });
 }
