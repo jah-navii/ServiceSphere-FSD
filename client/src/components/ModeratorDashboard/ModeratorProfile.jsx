@@ -75,7 +75,6 @@ const ModeratorProfile = () => {
       phone: profileData.phone
     });
     setIsEditMode(false);
-    setMessage({ type: '', text: '' });
   };
 
   if (loading) return <LoadingSpinner message="Loading profile..." />;

@@ -1,0 +1,1500 @@
+﻿
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.5 [39m[90mC:/Users/jahna/Acads/Sem6/WBD/ServiceSphere-FSD/client[39m
+
+ [32mΓ£ô[39m src/tests/ProtectedRoute.test.jsx[2m > [22mProtectedRoute[2m > [22mredirects unauthenticated users to the login page[32m 85[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/ProtectedRoute.test.jsx[2m > [22mProtectedRoute[2m > [22mrenders children when user is authenticated with the correct role[32m 14[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/ProtectedRoute.test.jsx[2m > [22mProtectedRoute[2m > [22mblocks a user whose role does not match allowedRoles[32m 18[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/ProtectedRoute.test.jsx[2m > [22mProtectedRoute[2m > [22mrenders children when allowedRoles is empty (any authenticated user is allowed)[32m 11[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/BookingForm.test.jsx[2m > [22mBookingForm[2m > [22mrenders the Navbar and Footer[32m 116[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/BookingForm.test.jsx[2m > [22mBookingForm[2m > [22mredirects to /search when accessed without location state (no service selected)[32m 25[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/SearchPage.test.jsx[2m > [22mSearchPage[2m > [22mrenders Navbar and Footer[32m 91[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/SearchPage.test.jsx[2m > [22mSearchPage[2m > [22mshows a loading state initially[32m 16[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/SearchPage.test.jsx[2m > [22mSearchPage[2m > [22mrenders filter controls after data loads[32m 37[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/Login.test.jsx[2m > [22mLoginForm[2m > [22mrenders the form title[33m 349[2mms[22m[39m
+ [32mΓ£ô[39m src/tests/Login.test.jsx[2m > [22mLoginForm[2m > [22mrenders email and password inputs[32m 17[2mms[22m[39m
+ [31m├ù[39m src/tests/Login.test.jsx[2m > [22mLoginForm[2m > [22mrenders the submit button[32m 291[2mms[22m[39m
+[31m   ΓåÆ Unable to find an accessible element with the role "button" and name `/login/i`
+
+Here are the accessible roles:
+
+  link:
+
+  Name "ServiceSphereService Sphere":
+  [36m<a[31m
+    [33mclass[31m=[32m"_panelLogo_944078"[31m
+    [33mdata-discover[31m=[32m"true"[31m
+    [33mhref[31m=[32m"/home"[31m
+  [36m/>[31m
+
+  Name "Sign up here":
+  [36m<a[31m
+    [33mclass[31m=[32m"_link_944078"[31m
+    [33mhref[31m=[32m"/signup/seeker"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+  img:
+
+  Name "ServiceSphere":
+  [36m<img[31m
+    [33malt[31m=[32m"ServiceSphere"[31m
+    [33mclass[31m=[32m"_panelLogoImg_944078"[31m
+    [33mdecoding[31m=[32m"async"[31m
+    [33mloading[31m=[32m"lazy"[31m
+    [33msrc[31m=[32m"logo.png"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[31m
+    [33mclass[31m=[32m"_panelTagline_944078"[31m
+  [36m/>[31m
+
+  Name "":
+  [36m<p[31m
+    [33mclass[31m=[32m"_switchText_944078"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+  button:
+
+  Name "ΓåÉ Back":
+  [36m<button[31m
+    [33mclass[31m=[32m"_backBtn_944078"[31m
+  [36m/>[31m
+
+  Name "Show password":
+  [36m<button[31m
+    [33maria-label[31m=[32m"Show password"[31m
+    [33mclass[31m=[32m"_eyeBtn_944078"[31m
+    [33mtabindex[31m=[32m"-1"[31m
+    [33mtype[31m=[32m"button"[31m
+  [36m/>[31m
+
+  Name "Log In":
+  [36m<button[31m
+    [33mclass[31m=[32m"_submitButton_944078"[31m
+    [33mtype[31m=[32m"submit"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+  heading:
+
+  Name "Login as a Seeker":
+  [36m<h1[31m
+    [33mclass[31m=[32m"_title_944078"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "":
+  [36m<input[31m
+    [33mclass[31m=[32m"_input_944078"[31m
+    [33mname[31m=[32m"email"[31m
+    [33mplaceholder[31m=[32m"Enter your email"[31m
+    [33mrequired[31m=[32m""[31m
+    [33mtype[31m=[32m"email"[31m
+    [33mvalue[31m=[32m""[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"_page_944078"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"_brandPanel_944078"[31m
+      [36m>[31m
+        [36m<a[31m
+          [33mclass[31m=[32m"_panelLogo_944078"[31m
+          [33mdata-discover[31m=[32m"true"[31m
+          [33mhref[31m=[32m"/home"[31m
+        [36m>[31m
+          [36m<img[31m
+            [33malt[31m=[32m"ServiceSphere"[31m
+            [33mclass[31m=[32m"_panelLogoImg_944078"[31m
+            [33mdecoding[31m=[32m"async"[31m
+            [33mloading[31m=[32m"lazy"[31m
+            [33msrc[31m=[32m"logo.png"[31m
+          [36m/>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"_panelLogoName_944078"[31m
+          [36m>[31m
+            [0mService Sphere[0m
+          [36m</span>[31m
+        [36m</a>[31m
+        [36m<p[31m
+          [33mclass[31m=[32m"_panelTagline_944078"[31m
+        [36m>[31m
+          [0mYour orbit to assistance[0m
+        [36m</p>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"_formPanel_944078"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"_formWrap_944078"[31m
+        [36m>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"_backBtn_944078"[31m
+          [36m>[31m
+            [0mΓåÉ Back[0m
+          [36m</button>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"_formCard_944078"[31m
+          [36m>[31m
+            [36m<h1[31m
+              [33mclass[31m=[32m"_title_944078"[31m
+            [36m>[31m
+              [0mLogin as a Seeker[0m
+            [36m</h1>[31m
+            [36m<form>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"_formGroup_944078"[31m
+              [36m>[31m
+                [36m<label[31m
+                  [33mclass[31m=[32m"_label_944078"[31m
+                [36m>[31m
+                  [0mEmail Address[0m
+                [36m</label>[31m
+                [36m<input[31m
+                  [33mclass[31m=[32m"_input_944078"[31m
+                  [33mname[31m=[32m"email"[31m
+                  [33mplaceholder[31m=[32m"Enter your email"[31m
+                  [33mrequired[31m=[32m""[31m
+                  [33mtype[31m=[32m"email"[31m
+                  [33mvalue[31m=[32m""[31m
+                [36m/>[31m
+              [36m</div>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"_formGroup_944078"[31m
+              [36m>[31m
+                [36m<label[31m
+                  [33mclass[31m=[32m"_label_944078"[31m
+                [36m>[31m
+                  [0mPassword[0m
+                [36m</label>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"_inputWrapper_944078"[31m
+                [36m>[31m
+                  [36m<input[31m
+                    [33mclass[31m=[32m"_input_944078"[31m
+                    [33mname[31m=[32m"password"[31m
+                    [33mplaceholder[31m=[32m"Enter your password"[31m
+                    [33mrequired[31m=[32m""[31m
+                    [33mtype[31m=[32m"password"[31m
+                    [33mvalue[31m=[32m""[31m
+                  [36m/>[31m
+                  [36m<button[31m
+                    [33maria-label[31m=[32m"Show password"[31m
+                    [33mclass[31m=[32m"_eyeBtn_944078"[31m
+                    [33mtabindex[31m=[32m"-1"[31m
+                    [33mtype[31m=[32m"button"[31m
+                  [36m>[31m
+                    [36m<svg[31m
+                      [33mfill[31m=[32m"currentColor"[31m
+                      [33mheight[31m=[32m"18"[31m
+                      [33mviewBox[31m=[32m"0 0 24 24"[31m
+                      [33mwidth[31m=[32m"18"[31m
+                    [36m>[31m
+                      [36m<path[31m
+                        [33md[31m=[32m"M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"[31m
+                      [36m/>[31m
+                    [36m</svg>[31m
+                  [36m</button>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<button[31m
+                [33mclass[31m=[32m"_submitButton_944078"[31m
+                [33mtype[31m=[32m"submit"[31m
+              [36m>[31m
+                [0mLog In[0m
+              [36m</button>[31m
+            [36m</form>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"_switchText_944078"[31m
+            [36m>[31m
+              [0mDon't have an account?[0m
+              [0m [0m
+              [36m<a[31m
+                [33mclass[31m=[32m"_link_944078"[31m
+                [33mhref[31m=[32m"/signup/seeker"[31m
+              [36m>[31m
+                [0mSign up here[0m
+              [36m</a>[31m
+            [36m</p>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+ [31m├ù[39m src/tests/Login.test.jsx[2m > [22mLoginForm[2m > [22mshows an error message when the API returns an error[33m 691[2mms[22m[39m
+[31m   ΓåÆ Unable to find an accessible element with the role "button" and name `/login/i`
+
+Here are the accessible roles:
+
+  link:
+
+  Name "ServiceSphereService Sphere":
+  [36m<a[31m
+    [33mclass[31m=[32m"_panelLogo_944078"[31m
+    [33mdata-discover[31m=[32m"true"[31m
+    [33mhref[31m=[32m"/home"[31m
+  [36m/>[31m
+
+  Name "Sign up here":
+  [36m<a[31m
+    [33mclass[31m=[32m"_link_944078"[31m
+    [33mhref[31m=[32m"/signup/seeker"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+  img:
+
+  Name "ServiceSphere":
+  [36m<img[31m
+    [33malt[31m=[32m"ServiceSphere"[31m
+    [33mclass[31m=[32m"_panelLogoImg_944078"[31m
+    [33mdecoding[31m=[32m"async"[31m
+    [33mloading[31m=[32m"lazy"[31m
+    [33msrc[31m=[32m"logo.png"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[31m
+    [33mclass[31m=[32m"_panelTagline_944078"[31m
+  [36m/>[31m
+
+  Name "":
+  [36m<p[31m
+    [33mclass[31m=[32m"_switchText_944078"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+  button:
+
+  Name "ΓåÉ Back":
+  [36m<button[31m
+    [33mclass[31m=[32m"_backBtn_944078"[31m
+  [36m/>[31m
+
+  Name "Show password":
+  [36m<button[31m
+    [33maria-label[31m=[32m"Show password"[31m
+    [33mclass[31m=[32m"_eyeBtn_944078"[31m
+    [33mtabindex[31m=[32m"-1"[31m
+    [33mtype[31m=[32m"button"[31m
+  [36m/>[31m
+
+  Name "Log In":
+  [36m<button[31m
+    [33mclass[31m=[32m"_submitButton_944078"[31m
+    [33mtype[31m=[32m"submit"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+  heading:
+
+  Name "Login as a Seeker":
+  [36m<h1[31m
+    [33mclass[31m=[32m"_title_944078"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "":
+  [36m<input[31m
+    [33mclass[31m=[32m"_input_944078"[31m
+    [33mname[31m=[32m"email"[31m
+    [33mplaceholder[31m=[32m"Enter your email"[31m
+    [33mrequired[31m=[32m""[31m
+    [33mtype[31m=[32m"email"[31m
+    [33mvalue[31m=[32m"bad@test.com"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"_page_944078"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"_brandPanel_944078"[31m
+      [36m>[31m
+        [36m<a[31m
+          [33mclass[31m=[32m"_panelLogo_944078"[31m
+          [33mdata-discover[31m=[32m"true"[31m
+          [33mhref[31m=[32m"/home"[31m
+        [36m>[31m
+          [36m<img[31m
+            [33malt[31m=[32m"ServiceSphere"[31m
+            [33mclass[31m=[32m"_panelLogoImg_944078"[31m
+            [33mdecoding[31m=[32m"async"[31m
+            [33mloading[31m=[32m"lazy"[31m
+            [33msrc[31m=[32m"logo.png"[31m
+          [36m/>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"_panelLogoName_944078"[31m
+          [36m>[31m
+            [0mService Sphere[0m
+          [36m</span>[31m
+        [36m</a>[31m
+        [36m<p[31m
+          [33mclass[31m=[32m"_panelTagline_944078"[31m
+        [36m>[31m
+          [0mYour orbit to assistance[0m
+        [36m</p>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"_formPanel_944078"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"_formWrap_944078"[31m
+        [36m>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"_backBtn_944078"[31m
+          [36m>[31m
+            [0mΓåÉ Back[0m
+          [36m</button>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"_formCard_944078"[31m
+          [36m>[31m
+            [36m<h1[31m
+              [33mclass[31m=[32m"_title_944078"[31m
+            [36m>[31m
+              [0mLogin as a Seeker[0m
+            [36m</h1>[31m
+            [36m<form>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"_formGroup_944078"[31m
+              [36m>[31m
+                [36m<label[31m
+                  [33mclass[31m=[32m"_label_944078"[31m
+                [36m>[31m
+                  [0mEmail Address[0m
+                [36m</label>[31m
+                [36m<input[31m
+                  [33mclass[31m=[32m"_input_944078"[31m
+                  [33mname[31m=[32m"email"[31m
+                  [33mplaceholder[31m=[32m"Enter your email"[31m
+                  [33mrequired[31m=[32m""[31m
+                  [33mtype[31m=[32m"email"[31m
+                  [33mvalue[31m=[32m"bad@test.com"[31m
+                [36m/>[31m
+              [36m</div>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"_formGroup_944078"[31m
+              [36m>[31m
+                [36m<label[31m
+                  [33mclass[31m=[32m"_label_944078"[31m
+                [36m>[31m
+                  [0mPassword[0m
+                [36m</label>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"_inputWrapper_944078"[31m
+                [36m>[31m
+                  [36m<input[31m
+                    [33mclass[31m=[32m"_input_944078"[31m
+                    [33mname[31m=[32m"password"[31m
+                    [33mplaceholder[31m=[32m"Enter your password"[31m
+                    [33mrequired[31m=[32m""[31m
+                    [33mtype[31m=[32m"password"[31m
+                    [33mvalue[31m=[32m"wrongpass"[31m
+                  [36m/>[31m
+                  [36m<button[31m
+                    [33maria-label[31m=[32m"Show password"[31m
+                    [33mclass[31m=[32m"_eyeBtn_944078"[31m
+                    [33mtabindex[31m=[32m"-1"[31m
+                    [33mtype[31m=[32m"button"[31m
+                  [36m>[31m
+                    [36m<svg[31m
+                      [33mfill[31m=[32m"currentColor"[31m
+                      [33mheight[31m=[32m"18"[31m
+                      [33mviewBox[31m=[32m"0 0 24 24"[31m
+                      [33mwidth[31m=[32m"18"[31m
+                    [36m>[31m
+                      [36m<path[31m
+                        [33md[31m=[32m"M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"[31m
+                      [36m/>[31m
+                    [36m</svg>[31m
+                  [36m</button>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<button[31m
+                [33mclass[31m=[32m"_submitButton_944078"[31m
+                [33mtype[31m=[32m"submit"[31m
+              [36m>[31m
+                [0mLog In[0m
+              [36m</button>[31m
+            [36m</form>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"_switchText_944078"[31m
+            [36m>[31m
+              [0mDon't have an account?[0m
+              [0m [0m
+              [36m<a[31m
+                [33mclass[31m=[32m"_link_944078"[31m
+                [33mhref[31m=[32m"/signup/seeker"[31m
+              [36m>[31m
+                [0mSign up here[0m
+              [36m</a>[31m
+            [36m</p>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+ [31m├ù[39m src/tests/Login.test.jsx[2m > [22mLoginForm[2m > [22mcalls apiClient.post with email and password on submit[33m 715[2mms[22m[39m
+[31m   ΓåÆ Unable to find an accessible element with the role "button" and name `/login/i`
+
+Here are the accessible roles:
+
+  link:
+
+  Name "ServiceSphereService Sphere":
+  [36m<a[31m
+    [33mclass[31m=[32m"_panelLogo_944078"[31m
+    [33mdata-discover[31m=[32m"true"[31m
+    [33mhref[31m=[32m"/home"[31m
+  [36m/>[31m
+
+  Name "Sign up here":
+  [36m<a[31m
+    [33mclass[31m=[32m"_link_944078"[31m
+    [33mhref[31m=[32m"/signup/seeker"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+  img:
+
+  Name "ServiceSphere":
+  [36m<img[31m
+    [33malt[31m=[32m"ServiceSphere"[31m
+    [33mclass[31m=[32m"_panelLogoImg_944078"[31m
+    [33mdecoding[31m=[32m"async"[31m
+    [33mloading[31m=[32m"lazy"[31m
+    [33msrc[31m=[32m"logo.png"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[31m
+    [33mclass[31m=[32m"_panelTagline_944078"[31m
+  [36m/>[31m
+
+  Name "":
+  [36m<p[31m
+    [33mclass[31m=[32m"_switchText_944078"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+  button:
+
+  Name "ΓåÉ Back":
+  [36m<button[31m
+    [33mclass[31m=[32m"_backBtn_944078"[31m
+  [36m/>[31m
+
+  Name "Show password":
+  [36m<button[31m
+    [33maria-label[31m=[32m"Show password"[31m
+    [33mclass[31m=[32m"_eyeBtn_944078"[31m
+    [33mtabindex[31m=[32m"-1"[31m
+    [33mtype[31m=[32m"button"[31m
+  [36m/>[31m
+
+  Name "Log In":
+  [36m<button[31m
+    [33mclass[31m=[32m"_submitButton_944078"[31m
+    [33mtype[31m=[32m"submit"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+  heading:
+
+  Name "Login as a Seeker":
+  [36m<h1[31m
+    [33mclass[31m=[32m"_title_944078"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "":
+  [36m<input[31m
+    [33mclass[31m=[32m"_input_944078"[31m
+    [33mname[31m=[32m"email"[31m
+    [33mplaceholder[31m=[32m"Enter your email"[31m
+    [33mrequired[31m=[32m""[31m
+    [33mtype[31m=[32m"email"[31m
+    [33mvalue[31m=[32m"seeker@test.com"[31m
+  [36m/>[31m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"_page_944078"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"_brandPanel_944078"[31m
+      [36m>[31m
+        [36m<a[31m
+          [33mclass[31m=[32m"_panelLogo_944078"[31m
+          [33mdata-discover[31m=[32m"true"[31m
+          [33mhref[31m=[32m"/home"[31m
+        [36m>[31m
+          [36m<img[31m
+            [33malt[31m=[32m"ServiceSphere"[31m
+            [33mclass[31m=[32m"_panelLogoImg_944078"[31m
+            [33mdecoding[31m=[32m"async"[31m
+            [33mloading[31m=[32m"lazy"[31m
+            [33msrc[31m=[32m"logo.png"[31m
+          [36m/>[31m
+          [36m<span[31m
+            [33mclass[31m=[32m"_panelLogoName_944078"[31m
+          [36m>[31m
+            [0mService Sphere[0m
+          [36m</span>[31m
+        [36m</a>[31m
+        [36m<p[31m
+          [33mclass[31m=[32m"_panelTagline_944078"[31m
+        [36m>[31m
+          [0mYour orbit to assistance[0m
+        [36m</p>[31m
+      [36m</div>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"_formPanel_944078"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"_formWrap_944078"[31m
+        [36m>[31m
+          [36m<button[31m
+            [33mclass[31m=[32m"_backBtn_944078"[31m
+          [36m>[31m
+            [0mΓåÉ Back[0m
+          [36m</button>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"_formCard_944078"[31m
+          [36m>[31m
+            [36m<h1[31m
+              [33mclass[31m=[32m"_title_944078"[31m
+            [36m>[31m
+              [0mLogin as a Seeker[0m
+            [36m</h1>[31m
+            [36m<form>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"_formGroup_944078"[31m
+              [36m>[31m
+                [36m<label[31m
+                  [33mclass[31m=[32m"_label_944078"[31m
+                [36m>[31m
+                  [0mEmail Address[0m
+                [36m</label>[31m
+                [36m<input[31m
+                  [33mclass[31m=[32m"_input_944078"[31m
+                  [33mname[31m=[32m"email"[31m
+                  [33mplaceholder[31m=[32m"Enter your email"[31m
+                  [33mrequired[31m=[32m""[31m
+                  [33mtype[31m=[32m"email"[31m
+                  [33mvalue[31m=[32m"seeker@test.com"[31m
+                [36m/>[31m
+              [36m</div>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"_formGroup_944078"[31m
+              [36m>[31m
+                [36m<label[31m
+                  [33mclass[31m=[32m"_label_944078"[31m
+                [36m>[31m
+                  [0mPassword[0m
+                [36m</label>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"_inputWrapper_944078"[31m
+                [36m>[31m
+                  [36m<input[31m
+                    [33mclass[31m=[32m"_input_944078"[31m
+                    [33mname[31m=[32m"password"[31m
+                    [33mplaceholder[31m=[32m"Enter your password"[31m
+                    [33mrequired[31m=[32m""[31m
+                    [33mtype[31m=[32m"password"[31m
+                    [33mvalue[31m=[32m"pass1234"[31m
+                  [36m/>[31m
+                  [36m<button[31m
+                    [33maria-label[31m=[32m"Show password"[31m
+                    [33mclass[31m=[32m"_eyeBtn_944078"[31m
+                    [33mtabindex[31m=[32m"-1"[31m
+                    [33mtype[31m=[32m"button"[31m
+                  [36m>[31m
+                    [36m<svg[31m
+                      [33mfill[31m=[32m"currentColor"[31m
+                      [33mheight[31m=[32m"18"[31m
+                      [33mviewBox[31m=[32m"0 0 24 24"[31m
+                      [33mwidth[31m=[32m"18"[31m
+                    [36m>[31m
+                      [36m<path[31m
+                        [33md[31m=[32m"M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"[31m
+                      [36m/>[31m
+                    [36m</svg>[31m
+                  [36m</button>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<button[31m
+                [33mclass[31m=[32m"_submitButton_944078"[31m
+                [33mtype[31m=[32m"submit"[31m
+              [36m>[31m
+                [0mLog In[0m
+              [36m</button>[31m
+            [36m</form>[31m
+            [36m<p[31m
+              [33mclass[31m=[32m"_switchText_944078"[31m
+            [36m>[31m
+              [0mDon't have an account?[0m
+              [0m [0m
+              [36m<a[31m
+                [33mclass[31m=[32m"_link_944078"[31m
+                [33mhref[31m=[32m"/signup/seeker"[31m
+              [36m>[31m
+                [0mSign up here[0m
+              [36m</a>[31m
+            [36m</p>[31m
+          [36m</div>[31m
+        [36m</div>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+  [36m</div>[31m
+[36m</body>[31m[39m
+ [31m├ù[39m src/tests/App.test.jsx[2m > [22mApp[2m > [22mrenders without crashing[32m 83[2mms[22m[39m
+[31m   ΓåÆ serviceApi.locationsOpen is not a function[39m
+ [31m├ù[39m src/tests/App.test.jsx[2m > [22mApp[2m > [22mredirects / to /home[32m 19[2mms[22m[39m
+[31m   ΓåÆ serviceApi.locationsOpen is not a function[39m
+ [31m├ù[39m src/tests/App.test.jsx[2m > [22mApp[2m > [22mshows the login page at /login/seeker for unauthenticated users navigating to /search[32m 22[2mms[22m[39m
+[31m   ΓåÆ serviceApi.locationsOpen is not a function[39m
+node.exe : 
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[39m[1m[41m Failed Tests 6 
+[49m[22m[31mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[39m
+
+[41m[1m FAIL [22m[49m src/tests/App.test.jsx[2m > [22mApp[2m > 
+[22mrenders without crashing
+[41m[1m FAIL [22m[49m src/tests/App.test.jsx[2m > [22mApp[2m > 
+[22mredirects / to /home
+[41m[1m FAIL [22m[49m src/tests/App.test.jsx[2m > [22mApp[2m > 
+[22mshows the login page at /login/seeker for unauthenticated users 
+navigating to /search
+[31m[1mTypeError[22m: serviceApi.locationsOpen is not a function[39m
+[36m [2mΓ¥»[22m src/pages/Home/Home.jsx:[2m59:16[22m[39m
+    [90m 57|[39m   [34museEffect[39m(() [33m=>[39m {
+    [90m 58|[39m     serviceApi.categories().then((d) => 
+setCategories(d.categories ?? ΓÇª
+    [90m 59|[39m     serviceApi.locationsOpen().then((d) => { if 
+(Array.isArray(d)) setΓÇª
+    [90m   |[39m                [31m^[39m
+    [90m 60|[39m   }[33m,[39m [])[33m;[39m
+    [90m 61|[39m
+[90m [2mΓ¥»[22m Object.react_stack_bottom_frame node_modules/react-dom/cjs/r
+eact-dom-client.development.js:[2m25989:20[22m[39m
+[90m [2mΓ¥»[22m runWithFiberInDEV 
+node_modules/react-dom/cjs/react-dom-client.development.js:[2m874:13[22m[39m
+[90m [2mΓ¥»[22m commitHookEffectListMount node_modules/react-dom/cjs/react-d
+om-client.development.js:[2m13249:29[22m[39m
+[90m [2mΓ¥»[22m commitHookPassiveMountEffects node_modules/react-dom/cjs/rea
+ct-dom-client.development.js:[2m13336:11[22m[39m
+[90m [2mΓ¥»[22m commitPassiveMountOnFiber node_modules/react-dom/cjs/react-d
+om-client.development.js:[2m15484:13[22m[39m
+[90m [2mΓ¥»[22m recursivelyTraversePassiveMountEffects node_modules/react-do
+m/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2mΓ¥»[22m commitPassiveMountOnFiber node_modules/react-dom/cjs/react-d
+om-client.development.js:[2m15718:11[22m[39m
+[90m [2mΓ¥»[22m recursivelyTraversePassiveMountEffects node_modules/react-do
+m/cjs/react-dom-client.development.js:[2m15439:11[22m[39m
+[90m [2mΓ¥»[22m commitPassiveMountOnFiber node_modules/react-dom/cjs/react-d
+om-client.development.js:[2m15476:11[22m[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»[1/6]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m src/tests/Login.test.jsx[2m > [22mLoginForm[2m > 
+[22mrenders the submit button
+[31m[1mTestingLibraryElementError[22m[39m: Unable to find an accessible 
+element with the role "button" and name `/login/i`
+
+Here are the accessible roles:
+
+  link:
+
+  Name "ServiceSphereService Sphere":
+  [36m<a[39m
+    [33mclass[39m=[32m"_panelLogo_944078"[39m
+    [33mdata-discover[39m=[32m"true"[39m
+    [33mhref[39m=[32m"/home"[39m
+  [36m/>[39m
+
+  Name "Sign up here":
+  [36m<a[39m
+    [33mclass[39m=[32m"_link_944078"[39m
+    [33mhref[39m=[32m"/signup/seeker"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  img:
+
+  Name "ServiceSphere":
+  [36m<img[39m
+    [33malt[39m=[32m"ServiceSphere"[39m
+    [33mclass[39m=[32m"_panelLogoImg_944078"[39m
+    [33mdecoding[39m=[32m"async"[39m
+    [33mloading[39m=[32m"lazy"[39m
+    [33msrc[39m=[32m"logo.png"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"_panelTagline_944078"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"_switchText_944078"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "ΓåÉ Back":
+  [36m<button[39m
+    [33mclass[39m=[32m"_backBtn_944078"[39m
+  [36m/>[39m
+
+  Name "Show password":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Show password"[39m
+    [33mclass[39m=[32m"_eyeBtn_944078"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Log In":
+  [36m<button[39m
+    [33mclass[39m=[32m"_submitButton_944078"[39m
+    [33mtype[39m=[32m"submit"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "Login as a Seeker":
+  [36m<h1[39m
+    [33mclass[39m=[32m"_title_944078"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "":
+  [36m<input[39m
+    [33mclass[39m=[32m"_input_944078"[39m
+    [33mname[39m=[32m"email"[39m
+    [33mplaceholder[39m=[32m"Enter your email"[39m
+    [33mrequired[39m=[32m""[39m
+    [33mtype[39m=[32m"email"[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"_page_944078"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"_brandPanel_944078"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"_panelLogo_944078"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/home"[39m
+        [36m>[39m
+          [36m<img[39m
+            [33malt[39m=[32m"ServiceSphere"[39m
+            [33mclass[39m=[32m"_panelLogoImg_944078"[39m
+            [33mdecoding[39m=[32m"async"[39m
+            [33mloading[39m=[32m"lazy"[39m
+            [33msrc[39m=[32m"logo.png"[39m
+          [36m/>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"_panelLogoName_944078"[39m
+          [36m>[39m
+            [0mService Sphere[0m
+          [36m</span>[39m
+        [36m</a>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"_panelTagline_944078"[39m
+        [36m>[39m
+          [0mYour orbit to assistance[0m
+        [36m</p>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"_formPanel_944078"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_formWrap_944078"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"_backBtn_944078"[39m
+          [36m>[39m
+            [0mΓåÉ Back[0m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"_formCard_944078"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"_title_944078"[39m
+            [36m>[39m
+              [0mLogin as a Seeker[0m
+            [36m</h1>[39m
+            [36m<form>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"_formGroup_944078"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mclass[39m=[32m"_label_944078"[39m
+                [36m>[39m
+                  [0mEmail Address[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  [33mclass[39m=[32m"_input_944078"[39m
+                  [33mname[39m=[32m"email"[39m
+                  [33mplaceholder[39m=[32m"Enter your email"[39m
+                  [33mrequired[39m=[32m""[39m
+                  [33mtype[39m=[32m"email"[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"_formGroup_944078"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mclass[39m=[32m"_label_944078"[39m
+                [36m>[39m
+                  [0mPassword[0m
+                [36m</label>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"_inputWrapper_944078"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"_input_944078"[39m
+                    [33mname[39m=[32m"password"[39m
+                    [33mplaceholder[39m=[32m"Enter your password"[39m
+                    [33mrequired[39m=[32m""[39m
+                    [33mtype[39m=[32m"password"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                  [36m<button[39m
+                    [33maria-label[39m=[32m"Show password"[39m
+                    [33mclass[39m=[32m"_eyeBtn_944078"[39m
+                    [33mtabindex[39m=[32m"-1"[39m
+                    [33mtype[39m=[32m"button"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33mfill[39m=[32m"currentColor"[39m
+                      [33mheight[39m=[32m"18"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"18"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M12 4.5C7 4.5 2.73 7.61 1 12c1.73 
+4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 
+0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 
+3 3-1.34 3-3-1.34-3-3-3z"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                  [36m</button>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"_submitButton_944078"[39m
+                [33mtype[39m=[32m"submit"[39m
+              [36m>[39m
+                [0mLog In[0m
+              [36m</button>[39m
+            [36m</form>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"_switchText_944078"[39m
+            [36m>[39m
+              [0mDon't have an account?[0m
+              [0m [0m
+              [36m<a[39m
+                [33mclass[39m=[32m"_link_944078"[39m
+                [33mhref[39m=[32m"/signup/seeker"[39m
+              [36m>[39m
+                [0mSign up here[0m
+              [36m</a>[39m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+[90m [2mΓ¥»[22m Object.getElementError 
+node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2mΓ¥»[22m 
+node_modules/@testing-library/dom/dist/query-helpers.js:[2m76:38[22m[39m
+[90m [2mΓ¥»[22m 
+node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2mΓ¥»[22m 
+node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2mΓ¥»[22m src/tests/Login.test.jsx:[2m43:19[22m[39m
+    [90m 41|[39m   [34mit[39m([32m'renders the submit 
+button'[39m[33m,[39m () [33m=>[39m {
+    [90m 42|[39m     
+[34mrenderWithProviders[39m([33m<[39m[33mLoginForm[39m 
+[33m{[39m[33m...[39mdefaultProps[33m}[39m 
+[33m/[39m[33m>[39m)[33m;[39m
+    [90m 43|[39m     expect(screen.getByRole('button', { name: /login/i 
+})).toBeInTheDoΓÇª
+    [90m   |[39m                   [31m^[39m
+    [90m 44|[39m   })[33m;[39m
+    [90m 45|[39m
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»[2/6]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m src/tests/Login.test.jsx[2m > [22mLoginForm[2m > 
+[22mshows an error message when the API returns an error
+[31m[1mTestingLibraryElementError[22m[39m: Unable to find an accessible 
+element with the role "button" and name `/login/i`
+
+Here are the accessible roles:
+
+  link:
+
+  Name "ServiceSphereService Sphere":
+  [36m<a[39m
+    [33mclass[39m=[32m"_panelLogo_944078"[39m
+    [33mdata-discover[39m=[32m"true"[39m
+    [33mhref[39m=[32m"/home"[39m
+  [36m/>[39m
+
+  Name "Sign up here":
+  [36m<a[39m
+    [33mclass[39m=[32m"_link_944078"[39m
+    [33mhref[39m=[32m"/signup/seeker"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  img:
+
+  Name "ServiceSphere":
+  [36m<img[39m
+    [33malt[39m=[32m"ServiceSphere"[39m
+    [33mclass[39m=[32m"_panelLogoImg_944078"[39m
+    [33mdecoding[39m=[32m"async"[39m
+    [33mloading[39m=[32m"lazy"[39m
+    [33msrc[39m=[32m"logo.png"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"_panelTagline_944078"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"_switchText_944078"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "ΓåÉ Back":
+  [36m<button[39m
+    [33mclass[39m=[32m"_backBtn_944078"[39m
+  [36m/>[39m
+
+  Name "Show password":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Show password"[39m
+    [33mclass[39m=[32m"_eyeBtn_944078"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Log In":
+  [36m<button[39m
+    [33mclass[39m=[32m"_submitButton_944078"[39m
+    [33mtype[39m=[32m"submit"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "Login as a Seeker":
+  [36m<h1[39m
+    [33mclass[39m=[32m"_title_944078"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "":
+  [36m<input[39m
+    [33mclass[39m=[32m"_input_944078"[39m
+    [33mname[39m=[32m"email"[39m
+    [33mplaceholder[39m=[32m"Enter your email"[39m
+    [33mrequired[39m=[32m""[39m
+    [33mtype[39m=[32m"email"[39m
+    [33mvalue[39m=[32m"bad@test.com"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"_page_944078"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"_brandPanel_944078"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"_panelLogo_944078"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/home"[39m
+        [36m>[39m
+          [36m<img[39m
+            [33malt[39m=[32m"ServiceSphere"[39m
+            [33mclass[39m=[32m"_panelLogoImg_944078"[39m
+            [33mdecoding[39m=[32m"async"[39m
+            [33mloading[39m=[32m"lazy"[39m
+            [33msrc[39m=[32m"logo.png"[39m
+          [36m/>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"_panelLogoName_944078"[39m
+          [36m>[39m
+            [0mService Sphere[0m
+          [36m</span>[39m
+        [36m</a>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"_panelTagline_944078"[39m
+        [36m>[39m
+          [0mYour orbit to assistance[0m
+        [36m</p>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"_formPanel_944078"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_formWrap_944078"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"_backBtn_944078"[39m
+          [36m>[39m
+            [0mΓåÉ Back[0m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"_formCard_944078"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"_title_944078"[39m
+            [36m>[39m
+              [0mLogin as a Seeker[0m
+            [36m</h1>[39m
+            [36m<form>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"_formGroup_944078"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mclass[39m=[32m"_label_944078"[39m
+                [36m>[39m
+                  [0mEmail Address[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  [33mclass[39m=[32m"_input_944078"[39m
+                  [33mname[39m=[32m"email"[39m
+                  [33mplaceholder[39m=[32m"Enter your email"[39m
+                  [33mrequired[39m=[32m""[39m
+                  [33mtype[39m=[32m"email"[39m
+                  [33mvalue[39m=[32m"bad@test.com"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"_formGroup_944078"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mclass[39m=[32m"_label_944078"[39m
+                [36m>[39m
+                  [0mPassword[0m
+                [36m</label>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"_inputWrapper_944078"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"_input_944078"[39m
+                    [33mname[39m=[32m"password"[39m
+                    [33mplaceholder[39m=[32m"Enter your password"[39m
+                    [33mrequired[39m=[32m""[39m
+                    [33mtype[39m=[32m"password"[39m
+                    [33mvalue[39m=[32m"wrongpass"[39m
+                  [36m/>[39m
+                  [36m<button[39m
+                    [33maria-label[39m=[32m"Show password"[39m
+                    [33mclass[39m=[32m"_eyeBtn_944078"[39m
+                    [33mtabindex[39m=[32m"-1"[39m
+                    [33mtype[39m=[32m"button"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33mfill[39m=[32m"currentColor"[39m
+                      [33mheight[39m=[32m"18"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"18"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M12 4.5C7 4.5 2.73 7.61 1 12c1.73 
+4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 
+0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 
+3 3-1.34 3-3-1.34-3-3-3z"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                  [36m</button>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"_submitButton_944078"[39m
+                [33mtype[39m=[32m"submit"[39m
+              [36m>[39m
+                [0mLog In[0m
+              [36m</button>[39m
+            [36m</form>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"_switchText_944078"[39m
+            [36m>[39m
+              [0mDon't have an account?[0m
+              [0m [0m
+              [36m<a[39m
+                [33mclass[39m=[32m"_link_944078"[39m
+                [33mhref[39m=[32m"/signup/seeker"[39m
+              [36m>[39m
+                [0mSign up here[0m
+              [36m</a>[39m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+[90m [2mΓ¥»[22m Object.getElementError 
+node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2mΓ¥»[22m 
+node_modules/@testing-library/dom/dist/query-helpers.js:[2m76:38[22m[39m
+[90m [2mΓ¥»[22m 
+node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2mΓ¥»[22m 
+node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2mΓ¥»[22m src/tests/Login.test.jsx:[2m54:29[22m[39m
+    [90m 52|[39m     await user.type(screen.getByPlaceholderText(/enter your 
+email/i), ΓÇª
+    [90m 53|[39m     await user.type(screen.getByPlaceholderText(/enter your 
+password/iΓÇª
+    [90m 54|[39m     [35mawait[39m user[33m.[39m[34mclick[39m(screen[3
+3m.[39m[34mgetByRole[39m([32m'button'[39m[33m,[39m { name[33m:[39m 
+[36m/login/i[39m }))[33m;[39m
+    [90m   |[39m                             [31m^[39m
+    [90m 55|[39m
+    [90m 56|[39m     expect(await screen.findByText(/invalid 
+credentials/i)).toBeInTheDΓÇª
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»[3/6]ΓÄ»[22m[39m
+
+[41m[1m FAIL [22m[49m src/tests/Login.test.jsx[2m > [22mLoginForm[2m > 
+[22mcalls apiClient.post with email and password on submit
+[31m[1mTestingLibraryElementError[22m[39m: Unable to find an accessible 
+element with the role "button" and name `/login/i`
+
+Here are the accessible roles:
+
+  link:
+
+  Name "ServiceSphereService Sphere":
+  [36m<a[39m
+    [33mclass[39m=[32m"_panelLogo_944078"[39m
+    [33mdata-discover[39m=[32m"true"[39m
+    [33mhref[39m=[32m"/home"[39m
+  [36m/>[39m
+
+  Name "Sign up here":
+  [36m<a[39m
+    [33mclass[39m=[32m"_link_944078"[39m
+    [33mhref[39m=[32m"/signup/seeker"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  img:
+
+  Name "ServiceSphere":
+  [36m<img[39m
+    [33malt[39m=[32m"ServiceSphere"[39m
+    [33mclass[39m=[32m"_panelLogoImg_944078"[39m
+    [33mdecoding[39m=[32m"async"[39m
+    [33mloading[39m=[32m"lazy"[39m
+    [33msrc[39m=[32m"logo.png"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"_panelTagline_944078"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"_switchText_944078"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "ΓåÉ Back":
+  [36m<button[39m
+    [33mclass[39m=[32m"_backBtn_944078"[39m
+  [36m/>[39m
+
+  Name "Show password":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Show password"[39m
+    [33mclass[39m=[32m"_eyeBtn_944078"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Log In":
+  [36m<button[39m
+    [33mclass[39m=[32m"_submitButton_944078"[39m
+    [33mtype[39m=[32m"submit"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "Login as a Seeker":
+  [36m<h1[39m
+    [33mclass[39m=[32m"_title_944078"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "":
+  [36m<input[39m
+    [33mclass[39m=[32m"_input_944078"[39m
+    [33mname[39m=[32m"email"[39m
+    [33mplaceholder[39m=[32m"Enter your email"[39m
+    [33mrequired[39m=[32m""[39m
+    [33mtype[39m=[32m"email"[39m
+    [33mvalue[39m=[32m"seeker@test.com"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"_page_944078"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"_brandPanel_944078"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"_panelLogo_944078"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/home"[39m
+        [36m>[39m
+          [36m<img[39m
+            [33malt[39m=[32m"ServiceSphere"[39m
+            [33mclass[39m=[32m"_panelLogoImg_944078"[39m
+            [33mdecoding[39m=[32m"async"[39m
+            [33mloading[39m=[32m"lazy"[39m
+            [33msrc[39m=[32m"logo.png"[39m
+          [36m/>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"_panelLogoName_944078"[39m
+          [36m>[39m
+            [0mService Sphere[0m
+          [36m</span>[39m
+        [36m</a>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"_panelTagline_944078"[39m
+        [36m>[39m
+          [0mYour orbit to assistance[0m
+        [36m</p>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"_formPanel_944078"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"_formWrap_944078"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"_backBtn_944078"[39m
+          [36m>[39m
+            [0mΓåÉ Back[0m
+          [36m</button>[39m
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[31m6 failed[39m[22m[2m | [22m[1m[32m11 passed[39m[22m[90m (17)[39m
+[2m   Start at [22m 10:10:48
+[2m   Duration [22m 11.12s[2m (transform 3.86s, setup 2.77s, import 12.81s, tests 2.63s, environment 23.28s)[22m
+          [36m<div[39m
+            [33mclass[39m=[32m"_formCard_944078"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"_title_944078"[39m
+            [36m>[39m
+              [0mLogin as a Seeker[0m
+            [36m</h1>[39m
+            [36m<form>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"_formGroup_944078"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mclass[39m=[32m"_label_944078"[39m
+                [36m>[39m
+                  [0mEmail Address[0m
+                [36m</label>[39m
+                [36m<input[39m
+                  [33mclass[39m=[32m"_input_944078"[39m
+                  [33mname[39m=[32m"email"[39m
+                  [33mplaceholder[39m=[32m"Enter your email"[39m
+                  [33mrequired[39m=[32m""[39m
+                  [33mtype[39m=[32m"email"[39m
+                  [33mvalue[39m=[32m"seeker@test.com"[39m
+                [36m/>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"_formGroup_944078"[39m
+              [36m>[39m
+                [36m<label[39m
+                  [33mclass[39m=[32m"_label_944078"[39m
+                [36m>[39m
+                  [0mPassword[0m
+                [36m</label>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"_inputWrapper_944078"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"_input_944078"[39m
+                    [33mname[39m=[32m"password"[39m
+                    [33mplaceholder[39m=[32m"Enter your password"[39m
+                    [33mrequired[39m=[32m""[39m
+                    [33mtype[39m=[32m"password"[39m
+                    [33mvalue[39m=[32m"pass1234"[39m
+                  [36m/>[39m
+                  [36m<button[39m
+                    [33maria-label[39m=[32m"Show password"[39m
+                    [33mclass[39m=[32m"_eyeBtn_944078"[39m
+                    [33mtabindex[39m=[32m"-1"[39m
+                    [33mtype[39m=[32m"button"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33mfill[39m=[32m"currentColor"[39m
+                      [33mheight[39m=[32m"18"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"18"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M12 4.5C7 4.5 2.73 7.61 1 12c1.73 
+4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 
+0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 
+3 3-1.34 3-3-1.34-3-3-3z"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                  [36m</button>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"_submitButton_944078"[39m
+                [33mtype[39m=[32m"submit"[39m
+              [36m>[39m
+                [0mLog In[0m
+              [36m</button>[39m
+            [36m</form>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"_switchText_944078"[39m
+            [36m>[39m
+              [0mDon't have an account?[0m
+              [0m [0m
+              [36m<a[39m
+                [33mclass[39m=[32m"_link_944078"[39m
+                [33mhref[39m=[32m"/signup/seeker"[39m
+              [36m>[39m
+                [0mSign up here[0m
+              [36m</a>[39m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+[90m [2mΓ¥»[22m Object.getElementError 
+node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2mΓ¥»[22m 
+node_modules/@testing-library/dom/dist/query-helpers.js:[2m76:38[22m[39m
+[90m [2mΓ¥»[22m 
+node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2mΓ¥»[22m 
+node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2mΓ¥»[22m src/tests/Login.test.jsx:[2m67:29[22m[39m
+    [90m 65|[39m     await user.type(screen.getByPlaceholderText(/enter your 
+email/i), ΓÇª
+    [90m 66|[39m     await user.type(screen.getByPlaceholderText(/enter your 
+password/iΓÇª
+    [90m 67|[39m     [35mawait[39m user[33m.[39m[34mclick[39m(screen[3
+3m.[39m[34mgetByRole[39m([32m'button'[39m[33m,[39m { name[33m:[39m 
+[36m/login/i[39m }))[33m;[39m
+    [90m   |[39m                             [31m^[39m
+    [90m 68|[39m
+    [90m 69|[39m     
+expect(apiClient.post).toHaveBeenCalledWith('/api/auth/login/seekeΓÇª
+
+[31m[2mΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»Γ
+Ä»[4/6]ΓÄ»[22m[39m
+
+

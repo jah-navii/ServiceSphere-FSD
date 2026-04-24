@@ -11,6 +11,21 @@ const schema = z.object({
   JWT_EXPIRY: z.string().default('7d'),
   NODE_ENV:   z.enum(['development', 'production', 'test']).default('development'),
   LOG_LEVEL:  z.string().default('http'),
+
+  // ── Phase 2: Redis ──────────────────────────────────────────────────────────
+  // Optional — only required when CACHE_DRIVER=redis
+  REDIS_URL:  z.string().optional(),
+
+  // ── Phase 2: Meilisearch ────────────────────────────────────────────────────
+  // Optional — only required when SEARCH_DRIVER=meili
+  MEILI_HOST:       z.string().default('http://localhost:7700'),
+  MEILI_MASTER_KEY: z.string().default(''),
+
+  // ── Feature flags ───────────────────────────────────────────────────────────
+  // CACHE_DRIVER: 'redis' | 'memory' | 'none'  (default: memory)
+  CACHE_DRIVER:  z.enum(['redis', 'memory', 'none']).default('memory'),
+  // SEARCH_DRIVER: 'meili' | 'mongo'            (default: mongo)
+  SEARCH_DRIVER: z.enum(['meili', 'mongo']).default('mongo'),
 });
 
 const parsed = schema.safeParse(process.env);

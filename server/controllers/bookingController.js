@@ -43,7 +43,7 @@ export const createBooking = async (req, res) => {
       time,
       address,
       price,
-      status: "Pending",        
+      status: "pending",        
       paid: false
     });
 

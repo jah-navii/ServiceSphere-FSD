@@ -1,54 +1,48 @@
 /**
- * utils/cache.js
+ * utils/cache.js — backward-compatibility shim
  *
- * Thin wrapper around node-cache providing a typed, self-documenting TTL cache.
- * A single shared instance is used across the process — safe for single-process
- * Node deployments.  For multi-process / clustered deployments swap this for Redis.
+ * All existing controllers import { getOrSet, del, delPrefix, flush, stats }
+ * from this file.  This shim re-implements those helpers on top of the new
+ * driver-pattern cache (utils/cache/index.js) so zero controller code changes
+ * are needed.
  *
- * Usage:
- *   import { getOrSet, del, flush } from '../utils/cache.js';
- *
- *   const data = await getOrSet('my-key', 60, () => fetchExpensiveThing());
+ * New code should import getCache() directly from utils/cache/index.js.
  */
 
-import NodeCache from 'node-cache';
-
-// Check period = 120s (background TTL reaper).  stdTTL = 0 means "no default TTL".
-const _cache = new NodeCache({ stdTTL: 0, checkperiod: 120, useClones: false });
+export { getCache, resetCache } from './cache/index.js';
+import { getCache } from './cache/index.js';
 
 /**
- * Return cached value for `key`, or call `fn` to produce + cache it.
- *
- * @param {string}   key    Cache key
- * @param {number}   ttl    Seconds until expiry
- * @param {Function} fn     Async factory — called only on a cache miss
- * @returns {Promise<any>}
+ * Return cached value or call `fn` to produce + cache it.
+ * @param {string}   key  Cache key
+ * @param {number}   ttl  Seconds until expiry
+ * @param {Function} fn   Async factory — called only on miss
  */
 export async function getOrSet(key, ttl, fn) {
-  const hit = _cache.get(key);
-  if (hit !== undefined) return hit;
+  const cache = getCache();
+  const hit   = await cache.get(key);
+  if (hit !== null) return hit;
   const value = await fn();
-  _cache.set(key, value, ttl);
+  await cache.set(key, value, ttl);
   return value;
 }
 
 /** Invalidate a single key. */
-export function del(key) {
-  _cache.del(key);
+export async function del(key) {
+  return getCache().del(key);
 }
 
-/** Invalidate all keys matching a prefix. */
-export function delPrefix(prefix) {
-  const keys = _cache.keys().filter(k => k.startsWith(prefix));
-  _cache.del(keys);
+/** Invalidate all keys whose name starts with `prefix`. */
+export async function delPrefix(prefix) {
+  return getCache().delByPrefix(prefix);
 }
 
-/** Wipe entire cache (use in tests / admin reset). */
-export function flush() {
-  _cache.flushAll();
+/** Wipe entire cache (tests / admin reset). */
+export async function flush() {
+  return getCache().flush();
 }
 
 /** Expose stats for health-check / admin endpoints. */
 export function stats() {
-  return _cache.getStats();
+  return getCache().stats();
 }

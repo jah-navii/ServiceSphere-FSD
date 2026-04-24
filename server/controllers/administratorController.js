@@ -9,6 +9,7 @@ import ContactMessage from '../models/ContactMessage.js';
 import Feedback from '../models/Feedback.js';
 import ServiceRequest from '../models/ServiceRequest.js';
 import { getOrSet } from '../utils/cache.js';
+import { getSearch } from '../utils/search/index.js';
 
 /**
  * Administrator Dashboard - Overview of entire platform
@@ -1338,3 +1339,32 @@ export const cleanupOrphans = async (req, res) => {
     res.status(500).json({ success: false, error: 'Cleanup failed' });
   }
 };
+
+// ── Meilisearch reindex ────────────────────────────────────────────────────────
+
+/**
+ * POST /api/administrator/reindex
+ * Triggers a full Meilisearch reindex from MongoDB (admin-only).
+ * Only meaningful when SEARCH_DRIVER=meili; otherwise returns a clear no-op message.
+ */
+export const triggerReindex = async (req, res) => {
+  if (process.env.SEARCH_DRIVER !== 'meili') {
+    return res.status(200).json({
+      success: true,
+      message: 'Reindex skipped — SEARCH_DRIVER is not "meili".',
+      driver: process.env.SEARCH_DRIVER ?? 'mongo',
+    });
+  }
+
+  const { reindexAll } = await import('../utils/search/meiliSearch.js');
+  const progress = [];
+
+  try {
+    const result = await reindexAll({ onProgress: (msg) => progress.push(msg) });
+    res.status(200).json({ success: true, ...result, progress });
+  } catch (err) {
+    console.error('[admin] reindex failed:', err.message);
+    res.status(500).json({ success: false, message: err.message, progress });
+  }
+};
+

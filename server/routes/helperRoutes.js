@@ -10,6 +10,7 @@ import {
   getHelperFeedback,
   seedDemoBookings
 } from '../controllers/helperController.js';
+import { searchHelpersAPI } from '../controllers/serviceController.js';
 
 const router = express.Router();
 
@@ -200,5 +201,9 @@ router.get('/feedback/:helperId', getHelperFeedback);
  *         description: Demo bookings created
  */
 router.post('/seed-demo-bookings', seedDemoBookings);
+
+// Driver-agnostic helper search (mongo regex | Meilisearch depending on SEARCH_DRIVER)
+// GET /api/helper/search?q=plumber&category=...&location=...&gender=...&maxPrice=...
+router.get('/search', searchHelpersAPI);
 
 export default router;
