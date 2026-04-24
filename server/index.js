@@ -130,7 +130,7 @@ export { app };
 // Start only after DB connects — skipped in test environment
 if (env.NODE_ENV !== 'test') {
   connectDB().then(() => {
-    app.listen(env.PORT, () => {
+    app.listen(env.PORT, '0.0.0.0', () => {
       logger.info(`Server running on http://localhost:${env.PORT}`);
     });
 
