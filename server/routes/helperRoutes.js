@@ -202,6 +202,76 @@ router.get('/feedback/:helperId', getHelperFeedback);
  */
 router.post('/seed-demo-bookings', seedDemoBookings);
 
+/**
+ * @swagger
+ * /api/helper/search:
+ *   get:
+ *     summary: Full-text search for helpers
+ *     description: >
+ *       Driver-agnostic search. When `SEARCH_DRIVER=meili` uses Meilisearch
+ *       (typo-tolerant, ~12 ms P50). When `SEARCH_DRIVER=mongo` falls back to
+ *       MongoDB regex (~180 ms P50). No authentication required.
+ *     tags: [Helper]
+ *     security: []
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Search term, e.g. "plumber" or "plumer" (typos tolerated in Meili mode)
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         description: Category ObjectId filter (default "all")
+ *       - in: query
+ *         name: location
+ *         schema:
+ *           type: string
+ *         description: Location ObjectId filter (default "all")
+ *       - in: query
+ *         name: gender
+ *         schema:
+ *           type: string
+ *           enum: [all, male, female]
+ *         description: Gender filter (default "all")
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *           default: 5000
+ *         description: Maximum service price filter
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 50
+ *           maximum: 100
+ *     responses:
+ *       200:
+ *         description: Helper search results
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 hits:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 total:  { type: integer, example: 8 }
+ *                 page:   { type: integer, example: 1 }
+ *                 limit:  { type: integer, example: 50 }
+ *       500:
+ *         description: Search failed
+ */
 // Driver-agnostic helper search (mongo regex | Meilisearch depending on SEARCH_DRIVER)
 // GET /api/helper/search?q=plumber&category=...&location=...&gender=...&maxPrice=...
 router.get('/search', searchHelpersAPI);

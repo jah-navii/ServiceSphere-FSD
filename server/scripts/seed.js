@@ -359,9 +359,9 @@ async function main() {
   }));
   const insertedAdmins = await Admin.insertMany(adminRows);
 
-  // ── 6. Helpers (300, spread across 4 active locations ~75 each) ───────────────
-  console.log('[seed] 6/9 Seeding 300 helpers...');
-  const TOTAL_HELPERS = 300;
+  // ── 6. Helpers (spread across 4 active locations) ─────────────────────────────
+  console.log('[seed] 6/9 Seeding 20 helpers...');
+  const TOTAL_HELPERS = 20;
   const helperRows = [];
 
   for (let i = 0; i < TOTAL_HELPERS; i++) {
@@ -399,9 +399,9 @@ async function main() {
     helperLocMap[h._id.toString()] = h.location?.toString();
   }
 
-  // ── 7. Seekers (500) ──────────────────────────────────────────────────────────
-  console.log('[seed] 7/9 Seeding 500 seekers...');
-  const TOTAL_SEEKERS = 500;
+  // ── 7. Seekers ────────────────────────────────────────────────────────────────
+  console.log('[seed] 7/9 Seeding 30 seekers...');
+  const TOTAL_SEEKERS = 30;
   const seekerRows = [];
   const usedMobiles = new Set();
 
@@ -424,10 +424,10 @@ async function main() {
   const insertedSeekers = await Seeker.insertMany(seekerRows);
   const seekerIds = insertedSeekers.map((s) => s._id);
 
-  // ── 8. Bookings (5 000, last 12 months) ───────────────────────────────────────
-  console.log('[seed] 8/9 Seeding 5,000 bookings in batches of 500...');
-  const TOTAL_BOOKINGS = 5_000;
-  const BATCH_SIZE     = 500;
+  // ── 8. Bookings (last 12 months) ──────────────────────────────────────────────
+  console.log('[seed] 8/9 Seeding 100 bookings...');
+  const TOTAL_BOOKINGS = 100;
+  const BATCH_SIZE     = 100;
   const now            = new Date();
   const twelveMonthsAgo = new Date(now);
   twelveMonthsAgo.setFullYear(twelveMonthsAgo.getFullYear() - 1);
@@ -469,9 +469,9 @@ async function main() {
     console.log(`       ${Math.min(offset + BATCH_SIZE, TOTAL_BOOKINGS)}/${TOTAL_BOOKINGS} booked`);
   }
 
-  // ── 9. Feedbacks (2 000, from completed bookings, skewed ratings) ──────────────
-  console.log('[seed] 9/9 Seeding up to 2,000 feedbacks...');
-  const TOTAL_FEEDBACKS = 2_000;
+  // ── 9. Feedbacks (from completed bookings, skewed ratings) ────────────────────
+  console.log('[seed] 9/9 Seeding up to 50 feedbacks...');
+  const TOTAL_FEEDBACKS = 50;
 
   // Shuffle completedForFeedback in-place (Fisher-Yates)
   for (let i = completedForFeedback.length - 1; i > 0; i--) {
@@ -495,12 +495,12 @@ async function main() {
   }
 
   // ── Contact Messages (200) ────────────────────────────────────────────────────
-  console.log('[seed] 9+/9 Seeding 200 contact messages...');
+  console.log('[seed] 9+/9 Seeding 20 contact messages...');
   const allAdminDocs = [
     ...insertedModerators.filter((m) => m.status === 'active'),
     ...insertedAdmins,
   ];
-  const contactRows = Array.from({ length: 200 }, () => {
+  const contactRows = Array.from({ length: 20 }, () => {
     const name = indianName();
     return {
       name,
