@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="96" failures="0" errors="0" time="49.8303963">
+    <testsuite name="tests/integration/auth.test.js" timestamp="2026-04-27T05:35:12.705Z" hostname="Jahnavi" tests="16" failures="0" errors="0" skipped="0" time="5.6375567">
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/signup/seeker &gt; creates a new seeker and returns 201" time="0.9943419">
+        </testcase>
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/signup/seeker &gt; stores the password as a bcrypt hash, not plaintext" time="0.2038561">
+        </testcase>
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/signup/seeker &gt; returns 409 when the email is already registered" time="0.2092974">
+        </testcase>
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/signup/seeker &gt; returns 409 when the mobile number is already registered" time="0.2245152">
+        </testcase>
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/signup/seeker &gt; returns 400 for an invalid email format" time="0.0174721">
+        </testcase>
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/signup/seeker &gt; returns 400 when passwords do not match" time="0.0149075">
+        </testcase>
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/signup/seeker &gt; returns 400 for a 9-digit mobile number" time="0.0178963">
+        </testcase>
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/signup/seeker &gt; returns 400 for an 11-digit mobile number" time="0.0199381">
+        </testcase>
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/signup/seeker &gt; returns 400 when a required field is missing" time="0.0175206">
+        </testcase>
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/login/seeker &gt; returns 200 and a JWT token on successful login" time="0.3845568">
+        </testcase>
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/login/seeker &gt; returns 401 for a wrong password — does not leak whether email exists" time="0.321637">
+        </testcase>
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/login/seeker &gt; returns 401 for a non-existent email — same message as wrong password" time="0.1764027">
+        </testcase>
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/login/seeker &gt; rejects a user whose stored password is plaintext (legacy account)" time="0.1862233">
+        </testcase>
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/login/seeker &gt; returns 400 when the email field is omitted" time="0.1730044">
+        </testcase>
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/login/seeker &gt; returns 400 when the password field is omitted" time="0.1749229">
+        </testcase>
+        <testcase classname="tests/integration/auth.test.js" name="POST /api/auth/login/seeker &gt; returns 403 for a suspended account" time="0.301093">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/bookings.test.js" timestamp="2026-04-27T05:35:12.713Z" hostname="Jahnavi" tests="6" failures="0" errors="0" skipped="0" time="5.1916753">
+        <testcase classname="tests/integration/bookings.test.js" name="POST /api/bookings &gt; creates a booking for an authenticated seeker" time="1.4030576">
+        </testcase>
+        <testcase classname="tests/integration/bookings.test.js" name="POST /api/bookings &gt; returns 401 when no auth token is provided" time="0.3392579">
+        </testcase>
+        <testcase classname="tests/integration/bookings.test.js" name="POST /api/bookings &gt; returns 400 when required fields are missing" time="0.3709777">
+        </testcase>
+        <testcase classname="tests/integration/bookings.test.js" name="POST /api/bookings &gt; returns 404 when the userId does not match a real seeker" time="0.3406335">
+        </testcase>
+        <testcase classname="tests/integration/bookings.test.js" name="GET /api/bookings &gt; returns only the requesting seeker&apos;s own bookings" time="0.3499514">
+        </testcase>
+        <testcase classname="tests/integration/bookings.test.js" name="GET /api/bookings &gt; returns 400 when userId query param is missing" time="0.3168963">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/feedback.test.js" timestamp="2026-04-27T05:35:12.716Z" hostname="Jahnavi" tests="5" failures="0" errors="0" skipped="0" time="4.8554246">
+        <testcase classname="tests/integration/feedback.test.js" name="POST /api/feedback &gt; submits feedback for a valid booking and returns 201" time="1.2845804">
+        </testcase>
+        <testcase classname="tests/integration/feedback.test.js" name="POST /api/feedback &gt; stores the feedback with correct seeker and helper references" time="0.3574259">
+        </testcase>
+        <testcase classname="tests/integration/feedback.test.js" name="POST /api/feedback &gt; returns 404 for a non-existent booking ID" time="0.3539479">
+        </testcase>
+        <testcase classname="tests/integration/feedback.test.js" name="POST /api/feedback &gt; can submit feedback for a pending booking (no status guard in current impl)" time="0.3514931">
+        </testcase>
+        <testcase classname="tests/integration/feedback.test.js" name="POST /api/feedback &gt; allows multiple feedback entries for the same booking (no duplicate guard)" time="0.3330264">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/helpers.test.js" timestamp="2026-04-27T05:35:12.719Z" hostname="Jahnavi" tests="5" failures="0" errors="0" skipped="0" time="5.2949123">
+        <testcase classname="tests/integration/helpers.test.js" name="GET /api/services &gt; returns 200 with a helpers array in the response" time="1.2978982">
+        </testcase>
+        <testcase classname="tests/integration/helpers.test.js" name="GET /api/services &gt; only returns approved, non-suspended helpers" time="0.3485475">
+        </testcase>
+        <testcase classname="tests/integration/helpers.test.js" name="GET /api/services &gt; filters by category ID" time="0.5574678">
+        </testcase>
+        <testcase classname="tests/integration/helpers.test.js" name="GET /api/services &gt; filters by location name" time="0.4891644">
+        </testcase>
+        <testcase classname="tests/integration/helpers.test.js" name="GET /api/services &gt; returns an empty helpers array when no helpers match the search term" time="0.3258961">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/moderator.test.js" timestamp="2026-04-27T05:35:12.721Z" hostname="Jahnavi" tests="6" failures="0" errors="0" skipped="0" time="6.5392122">
+        <testcase classname="tests/integration/moderator.test.js" name="GET /api/moderator/helpers &gt; returns only helpers in the moderator&apos;s assigned location" time="1.5803353">
+        </testcase>
+        <testcase classname="tests/integration/moderator.test.js" name="GET /api/moderator/helpers &gt; moderator B does not see helpers from location A" time="0.700519">
+        </testcase>
+        <testcase classname="tests/integration/moderator.test.js" name="GET /api/moderator/helpers &gt; returns 401 for an unauthenticated request" time="0.5962959">
+        </testcase>
+        <testcase classname="tests/integration/moderator.test.js" name="GET /api/moderator/helpers &gt; returns 403 for a seeker token (wrong role)" time="0.5883419">
+        </testcase>
+        <testcase classname="tests/integration/moderator.test.js" name="GET /api/moderator/dashboard &gt; returns dashboard data for the moderator&apos;s own location" time="0.4648217">
+        </testcase>
+        <testcase classname="tests/integration/moderator.test.js" name="GET /api/moderator/dashboard &gt; returns 403 when the moderator has no assignedLocation" time="0.484266">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/middleware/requireAuth.test.js" timestamp="2026-04-27T05:35:12.724Z" hostname="Jahnavi" tests="7" failures="0" errors="0" skipped="0" time="4.1299199">
+        <testcase classname="tests/unit/middleware/requireAuth.test.js" name="requireAuth() &gt; returns 401 when no Authorization header is present" time="0.2668068">
+        </testcase>
+        <testcase classname="tests/unit/middleware/requireAuth.test.js" name="requireAuth() &gt; returns 401 when the token is invalid / malformed" time="0.085136">
+        </testcase>
+        <testcase classname="tests/unit/middleware/requireAuth.test.js" name="requireAuth() &gt; returns 401 for an expired token" time="0.1303497">
+        </testcase>
+        <testcase classname="tests/unit/middleware/requireAuth.test.js" name="requireAuth() &gt; returns 403 when the token role is not in the allowed list" time="0.0467586">
+        </testcase>
+        <testcase classname="tests/unit/middleware/requireAuth.test.js" name="requireAuth() &gt; calls next() and attaches req.user for a valid token with allowed role" time="0.020749">
+        </testcase>
+        <testcase classname="tests/unit/middleware/requireAuth.test.js" name="requireAuth() &gt; calls next() for any authenticated user when requireAuth() is called with no args" time="0.0213745">
+        </testcase>
+        <testcase classname="tests/unit/middleware/requireAuth.test.js" name="requireAuth() &gt; calls next() when token has one of multiple allowed roles" time="0.0132532">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/validators/authSchemas.test.js" timestamp="2026-04-27T05:35:12.727Z" hostname="Jahnavi" tests="15" failures="0" errors="0" skipped="0" time="3.6429969">
+        <testcase classname="tests/unit/validators/authSchemas.test.js" name="loginSchema &gt; passes with a valid email and password" time="0.1417903">
+        </testcase>
+        <testcase classname="tests/unit/validators/authSchemas.test.js" name="loginSchema &gt; rejects an invalid email format" time="0.0207514">
+        </testcase>
+        <testcase classname="tests/unit/validators/authSchemas.test.js" name="loginSchema &gt; rejects a missing password" time="0.0408512">
+        </testcase>
+        <testcase classname="tests/unit/validators/authSchemas.test.js" name="loginSchema &gt; rejects an empty password string" time="0.0817715">
+        </testcase>
+        <testcase classname="tests/unit/validators/authSchemas.test.js" name="seekerSignupSchema &gt; passes with all valid fields" time="0.0443263">
+        </testcase>
+        <testcase classname="tests/unit/validators/authSchemas.test.js" name="seekerSignupSchema &gt; rejects an invalid email format" time="0.0310122">
+        </testcase>
+        <testcase classname="tests/unit/validators/authSchemas.test.js" name="seekerSignupSchema &gt; rejects a 9-digit mobile number" time="0.0384691">
+        </testcase>
+        <testcase classname="tests/unit/validators/authSchemas.test.js" name="seekerSignupSchema &gt; accepts exactly a 10-digit mobile number" time="0.005217">
+        </testcase>
+        <testcase classname="tests/unit/validators/authSchemas.test.js" name="seekerSignupSchema &gt; rejects an 11-digit mobile number" time="0.0061387">
+        </testcase>
+        <testcase classname="tests/unit/validators/authSchemas.test.js" name="seekerSignupSchema &gt; rejects when passwords do not match" time="0.0062195">
+        </testcase>
+        <testcase classname="tests/unit/validators/authSchemas.test.js" name="seekerSignupSchema &gt; rejects when the name is missing" time="0.0061928">
+        </testcase>
+        <testcase classname="tests/unit/validators/authSchemas.test.js" name="seekerSignupSchema &gt; rejects when the password is shorter than 6 characters" time="0.0066102">
+        </testcase>
+        <testcase classname="tests/unit/validators/authSchemas.test.js" name="seekerSignupSchema &gt; strips unknown extra fields (zod strips by default)" time="0.0080923">
+        </testcase>
+        <testcase classname="tests/unit/validators/authSchemas.test.js" name="validate middleware &gt; calls next() and replaces req.body with parsed data on success" time="0.0146963">
+        </testcase>
+        <testcase classname="tests/unit/validators/authSchemas.test.js" name="validate middleware &gt; returns 400 with an error message on validation failure" time="0.0217339">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/utils/cache.test.js" timestamp="2026-04-27T05:35:12.733Z" hostname="Jahnavi" tests="14" failures="0" errors="0" skipped="0" time="4.4267753">
+        <testcase classname="tests/unit/utils/cache.test.js" name="memory driver — set / get / del &gt; returns null for a key that has never been set" time="0.0938495">
+        </testcase>
+        <testcase classname="tests/unit/utils/cache.test.js" name="memory driver — set / get / del &gt; stores and retrieves a value" time="0.0200771">
+        </testcase>
+        <testcase classname="tests/unit/utils/cache.test.js" name="memory driver — set / get / del &gt; returns null after the key is deleted" time="0.0146765">
+        </testcase>
+        <testcase classname="tests/unit/utils/cache.test.js" name="memory driver — set / get / del &gt; overwrites an existing key on set" time="0.029786">
+        </testcase>
+        <testcase classname="tests/unit/utils/cache.test.js" name="memory driver — TTL expiry &gt; returns null after the TTL has elapsed (fake timers)" time="0.0434695">
+        </testcase>
+        <testcase classname="tests/unit/utils/cache.test.js" name="memory driver — delByPrefix &gt; deletes only keys that match the prefix" time="0.0592877">
+        </testcase>
+        <testcase classname="tests/unit/utils/cache.test.js" name="memory driver — delByPrefix &gt; is a no-op when no keys match the prefix" time="0.0552164">
+        </testcase>
+        <testcase classname="tests/unit/utils/cache.test.js" name="memory driver — stats() &gt; reports driver name as &quot;memory&quot;" time="0.0391495">
+        </testcase>
+        <testcase classname="tests/unit/utils/cache.test.js" name="memory driver — stats() &gt; increments hits and misses correctly" time="0.0142033">
+        </testcase>
+        <testcase classname="tests/unit/utils/cache.test.js" name="memory driver — stats() &gt; hitRate is a number between 0 and 1" time="0.0070056">
+        </testcase>
+        <testcase classname="tests/unit/utils/cache.test.js" name="getCache() driver factory &gt; returns the memory driver when CACHE_DRIVER=memory" time="0.0059291">
+        </testcase>
+        <testcase classname="tests/unit/utils/cache.test.js" name="getCache() driver factory &gt; returns the none (no-op) driver when CACHE_DRIVER=none" time="0.0054584">
+        </testcase>
+        <testcase classname="tests/unit/utils/cache.test.js" name="getCache() driver factory &gt; falls back to memory when CACHE_DRIVER=redis but REDIS_URL is missing" time="0.0052542">
+        </testcase>
+        <testcase classname="tests/unit/utils/cache.test.js" name="getCache() driver factory &gt; returns the same singleton on repeated calls (no re-creation)" time="0.0055479">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/utils/jwtUtils.test.js" timestamp="2026-04-27T05:35:12.737Z" hostname="Jahnavi" tests="13" failures="0" errors="0" skipped="0" time="3.7654359">
+        <testcase classname="tests/unit/utils/jwtUtils.test.js" name="generateToken &gt; returns a string with three dot-separated JWT segments" time="0.1509214">
+        </testcase>
+        <testcase classname="tests/unit/utils/jwtUtils.test.js" name="generateToken &gt; embeds all payload fields in the token" time="0.0159192">
+        </testcase>
+        <testcase classname="tests/unit/utils/jwtUtils.test.js" name="generateToken &gt; role is retrievable after signing and verifying" time="0.019084">
+        </testcase>
+        <testcase classname="tests/unit/utils/jwtUtils.test.js" name="generateToken &gt; includes an exp claim (token expires)" time="0.0679378">
+        </testcase>
+        <testcase classname="tests/unit/utils/jwtUtils.test.js" name="verifyToken &gt; returns the decoded payload for a valid token" time="0.1525399">
+        </testcase>
+        <testcase classname="tests/unit/utils/jwtUtils.test.js" name="verifyToken &gt; throws on a token signed with a different secret (tampered)" time="0.0479368">
+        </testcase>
+        <testcase classname="tests/unit/utils/jwtUtils.test.js" name="verifyToken &gt; throws on an expired token" time="0.0398181">
+        </testcase>
+        <testcase classname="tests/unit/utils/jwtUtils.test.js" name="verifyToken &gt; throws on a malformed (non-JWT) string" time="0.0059094">
+        </testcase>
+        <testcase classname="tests/unit/utils/jwtUtils.test.js" name="verifyToken &gt; throws on a token with a tampered payload segment" time="0.0074859">
+        </testcase>
+        <testcase classname="tests/unit/utils/jwtUtils.test.js" name="extractToken &gt; extracts the token from a valid Bearer Authorization header" time="0.0063819">
+        </testcase>
+        <testcase classname="tests/unit/utils/jwtUtils.test.js" name="extractToken &gt; returns null when the Authorization header is absent" time="0.0051747">
+        </testcase>
+        <testcase classname="tests/unit/utils/jwtUtils.test.js" name="extractToken &gt; returns null when the Authorization header is not Bearer scheme" time="0.0060477">
+        </testcase>
+        <testcase classname="tests/unit/utils/jwtUtils.test.js" name="extractToken &gt; returns null when the Authorization header is just &quot;Bearer &quot; with no token" time="0.0045324">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/utils/password.test.js" timestamp="2026-04-27T05:35:12.741Z" hostname="Jahnavi" tests="9" failures="0" errors="0" skipped="0" time="6.3464872">
+        <testcase classname="tests/unit/utils/password.test.js" name="hashPassword &gt; returns a bcrypt hash string (starts with $2)" time="0.507527">
+        </testcase>
+        <testcase classname="tests/unit/utils/password.test.js" name="hashPassword &gt; produces a different hash each call (salt randomisation)" time="0.6256343">
+        </testcase>
+        <testcase classname="tests/unit/utils/password.test.js" name="hashPassword &gt; can hash an empty string without throwing" time="0.2220261">
+        </testcase>
+        <testcase classname="tests/unit/utils/password.test.js" name="hashPassword &gt; handles passwords at the bcrypt 72-byte limit correctly" time="0.4915157">
+        </testcase>
+        <testcase classname="tests/unit/utils/password.test.js" name="verifyPassword &gt; returns true when the plain password matches the hash" time="0.3144532">
+        </testcase>
+        <testcase classname="tests/unit/utils/password.test.js" name="verifyPassword &gt; returns false for a wrong password" time="0.3352959">
+        </testcase>
+        <testcase classname="tests/unit/utils/password.test.js" name="verifyPassword &gt; returns false (never throws) when the stored hash is plaintext" time="0.0114489">
+        </testcase>
+        <testcase classname="tests/unit/utils/password.test.js" name="verifyPassword &gt; returns false (never throws) when the stored hash is null or undefined" time="0.00948">
+        </testcase>
+        <testcase classname="tests/unit/utils/password.test.js" name="verifyPassword &gt; returns false for a valid hash from a different password" time="0.3073421">
+        </testcase>
+    </testsuite>
+</testsuites>
