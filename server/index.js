@@ -65,15 +65,19 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
   },
 }));
 
-// SWAGGER
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+// SWAGGER — inject the real server URL so "Try it out" works on any host
+app.get('/api-docs.json', (req, res) => {
+  const proto = req.headers['x-forwarded-proto'] || req.protocol;
+  const host  = req.headers['x-forwarded-host']  || req.get('host');
+  const spec  = { ...swaggerSpec, servers: [{ url: `${proto}://${host}`, description: 'Current server' }] };
+  res.setHeader('Content-Type', 'application/json');
+  res.json(spec);
+});
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(null, {
   explorer: true,
+  swaggerUrl: '/api-docs.json',
   swaggerOptions: { persistAuthorization: true },
 }));
-app.get('/api-docs.json', (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.json(swaggerSpec);
-});
 
 // HEALTH CHECK
 app.get('/api/health', async (_req, res) => {

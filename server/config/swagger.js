@@ -8,10 +8,7 @@ definition: {
       version: '1.0.0',
       description: 'API documentation for the service booking platform',
     },
-    servers: [
-      { url: 'http://localhost', description: 'Docker (nginx proxy)' },
-      { url: 'http://localhost:5000', description: 'Local dev' },
-    ],
+    // servers injected dynamically at request time in index.js
     security: [          // ← add this
       { bearerAuth: [] } // ← applies bearerAuth to all routes by default
     ],
